@@ -1,10 +1,10 @@
 {
   "from":"../../bin/tsc/layaAir/",
-  "out":"../../build/",
+  "out":"../../build_lt/",
   "layajsURL":"./as/layajs.exe",
   "tsConfig":["../layaAir/tsconfig.json"],
   "filter":["AniLibPack.d.ts","ILaya.d.ts","GCanvas.d.ts","IPhysics.d.ts","IUI.d.ts","IMap.d.ts"],
-  "createAS":true,
+  "createAS":false,
   "jscObj":{
     "WebGLRenderingContext":"*",
     "CanvasRenderingContext2D":"*",
@@ -15,8 +15,6 @@
     "TextureFormat":"int",
     "RenderTextureFormat":"int",
     "RenderTextureDepthFormat":"int",
-    "HTMLCanvasElement":"*",
-    "ChildNode":"*",
-    "CanvasRenderingContext2D":"*"
+    "HTMLCanvasElement":"*"
   }
 }
