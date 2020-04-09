@@ -90,16 +90,16 @@ export class Sprite3D extends Node implements ICreateResource {
 	_needProcessTriggers: boolean = false;
 
 	/**@internal */
-	private _extData: [];
+	private _extData: any;
 
 	/**
 	 * 额外数据
 	 */
-	get extData(): [] {
+	get extData(): any {
 		return this._extData;
 	}
 
-	set extData(value: []) {
+	set extData(value: any) {
 		this._extData = value;
 	}
 
