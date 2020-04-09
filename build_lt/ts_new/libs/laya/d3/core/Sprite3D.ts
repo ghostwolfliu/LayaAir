@@ -89,6 +89,20 @@ export class Sprite3D extends Node implements ICreateResource {
 	/** @internal */
 	_needProcessTriggers: boolean = false;
 
+	/**@internal */
+	private _extData: [];
+
+	/**
+	 * 额外数据
+	 */
+	get extData(): [] {
+		return this._extData;
+	}
+
+	set extData(value: []) {
+		this._extData = value;
+	}
+
 	/**
 	 * 唯一标识ID。
 	 */
@@ -301,6 +315,10 @@ export class Sprite3D extends Node implements ICreateResource {
 		}
 
 		(data.layer != undefined) && (this.layer = data.layer);
+
+		if (data.extData !== undefined) {
+			this.extData = data.extData;
+		}
 	}
 
 	/**
