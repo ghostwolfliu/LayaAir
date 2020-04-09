@@ -58,7 +58,7 @@ export class ShadowCasterPass {
 	/** @internal */
 	private _shadowMapSize: Vector4 = new Vector4();
 	/** @internal */
-	private _shadowMatrices: Float32Array = new Float32Array(16 * (ShadowCasterPass._maxCascades + 1));//the end is project prcision problem in shader
+	private _shadowMatrices: Float32Array = new Float32Array(16 * (ShadowCasterPass._maxCascades));
 	/**@internal */
 	private _splitBoundSpheres: Float32Array = new Float32Array(ShadowCasterPass._maxCascades * 4);
 	/** @internal */
@@ -95,7 +95,7 @@ export class ShadowCasterPass {
 		cameraSV.setMatrix4x4(BaseCamera.PROJECTMATRIX, shadowSliceData.projectionMatrix);
 		cameraSV.setMatrix4x4(BaseCamera.VIEWPROJECTMATRIX, shadowSliceData.viewProjectMatrix);
 		context.viewMatrix = shadowSliceData.viewMatrix;
-		context.projectionViewMatrix = shadowSliceData.projectionMatrix;
+		context.projectionMatrix = shadowSliceData.projectionMatrix;
 		context.projectionViewMatrix = shadowSliceData.viewProjectMatrix;
 	}
 
