@@ -271,7 +271,7 @@ gulp.task('CopyTSJSLibsFileToTS', () => {
 
 
 gulp.task('CopyDTS', (cb) => {
-    gulp.src(['../tslibs/ts/*.*'])
+    gulp.src(['../tslibs/ts/*.*','./layaAir/glsl.d.ts'])
         .pipe(gulp.dest('../' + targetPath + '/js/ts'))
         .pipe(gulp.dest('../' + targetPath + '/ts/ts'))
 
