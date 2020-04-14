@@ -7685,9 +7685,6 @@ window.Laya= (function (exports) {
                 if (this.hasFreedText(sameTexData)) {
                     sameTexData = wt.pageChars = [];
                 }
-                if (isWT && (this.fontScaleX != wt.scalex || this.fontScaleY != wt.scaley)) {
-                    sameTexData = wt.pageChars = [];
-                }
             }
             var ri = null;
             var splitTex = this.renderPerChar = (!isWT) || TextRender.forceSplitRender || isHtmlChar || (isWT && wt.splitRender);
@@ -22364,7 +22361,7 @@ window.Laya= (function (exports) {
     Laya.lateTimer = null;
     Laya.timer = null;
     Laya.loader = null;
-    Laya.version = "2.6.1beta";
+    Laya.version = "2.6.0";
     Laya._isinit = false;
     Laya.isWXOpenDataContext = false;
     Laya.isWXPosMsg = false;
