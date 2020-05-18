@@ -102,6 +102,7 @@ package laya.d3.physics {
 		 */
 		public function get sleepAngularVelocity():Number{return null;}
 		public function set sleepAngularVelocity(value:Number):void{}
+		public function get btColliderObject():Number{return null;}
 
 		/**
 		 * 创建一个 <code>RigidBody3D</code> 实例。

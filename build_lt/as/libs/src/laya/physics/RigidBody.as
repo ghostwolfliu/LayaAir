@@ -133,6 +133,7 @@ package laya.physics {
 		 * 获得原始body对象
 		 */
 		public function getBody():*{}
+		public function _getOriBody():*{}
 
 		/**
 		 * [只读]获得原始body对象

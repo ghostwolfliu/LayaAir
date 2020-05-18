@@ -2405,6 +2405,12 @@ declare module laya.d3.component {
 		onCollisionExit(collision:laya.d3.physics.Collision):void;
 
 		/**
+		 * 关节破坏时执行此方法
+		 * 此方法为虚方法，使用时重写覆盖即可
+		 */
+		onJointBreak():void;
+
+		/**
 		 * 鼠标按下时执行
 		 * 此方法为虚方法，使用时重写覆盖即可
 		 */
@@ -13856,39 +13862,77 @@ declare module laya.d3.physics.constraints {
 		set enabled(value:boolean);
 
 		/**
-		 * 获取打破冲力阈值。
-		 * @return 打破冲力阈值。
-		 */
-		get breakingImpulseThreshold():number;
-
-		/**
-		 * 设置打破冲力阈值。
-		 * @param value 打破冲力阈值。
-		 */
-		set breakingImpulseThreshold(value:number);
-
-		/**
 		 * 获取应用的冲力。
 		 */
 		get appliedImpulse():number;
+		set connectedBody(value:laya.d3.physics.Rigidbody3D);
 
 		/**
-		 * 获取已连接的刚体。
-		 * @return 已连接刚体。
+		 * 获取连接的刚体B。
+		 * @return 已连接刚体B。
 		 */
 		get connectedBody():laya.d3.physics.Rigidbody3D;
 
 		/**
-		 * 设置已连接刚体。
-		 * @param value 已连接刚体。
+		 * 获取连接的刚体A。
+		 * @return 已连接刚体A。
 		 */
-		set connectedBody(value:laya.d3.physics.Rigidbody3D);
+		get ownBody():laya.d3.physics.Rigidbody3D;
+		get currentForce():laya.d3.math.Vector3;
+		get currentToque():laya.d3.math.Vector3;
+
+		/**
+		 * 设置最大承受力
+		 * @param value 最大承受力
+		 */
+		get breakForce():number;
+		set breakForce(value:number);
+
+		/**
+		 * 设置最大承受力矩
+		 * @param value 最大承受力矩
+		 */
+		get breakTorque():number;
+		set breakTorque(value:number);
 
 		/**
 		 * 创建一个 <code>ConstraintComponent</code> 实例。
 		 */
 
+		constructor(constraintType:number);
+		_onDisable():void;
+
+		/**
+		 * 设置约束刚体
+		 * @param ownerRigid 
+		 * @param connectRigidBody 
+		 */
+		setConnectRigidBody(ownerRigid:laya.d3.physics.Rigidbody3D,connectRigidBody:laya.d3.physics.Rigidbody3D):void;
+
+		/**
+		 * 获得当前力
+		 * @param out 
+		 */
+		getcurrentForce(out:laya.d3.math.Vector3):void;
+
+		/**
+		 * 获得当前力矩
+		 * @param out 
+		 */
+		getcurrentTorque(out:laya.d3.math.Vector3):void;
+	}
+
+}
+
+declare module laya.d3.physics.constraints {
+	class FixedConstraint extends laya.d3.physics.constraints.ConstraintComponent  {
+
+		/**
+		 * 创建一个<code>FixedConstraint</code>实例
+		 */
+
 		constructor();
+		_onDisable():void;
 	}
 
 }
@@ -14254,12 +14298,12 @@ declare module laya.d3.physics {
 		 * @param constraint 约束。
 		 * @param disableCollisionsBetweenLinkedBodies 是否禁用
 		 */
-		addConstraint(constraint:laya.d3.physics.Constraint3D,disableCollisionsBetweenLinkedBodies?:boolean):void;
+		addConstraint(constraint:laya.d3.physics.constraints.ConstraintComponent,disableCollisionsBetweenLinkedBodies?:boolean):void;
 
 		/**
 		 * 移除刚体运动的约束条件。
 		 */
-		removeConstraint(constraint:laya.d3.physics.Constraint3D):void;
+		removeConstraint(constraint:laya.d3.physics.constraints.ConstraintComponent):void;
 
 		/**
 		 * 清除力。
@@ -14411,6 +14455,7 @@ declare module laya.d3.physics {
 		 */
 		get sleepAngularVelocity():number;
 		set sleepAngularVelocity(value:number);
+		get btColliderObject():number;
 
 		/**
 		 * 创建一个 <code>RigidBody3D</code> 实例。
@@ -16120,6 +16165,38 @@ declare module laya.d3.shader {
 		 * @param pipelineMode 渲染管线模式。
 		 */
 		addShaderPass(vs:string,ps:string,stateMap?:object,pipelineMode?:string):laya.d3.shader.ShaderPass;
+	}
+
+}
+
+declare module laya.d3.shadowMap {
+enum ShadowLightType {
+    DirectionLight = 0,
+    SpotLight = 1,
+    PointLight = 2
+}	class ShadowCasterPass  {
+
+		constructor();
+
+		/**
+		 * @interal 
+		 */
+		render(context:laya.d3.core.render.RenderContext3D,scene:laya.d3.core.scene.Scene3D,lightType:ShadowLightType):void;
+	}
+
+}
+
+declare module laya.d3.shadowMap {
+	class ShadowSpotData  {
+		cameraShaderValue:laya.d3.shader.ShaderData;
+		position:laya.d3.math.Vector3;
+		offsetX:number;
+		offsetY:number;
+		resolution:number;
+		viewMatrix:laya.d3.math.Matrix4x4;
+		projectionMatrix:laya.d3.math.Matrix4x4;
+		viewProjectMatrix:laya.d3.math.Matrix4x4;
+		cameraCullInfo:laya.d3.graphics.CameraCullInfo;
 	}
 
 }
@@ -27055,7 +27132,7 @@ declare module laya.media {
 		static destroySound(url:string):void;
 
 		/**
-		 * 播放背景音乐。背景音乐同时只能播放一个，如果在播放背景音乐时再次调用本方法，会先停止之前的背景音乐，再播发当前的背景音乐。
+		 * 播放背景音乐。背景音乐同时只能播放一个，如果在播放背景音乐时再次调用本方法，会先停止之前的背景音乐，再播放当前的背景音乐。
 		 * @param url 声音文件地址。
 		 * @param loops 循环次数,0表示无限循环。
 		 * @param complete 声音播放完成回调。
@@ -30946,6 +31023,7 @@ declare module laya.physics {
 		 * 获得原始body对象
 		 */
 		getBody():any;
+		_getOriBody():any;
 
 		/**
 		 * [只读]获得原始body对象
@@ -45757,6 +45835,8 @@ enum FrustumCorner {
 
 	class ConstraintComponent extends laya.d3.physics.constraints.ConstraintComponent {}
 
+	class FixedConstraint extends laya.d3.physics.constraints.FixedConstraint {}
+
 	/**
 	 * <code>Point2PointConstraint</code> 类用于创建物理组件的父类。
 	 */
@@ -45993,6 +46073,16 @@ enum TextureCubeFace {
 	 */
 
 	class SubShader extends laya.d3.shader.SubShader {}
+
+enum ShadowLightType {
+    DirectionLight = 0,
+    SpotLight = 1,
+    PointLight = 2
+}
+
+	class ShadowCasterPass extends laya.d3.shadowMap.ShadowCasterPass {}
+
+	class ShadowSpotData extends laya.d3.shadowMap.ShadowSpotData {}
 
 	/**
 	 * <code>TextMesh</code> 类用于创建文本网格。

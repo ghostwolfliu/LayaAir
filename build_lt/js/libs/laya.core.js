@@ -7555,7 +7555,7 @@ window.Laya= (function (exports) {
             }
             if (ILaya.Browser.onMiniGame && !bugIOS)
                 TextRender.isWan1Wan = true;
-            this.charRender = ILaya.Render.isConchApp ? (new CharRender_Native()) : (new CharRender_Canvas(TextRender.atlasWidth, TextRender.atlasWidth, TextRender.scaleFontWithCtx, !TextRender.isWan1Wan, false));
+            this.charRender = ILaya.Render.isConchApp ? (new CharRender_Native()) : (new CharRender_Canvas(2048, 2048, TextRender.scaleFontWithCtx, !TextRender.isWan1Wan, false));
             TextRender.textRenderInst = this;
             ILaya.Laya['textRender'] = this;
             TextRender.atlasWidth2 = TextRender.atlasWidth * TextRender.atlasWidth;
@@ -11633,7 +11633,17 @@ window.Laya= (function (exports) {
             var tex = sprite.texture;
             context.saveTransform(LayaGLQuickRunner.curMat);
             context.transformByMatrix(sprite.transform, x, y);
-            context.drawTexture(tex, -sprite.pivotX, -sprite.pivotY, sprite._width || tex.width, sprite._height || tex.height);
+            var width = sprite._width || tex.sourceWidth;
+            var height = sprite._height || tex.sourceHeight;
+            var wRate = width / tex.sourceWidth;
+            var hRate = height / tex.sourceHeight;
+            width = tex.width * wRate;
+            height = tex.height * hRate;
+            if (width <= 0 || height <= 0)
+                return null;
+            var px = -sprite.pivotX + tex.offsetX * wRate;
+            var py = -sprite.pivotY + tex.offsetY * hRate;
+            context.drawTexture(tex, px, py, width, height);
             context.restoreTransform(LayaGLQuickRunner.curMat);
         }
         static alpha_drawTexture(sprite, context, x, y) {
@@ -11862,8 +11872,19 @@ window.Laya= (function (exports) {
         }
         _texture(sprite, context, x, y) {
             var tex = sprite.texture;
-            if (tex._getSource())
-                context.drawTexture(tex, x - sprite.pivotX + tex.offsetX, y - sprite.pivotY + tex.offsetY, sprite._width || tex.width, sprite._height || tex.height);
+            if (tex._getSource()) {
+                var width = sprite._width || tex.sourceWidth;
+                var height = sprite._height || tex.sourceHeight;
+                var wRate = width / tex.sourceWidth;
+                var hRate = height / tex.sourceHeight;
+                width = tex.width * wRate;
+                height = tex.height * hRate;
+                if (width <= 0 || height <= 0)
+                    return null;
+                x = x - sprite.pivotX + tex.offsetX * wRate;
+                y = y - sprite.pivotY + tex.offsetY * hRate;
+                context.drawTexture(tex, x, y, width, height);
+            }
             var next = this._next;
             if (next != RenderSprite.NORENDER)
                 next._fun.call(next, sprite, context, x, y);
@@ -18619,6 +18640,7 @@ window.Laya= (function (exports) {
                 this.complete(data);
             }
             else if (type === Loader.IMAGE) {
+                let tex;
                 if (data instanceof ArrayBuffer) {
                     var ext = Utils.getFileExtension(this._url);
                     let format;
@@ -18634,18 +18656,21 @@ window.Laya= (function (exports) {
                             return;
                         }
                     }
-                    var tex = new Texture2D(0, 0, format, false, false);
+                    tex = new Texture2D(0, 0, format, false, false);
                     tex.wrapModeU = exports.WarpMode.Clamp;
                     tex.wrapModeV = exports.WarpMode.Clamp;
                     tex.setCompressData(data);
                     tex._setCreateURL(this.url);
                 }
                 else if (!(data instanceof Texture2D)) {
-                    var tex = new Texture2D(data.width, data.height, 1, false, false);
+                    tex = new Texture2D(data.width, data.height, 1, false, false);
                     tex.wrapModeU = exports.WarpMode.Clamp;
                     tex.wrapModeV = exports.WarpMode.Clamp;
                     tex.loadImageSource(data, true);
                     tex._setCreateURL(data.src);
+                }
+                else {
+                    tex = data;
                 }
                 var texture = new Texture(tex);
                 texture.url = this._url;
@@ -18655,7 +18680,7 @@ window.Laya= (function (exports) {
                 this.complete(data);
             }
             else if (type === "htmlimage") {
-                var tex = new Texture2D(data.width, data.height, 1, false, false);
+                let tex = new Texture2D(data.width, data.height, 1, false, false);
                 tex.wrapModeU = exports.WarpMode.Clamp;
                 tex.wrapModeV = exports.WarpMode.Clamp;
                 tex.loadImageSource(data, true);
@@ -18700,7 +18725,7 @@ window.Laya= (function (exports) {
                 }
                 else {
                     if (!(data instanceof Texture2D)) {
-                        var tex = new Texture2D(data.width, data.height, 1, false, false);
+                        let tex = new Texture2D(data.width, data.height, 1, false, false);
                         tex.wrapModeU = BaseTexture.WARPMODE_CLAMP;
                         tex.wrapModeV = BaseTexture.WARPMODE_CLAMP;
                         tex.loadImageSource(data, true);
@@ -24601,6 +24626,8 @@ window.Laya= (function (exports) {
             }
         }
     }
+    ClassUtils.regClass("laya.media.SoundNode", SoundNode);
+    ClassUtils.regClass("Laya.SoundNode", SoundNode);
 
     class ResourceVersion {
         static enable(manifestFile, callback, type = 2) {

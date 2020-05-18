@@ -69,6 +69,12 @@ package laya.d3.component {
 		public function onCollisionExit(collision:Collision):void{}
 
 		/**
+		 * 关节破坏时执行此方法
+		 * 此方法为虚方法，使用时重写覆盖即可
+		 */
+		public function onJointBreak():void{}
+
+		/**
 		 * 鼠标按下时执行
 		 * 此方法为虚方法，使用时重写覆盖即可
 		 */
