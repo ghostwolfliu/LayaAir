@@ -74,5 +74,12 @@ export class DirectionLight extends LightSprite {
 	protected _removeFromLightQueue(): void {
 		(<Scene3D>this._scene)._directionLights.remove(this);
 	}
+
+	//--- LT新增开始
+	_parse(data: any, spriteMap: any): void {
+		super._parse(data, spriteMap);
+		(data.shadowCascadesMode != undefined) && (this.shadowCascadesMode = data.shadowCascadesMode);
+	}
+	//--- LT新增结束
 }
 

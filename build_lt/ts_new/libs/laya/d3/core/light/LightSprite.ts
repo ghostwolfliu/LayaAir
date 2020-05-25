@@ -183,6 +183,16 @@ export class LightSprite extends Sprite3D {
 		this.color.fromArray(colorData);
 		this.intensity = data.intensity;
 		this.lightmapBakedType = data.lightmapBakedType;
+
+		//--- LT新增开始
+
+		(data.shadowMode != undefined) && (this.shadowMode = data.shadowMode);
+		(data.shadowStrength != undefined) && (this.shadowStrength = data.shadowStrength);
+		(data.shadowDistance != undefined) && (this.shadowDistance = data.shadowDistance);
+		(data.shadowNearPlane != undefined) && (this.shadowNearPlane = data.shadowNearPlane);
+		(data.shadowResolution != undefined) && (this.shadowResolution = data.shadowResolution);
+
+		//--- LT新增结束
 	}
 
 	/**

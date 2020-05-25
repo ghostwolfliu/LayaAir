@@ -12280,6 +12280,11 @@
 	        this.color.fromArray(colorData);
 	        this.intensity = data.intensity;
 	        this.lightmapBakedType = data.lightmapBakedType;
+	        (data.shadowMode != undefined) && (this.shadowMode = data.shadowMode);
+	        (data.shadowStrength != undefined) && (this.shadowStrength = data.shadowStrength);
+	        (data.shadowDistance != undefined) && (this.shadowDistance = data.shadowDistance);
+	        (data.shadowNearPlane != undefined) && (this.shadowNearPlane = data.shadowNearPlane);
+	        (data.shadowResolution != undefined) && (this.shadowResolution = data.shadowResolution);
 	    }
 	    _addToScene() {
 	        var scene = this._scene;
@@ -30381,6 +30386,10 @@
 	    }
 	    _removeFromLightQueue() {
 	        this._scene._directionLights.remove(this);
+	    }
+	    _parse(data, spriteMap) {
+	        super._parse(data, spriteMap);
+	        (data.shadowCascadesMode != undefined) && (this.shadowCascadesMode = data.shadowCascadesMode);
 	    }
 	}
 

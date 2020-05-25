@@ -3375,6 +3375,7 @@ declare module laya.d3.core.light {
 		 */
 
 		constructor();
+		_parse(data:any,spriteMap:any):void;
 	}
 
 }

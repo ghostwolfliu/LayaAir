@@ -31,6 +31,7 @@ package laya.d3.core.light {
 		 */
 
 		public function DirectionLight(){}
+		public function _parse(data:*,spriteMap:*):void{}
 	}
 
 }
