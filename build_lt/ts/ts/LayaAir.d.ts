@@ -13844,6 +13844,116 @@ declare module laya.d3.physics {
 }
 
 declare module laya.d3.physics.constraints {
+	class ConfigurableJoint extends laya.d3.physics.constraints.ConstraintComponent  {
+		static CONFIG_MOTION_TYPE_LOCKED:number;
+		static CONFIG_MOTION_TYPE_LIMITED:number;
+		static CONFIG_MOTION_TYPE_FREE:number;
+
+		/**
+		 * 创建一个<code>Generic6DofSpring2Constraint</code>实例
+		 */
+
+		constructor();
+
+		/**
+		 * 主轴
+		 */
+		get axis():laya.d3.math.Vector3;
+
+		/**
+		 * 副轴
+		 */
+		get secondaryAxis():laya.d3.math.Vector3;
+		set maxAngularLimit(value:laya.d3.math.Vector3);
+		set minAngularLimit(value:laya.d3.math.Vector3);
+		get maxAngularLimit():laya.d3.math.Vector3;
+		get minAngularLimit():laya.d3.math.Vector3;
+		set maxLinearLimit(value:laya.d3.math.Vector3);
+		set minLinearLimit(value:laya.d3.math.Vector3);
+		get maxLinearLimit():laya.d3.math.Vector3;
+		get minLinearLimit():laya.d3.math.Vector3;
+
+		/**
+		 * X轴线性约束模式
+		 */
+		set XMotion(value:number);
+		get XMotion():number;
+
+		/**
+		 * Y轴线性约束模式
+		 */
+		set YMotion(value:number);
+		get YMotion():number;
+
+		/**
+		 * Z轴线性约束模式
+		 */
+		set ZMotion(value:number);
+		get ZMotion():number;
+
+		/**
+		 * X轴旋转约束模式
+		 */
+		set angularXMotion(value:number);
+		get angularXMotion():number;
+
+		/**
+		 * Y轴旋转约束模式
+		 */
+		set angularYMotion(value:number);
+		get angularYMotion():number;
+
+		/**
+		 * Z轴旋转约束模式
+		 */
+		set angularZMotion(value:number);
+		get angularZMotion():number;
+
+		/**
+		 * 线性弹簧
+		 */
+		set linearLimitSpring(value:laya.d3.math.Vector3);
+		get linearLimitSpring():laya.d3.math.Vector3;
+
+		/**
+		 * 角度弹簧
+		 */
+		set angularLimitSpring(value:laya.d3.math.Vector3);
+		get angularLimitSpring():laya.d3.math.Vector3;
+
+		/**
+		 * 线性弹力
+		 */
+		set linearBounce(value:laya.d3.math.Vector3);
+		get linearBounce():laya.d3.math.Vector3;
+
+		/**
+		 * 角度弹力
+		 */
+		set angularBounce(value:laya.d3.math.Vector3);
+		get angularBounce():laya.d3.math.Vector3;
+		set linearDamp(value:laya.d3.math.Vector3);
+		get linearDamp():laya.d3.math.Vector3;
+		set angularDamp(value:laya.d3.math.Vector3);
+		get angularDamp():laya.d3.math.Vector3;
+		set anchor(value:laya.d3.math.Vector3);
+		get anchor():laya.d3.math.Vector3;
+		set connectAnchor(value:laya.d3.math.Vector3);
+		get connectAnchor():laya.d3.math.Vector3;
+
+		/**
+		 * 设置对象自然旋转的局部轴主轴，axis2为副轴
+		 * @param axis1 
+		 * @param axis2 
+		 */
+		setAxis(axis:laya.d3.math.Vector3,secondaryAxis:laya.d3.math.Vector3):void;
+		_initAllConstraintInfo():void;
+		_onDisable():void;
+	}
+
+}
+
+declare module laya.d3.physics.constraints {
 
 	/**
 	 * <code>ConstraintComponent</code> 类用于创建约束的父类。
@@ -13866,7 +13976,6 @@ declare module laya.d3.physics.constraints {
 		 * 获取应用的冲力。
 		 */
 		get appliedImpulse():number;
-		set connectedBody(value:laya.d3.physics.Rigidbody3D);
 
 		/**
 		 * 获取连接的刚体B。
@@ -13879,7 +13988,15 @@ declare module laya.d3.physics.constraints {
 		 * @return 已连接刚体A。
 		 */
 		get ownBody():laya.d3.physics.Rigidbody3D;
+
+		/**
+		 * 获得收到的总力
+		 */
 		get currentForce():laya.d3.math.Vector3;
+
+		/**
+		 * 获取的总力矩
+		 */
 		get currentToque():laya.d3.math.Vector3;
 
 		/**
@@ -13901,12 +14018,25 @@ declare module laya.d3.physics.constraints {
 		 */
 
 		constructor(constraintType:number);
+
+		/**
+		 * 设置迭代的次数，次数越高，越精确
+		 * @param overideNumIterations 
+		 */
+		setOverrideNumSolverIterations(overideNumIterations:number):void;
+
+		/**
+		 * 设置约束是否可用
+		 * @param enable 
+		 */
+		setConstraintEnabled(enable:boolean):void;
 		_onDisable():void;
 
 		/**
 		 * 设置约束刚体
 		 * @param ownerRigid 
 		 * @param connectRigidBody 
+		 * @override 
 		 */
 		setConnectRigidBody(ownerRigid:laya.d3.physics.Rigidbody3D,connectRigidBody:laya.d3.physics.Rigidbody3D):void;
 
@@ -14890,6 +15020,633 @@ declare module laya.d3.physics.shape {
 		 */
 
 		constructor(normal:laya.d3.math.Vector3,offset:number);
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		clone():any;
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>Collision</code> 类用于创建物理碰撞信息。
+	 */
+	class CannonCollision  {
+
+		/**
+		 * @readonly 
+		 */
+		contacts:laya.d3.physicsCannon.CannonContactPoint[];
+
+		/**
+		 * @readonly 
+		 */
+		other:laya.d3.physicsCannon.CannonPhysicsComponent;
+
+		/**
+		 * 创建一个 <code>Collision</code> 实例。
+		 */
+
+		constructor();
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>CollisionMap</code> 类用于实现碰撞组合实例图。
+	 */
+	class CannonCollisionTool  {
+
+		/**
+		 * 创建一个 <code>CollisionMap</code> 实例。
+		 */
+
+		constructor();
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>ContactPoint</code> 类用于创建物理碰撞信息。
+	 */
+	class CannonContactPoint  {
+
+		/**
+		 * 碰撞器A。
+		 */
+		colliderA:laya.d3.physicsCannon.CannonPhysicsComponent;
+
+		/**
+		 * 碰撞器B。
+		 */
+		colliderB:laya.d3.physicsCannon.CannonPhysicsComponent;
+
+		/**
+		 * 距离。
+		 */
+		distance:number;
+
+		/**
+		 * 法线。
+		 */
+		normal:laya.d3.math.Vector3;
+
+		/**
+		 * 碰撞器A的碰撞点。
+		 */
+		positionOnA:laya.d3.math.Vector3;
+
+		/**
+		 * 碰撞器B的碰撞点。
+		 */
+		positionOnB:laya.d3.math.Vector3;
+
+		/**
+		 * 创建一个 <code>ContactPoint</code> 实例。
+		 */
+
+		constructor();
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>HitResult</code> 类用于实现射线检测或形状扫描的结果。
+	 */
+	class CannonHitResult  {
+
+		/**
+		 * 是否成功。
+		 */
+		succeeded:boolean;
+
+		/**
+		 * 发生碰撞的碰撞组件。
+		 */
+		collider:laya.d3.physicsCannon.CannonPhysicsComponent;
+
+		/**
+		 * 碰撞点。
+		 */
+		point:laya.d3.math.Vector3;
+
+		/**
+		 * 碰撞法线。
+		 */
+		normal:laya.d3.math.Vector3;
+
+		/**
+		 * 碰撞分数。
+		 */
+		hitFraction:number;
+
+		/**
+		 * 创建一个 <code>HitResult</code> 实例。
+		 */
+
+		constructor();
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>PhysicsCollider</code> 类用于创建物理碰撞器。
+	 */
+	class CannonPhysicsCollider extends laya.d3.physicsCannon.CannonPhysicsTriggerComponent  {
+
+		/**
+		 * 创建一个 <code>PhysicsCollider</code> 实例。
+		 * @param collisionGroup 所属碰撞组。
+		 * @param canCollideWith 可产生碰撞的碰撞组。
+		 */
+
+		constructor(collisionGroup?:number,canCollideWith?:number);
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>PhysicsComponent</code> 类用于创建物理组件的父类。
+	 */
+	class CannonPhysicsComponent extends laya.components.Component  {
+
+		/**
+		 * 是否可以缩放Shape。
+		 */
+		canScaleShape:boolean;
+
+		/**
+		 * 弹力。
+		 */
+		get restitution():number;
+		set restitution(value:number);
+
+		/**
+		 * 摩擦力。
+		 */
+		get friction():number;
+		set friction(value:number);
+
+		/**
+		 * 碰撞形状。
+		 */
+		get colliderShape():laya.d3.physicsCannon.shape.CannonColliderShape;
+		set colliderShape(value:laya.d3.physicsCannon.shape.CannonColliderShape);
+
+		/**
+		 * 模拟器。
+		 */
+		get simulation():laya.d3.physicsCannon.CannonPhysicsSimulation;
+
+		/**
+		 * 所属碰撞组。
+		 */
+		get collisionGroup():number;
+		set collisionGroup(value:number);
+
+		/**
+		 * 可碰撞的碰撞组,基于位运算。
+		 */
+		get canCollideWith():number;
+		set canCollideWith(value:number);
+
+		/**
+		 * 创建一个 <code>PhysicsComponent</code> 实例。
+		 * @param collisionGroup 所属碰撞组。
+		 * @param canCollideWith 可产生碰撞的碰撞组。
+		 */
+
+		constructor(collisionGroup:number,canCollideWith:number);
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>PhysicsSettings</code> 类用于创建物理配置信息。
+	 */
+	class CannonPhysicsSettings  {
+
+		/**
+		 * 标志集合。
+		 */
+		flags:number;
+
+		/**
+		 * 物理引擎在一帧中用于补偿减速的最大次数。
+		 */
+		maxSubSteps:number;
+
+		/**
+		 * 物理模拟器帧的间隔时间。
+		 */
+		fixedTimeStep:number;
+
+		/**
+		 * 物理松弛系数
+		 */
+		contactEquationRelaxation:number;
+
+		/**
+		 * 刚度系数
+		 */
+		contactEquationStiffness:number;
+
+		/**
+		 * 创建一个 <code>PhysicsSettings</code> 实例。
+		 */
+
+		constructor();
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>Simulation</code> 类用于创建物理模拟器。
+	 */
+	class CannonPhysicsSimulation  {
+		static disableSimulation:boolean;
+
+		/**
+		 * 创建限制刚体运动的约束条件。
+		 */
+		static createConstraint():void;
+
+		/**
+		 * 物理引擎在一帧中用于补偿减速的最大次数：模拟器每帧允许的最大模拟次数，如果引擎运行缓慢,可能需要增加该次数，否则模拟器会丢失“时间",引擎间隔时间小于maxSubSteps*fixedTimeStep非常重要。
+		 */
+		maxSubSteps:number;
+
+		/**
+		 * 物理模拟器帧的间隔时间:通过减少fixedTimeStep可增加模拟精度，默认是1.0 / 60.0。
+		 */
+		fixedTimeStep:number;
+
+		/**
+		 * 是否进行连续碰撞检测。CCD
+		 */
+		get continuousCollisionDetection():boolean;
+		set continuousCollisionDetection(value:boolean);
+
+		/**
+		 * 获取重力。
+		 */
+		get gravity():laya.d3.math.Vector3;
+		set gravity(value:laya.d3.math.Vector3);
+
+		/**
+		 * 获取重力。
+		 */
+		get solverIterations():number;
+		set solverIterations(value:number);
+
+		/**
+		 * 射线检测第一个碰撞物体。
+		 * @param from 起始位置。
+		 * @param to 结束位置。
+		 * @param out 碰撞结果。
+		 * @param collisonGroup 射线所属碰撞组。
+		 * @param collisionMask 与射线可产生碰撞的组。
+		 * @return 是否成功。
+		 */
+		raycastFromTo(from:laya.d3.math.Vector3,to:laya.d3.math.Vector3,out?:laya.d3.physicsCannon.CannonHitResult,collisonGroup?:number,collisionMask?:number):boolean;
+
+		/**
+		 * 射线检测所有碰撞的物体。
+		 * @param from 起始位置。
+		 * @param to 结束位置。
+		 * @param out 碰撞结果[数组元素会被回收]。
+		 * @param collisonGroup 射线所属碰撞组。
+		 * @param collisionMask 与射线可产生碰撞的组。
+		 * @return 是否成功。
+		 */
+		raycastAllFromTo(from:laya.d3.math.Vector3,to:laya.d3.math.Vector3,out:laya.d3.physicsCannon.CannonHitResult[],collisonGroup?:number,collisionMask?:number):boolean;
+
+		/**
+		 * 射线检测第一个碰撞物体。
+		 * @param ray 射线
+		 * @param outHitInfo 与该射线发生碰撞的第一个碰撞器的碰撞信息
+		 * @param distance 射线长度,默认为最大值
+		 * @param collisonGroup 射线所属碰撞组。
+		 * @param collisionMask 与射线可产生碰撞的组。
+		 * @return 是否检测成功。
+		 */
+		rayCast(ray:laya.d3.math.Ray,outHitResult?:laya.d3.physicsCannon.CannonHitResult,distance?:number,collisonGroup?:number,collisionMask?:number):boolean;
+
+		/**
+		 * 射线检测所有碰撞的物体。
+		 * @param ray 射线
+		 * @param out 碰撞结果[数组元素会被回收]。
+		 * @param distance 射线长度,默认为最大值
+		 * @param collisonGroup 射线所属碰撞组。
+		 * @param collisionMask 与射线可产生碰撞的组。
+		 * @return 是否检测成功。
+		 */
+		rayCastAll(ray:laya.d3.math.Ray,out:laya.d3.physicsCannon.CannonHitResult[],distance?:number,collisonGroup?:number,collisionMask?:number):boolean;
+
+		/**
+		 * 清除力。
+		 */
+		clearForces():void;
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>PhysicsTriggerComponent</code> 类用于创建物理触发器组件。
+	 */
+	class CannonPhysicsTriggerComponent extends laya.d3.physicsCannon.CannonPhysicsComponent  {
+
+		/**
+		 * 是否为触发器。
+		 */
+		get isTrigger():boolean;
+		set isTrigger(value:boolean);
+
+		/**
+		 * 创建一个 <code>PhysicsTriggerComponent</code> 实例。
+		 * @param collisionGroup 所属碰撞组。
+		 * @param canCollideWith 可产生碰撞的碰撞组。
+		 */
+
+		constructor(collisionGroup:number,canCollideWith:number);
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>PhysicsUpdateList</code> 类用于实现物理更新队列。
+	 */
+	class CannonPhysicsUpdateList extends laya.d3.component.SingletonList<laya.resource.ISingletonElement>  {
+
+		/**
+		 * 创建一个新的 <code>PhysicsUpdateList</code> 实例。
+		 */
+
+		constructor();
+	}
+
+}
+
+declare module laya.d3.physicsCannon {
+
+	/**
+	 * <code>Rigidbody3D</code> 类用于创建刚体碰撞器。
+	 */
+	class CannonRigidbody3D extends laya.d3.physicsCannon.CannonPhysicsCollider  {
+		static TYPE_STATIC:number;
+		static TYPE_DYNAMIC:number;
+		static TYPE_KINEMATIC:number;
+
+		/**
+		 * 质量。
+		 */
+		get mass():number;
+		set mass(value:number);
+
+		/**
+		 * 是否为运动物体，如果为true仅可通过transform属性移动物体,而非其他力相关属性。
+		 */
+		get isKinematic():boolean;
+		set isKinematic(value:boolean);
+
+		/**
+		 * 刚体的线阻力。
+		 */
+		get linearDamping():number;
+		set linearDamping(value:number);
+
+		/**
+		 * 刚体的角阻力。
+		 */
+		get angularDamping():number;
+		set angularDamping(value:number);
+
+		/**
+		 * 总力。
+		 */
+		get totalForce():laya.d3.math.Vector3;
+
+		/**
+		 * 线速度
+		 */
+		get linearVelocity():laya.d3.math.Vector3;
+		set linearVelocity(value:laya.d3.math.Vector3);
+
+		/**
+		 * 角速度。
+		 */
+		get angularVelocity():laya.d3.math.Vector3;
+		set angularVelocity(value:laya.d3.math.Vector3);
+
+		/**
+		 * 刚体所有扭力。
+		 */
+		get totalTorque():laya.d3.math.Vector3;
+
+		/**
+		 * 是否处于睡眠状态。
+		 */
+		get isSleeping():boolean;
+
+		/**
+		 * 刚体睡眠的线速度阈值。
+		 */
+		get sleepLinearVelocity():number;
+		set sleepLinearVelocity(value:number);
+		get btColliderObject():CANNON.Body;
+
+		/**
+		 * 创建一个 <code>RigidBody3D</code> 实例。
+		 * @param collisionGroup 所属碰撞组。
+		 * @param canCollideWith 可产生碰撞的碰撞组。
+		 */
+
+		constructor(collisionGroup?:number,canCollideWith?:number);
+
+		/**
+		 * 应用作用力。
+		 * @param force 作用力。
+		 * @param localOffset 偏移,如果为null则为中心点
+		 */
+		applyForce(force:laya.d3.math.Vector3,localOffset?:laya.d3.math.Vector3):void;
+
+		/**
+		 * 应用扭转力。
+		 * @param torque 扭转力。
+		 */
+		applyTorque(torque:laya.d3.math.Vector3):void;
+
+		/**
+		 * 应用冲量。
+		 * @param impulse 冲量。
+		 * @param localOffset 偏移,如果为null则为中心点。
+		 */
+		applyImpulse(impulse:laya.d3.math.Vector3,localOffset?:laya.d3.math.Vector3):void;
+
+		/**
+		 * 唤醒刚体。
+		 */
+		wakeUp():void;
+
+		/**
+		 * 清除应用到刚体上的所有力。
+		 */
+		clearForces():void;
+	}
+
+}
+
+declare module laya.d3.physicsCannon.shape {
+
+	/**
+	 * <code>BoxColliderShape</code> 类用于创建盒子形状碰撞器。
+	 */
+	class CannonBoxColliderShape extends laya.d3.physicsCannon.shape.CannonColliderShape  {
+
+		/**
+		 * X轴尺寸。
+		 */
+		get sizeX():number;
+
+		/**
+		 * Y轴尺寸。
+		 */
+		get sizeY():number;
+
+		/**
+		 * Z轴尺寸。
+		 */
+		get sizeZ():number;
+
+		/**
+		 * 创建一个新的 <code>BoxColliderShape</code> 实例。
+		 * @param sizeX 盒子X轴尺寸。
+		 * @param sizeY 盒子Y轴尺寸。
+		 * @param sizeZ 盒子Z轴尺寸。
+		 */
+
+		constructor(sizeX?:number,sizeY?:number,sizeZ?:number);
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		clone():any;
+	}
+
+}
+
+declare module laya.d3.physicsCannon.shape {
+
+	/**
+	 * <code>ColliderShape</code> 类用于创建形状碰撞器的父类，该类为抽象类。
+	 */
+	class CannonColliderShape implements laya.d3.core.IClone  {
+
+		/**
+		 * 形状方向_X轴正向
+		 */
+		static SHAPEORIENTATION_UPX:number;
+
+		/**
+		 * 形状方向_Y轴正向
+		 */
+		static SHAPEORIENTATION_UPY:number;
+
+		/**
+		 * 形状方向_Z轴正向
+		 */
+		static SHAPEORIENTATION_UPZ:number;
+		needsCustomCollisionCallback:boolean;
+
+		/**
+		 * 碰撞类型。
+		 */
+		get type():number;
+
+		/**
+		 * Shape的本地偏移。
+		 */
+		get localOffset():laya.d3.math.Vector3;
+		set localOffset(value:laya.d3.math.Vector3);
+
+		/**
+		 * Shape的本地旋转。
+		 */
+		get localRotation():laya.d3.math.Quaternion;
+		set localRotation(value:laya.d3.math.Quaternion);
+
+		/**
+		 * 创建一个新的 <code>ColliderShape</code> 实例。
+		 */
+
+		constructor();
+
+		/**
+		 * 更新本地偏移,如果修改LocalOffset或LocalRotation需要调用。
+		 */
+		updateLocalTransformations():void;
+
+		/**
+		 * 克隆。
+		 * @param destObject 克隆源。
+		 */
+		cloneTo(destObject:any):void;
+
+		/**
+		 * 克隆。
+		 * @return 克隆副本。
+		 */
+		clone():any;
+
+		/**
+		 * 销毁。
+		 */
+		destroy():void;
+	}
+
+}
+
+declare module laya.d3.physicsCannon.shape {
+
+	/**
+	 * <code>SphereColliderShape</code> 类用于创建球形碰撞器。
+	 */
+	class CannonSphereColliderShape extends laya.d3.physicsCannon.shape.CannonColliderShape  {
+
+		/**
+		 * 半径。
+		 */
+		get radius():number;
+
+		/**
+		 * 创建一个新的 <code>SphereColliderShape</code> 实例。
+		 * @param radius 半径。
+		 */
+
+		constructor(radius?:number);
 
 		/**
 		 * @inheritDoc 
@@ -45830,6 +46587,8 @@ enum FrustumCorner {
 
 	class Constraint3D extends laya.d3.physics.Constraint3D {}
 
+	class ConfigurableJoint extends laya.d3.physics.constraints.ConfigurableJoint {}
+
 	/**
 	 * <code>ConstraintComponent</code> 类用于创建约束的父类。
 	 */
@@ -45960,6 +46719,90 @@ enum FrustumCorner {
 	 */
 
 	class StaticPlaneColliderShape extends laya.d3.physics.shape.StaticPlaneColliderShape {}
+
+	/**
+	 * <code>Collision</code> 类用于创建物理碰撞信息。
+	 */
+
+	class CannonCollision extends laya.d3.physicsCannon.CannonCollision {}
+
+	/**
+	 * <code>CollisionMap</code> 类用于实现碰撞组合实例图。
+	 */
+
+	class CannonCollisionTool extends laya.d3.physicsCannon.CannonCollisionTool {}
+
+	/**
+	 * <code>ContactPoint</code> 类用于创建物理碰撞信息。
+	 */
+
+	class CannonContactPoint extends laya.d3.physicsCannon.CannonContactPoint {}
+
+	/**
+	 * <code>HitResult</code> 类用于实现射线检测或形状扫描的结果。
+	 */
+
+	class CannonHitResult extends laya.d3.physicsCannon.CannonHitResult {}
+
+	/**
+	 * <code>PhysicsCollider</code> 类用于创建物理碰撞器。
+	 */
+
+	class CannonPhysicsCollider extends laya.d3.physicsCannon.CannonPhysicsCollider {}
+
+	/**
+	 * <code>PhysicsComponent</code> 类用于创建物理组件的父类。
+	 */
+
+	class CannonPhysicsComponent extends laya.d3.physicsCannon.CannonPhysicsComponent {}
+
+	/**
+	 * <code>PhysicsSettings</code> 类用于创建物理配置信息。
+	 */
+
+	class CannonPhysicsSettings extends laya.d3.physicsCannon.CannonPhysicsSettings {}
+
+	/**
+	 * <code>Simulation</code> 类用于创建物理模拟器。
+	 */
+
+	class CannonPhysicsSimulation extends laya.d3.physicsCannon.CannonPhysicsSimulation {}
+
+	/**
+	 * <code>PhysicsTriggerComponent</code> 类用于创建物理触发器组件。
+	 */
+
+	class CannonPhysicsTriggerComponent extends laya.d3.physicsCannon.CannonPhysicsTriggerComponent {}
+
+	/**
+	 * <code>PhysicsUpdateList</code> 类用于实现物理更新队列。
+	 */
+
+	class CannonPhysicsUpdateList extends laya.d3.physicsCannon.CannonPhysicsUpdateList {}
+
+	/**
+	 * <code>Rigidbody3D</code> 类用于创建刚体碰撞器。
+	 */
+
+	class CannonRigidbody3D extends laya.d3.physicsCannon.CannonRigidbody3D {}
+
+	/**
+	 * <code>BoxColliderShape</code> 类用于创建盒子形状碰撞器。
+	 */
+
+	class CannonBoxColliderShape extends laya.d3.physicsCannon.shape.CannonBoxColliderShape {}
+
+	/**
+	 * <code>ColliderShape</code> 类用于创建形状碰撞器的父类，该类为抽象类。
+	 */
+
+	class CannonColliderShape extends laya.d3.physicsCannon.shape.CannonColliderShape {}
+
+	/**
+	 * <code>SphereColliderShape</code> 类用于创建球形碰撞器。
+	 */
+
+	class CannonSphereColliderShape extends laya.d3.physicsCannon.shape.CannonSphereColliderShape {}
 
 	/**
 	 * <code>Mesh</code> 类用于创建文件网格数据模板。

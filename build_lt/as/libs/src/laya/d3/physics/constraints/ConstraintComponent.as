@@ -24,7 +24,6 @@ package laya.d3.physics.constraints {
 		 * 获取应用的冲力。
 		 */
 		public function get appliedImpulse():Number{return null;}
-		public function set connectedBody(value:Rigidbody3D):void{}
 
 		/**
 		 * 获取连接的刚体B。
@@ -37,7 +36,15 @@ package laya.d3.physics.constraints {
 		 * @return 已连接刚体A。
 		 */
 		public function get ownBody():Rigidbody3D{return null;}
+
+		/**
+		 * 获得收到的总力
+		 */
 		public function get currentForce():Vector3{return null;}
+
+		/**
+		 * 获取的总力矩
+		 */
 		public function get currentToque():Vector3{return null;}
 
 		/**
@@ -59,14 +66,27 @@ package laya.d3.physics.constraints {
 		 */
 
 		public function ConstraintComponent(constraintType:Number = undefined){}
+
+		/**
+		 * 设置迭代的次数，次数越高，越精确
+		 * @param overideNumIterations 
+		 */
+		public function setOverrideNumSolverIterations(overideNumIterations:Number):void{}
+
+		/**
+		 * 设置约束是否可用
+		 * @param enable 
+		 */
+		public function setConstraintEnabled(enable:Boolean):void{}
 		public function _onDisable():void{}
 
 		/**
 		 * 设置约束刚体
 		 * @param ownerRigid 
 		 * @param connectRigidBody 
+		 * @override 
 		 */
-		public function setConnectRigidBody(ownerRigid:Rigidbody3D,connectRigidBody:Rigidbody3D):void{}
+		override public function setConnectRigidBody(ownerRigid:Rigidbody3D,connectRigidBody:Rigidbody3D):void{}
 
 		/**
 		 * 获得当前力

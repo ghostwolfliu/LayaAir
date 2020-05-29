@@ -14636,6 +14636,11 @@
 	            }
 	        }
 	    }
+	    get physicsSimulation() {
+	        if (this.owner && this.owner.scene)
+	            this._simulation = this.owner._scene.physicsSimulation;
+	        return this._simulation;
+	    }
 	    _parseShape(shapesData) {
 	        var shapeCount = shapesData.length;
 	        if (shapeCount === 1) {
@@ -15457,8 +15462,10 @@
 	            var constraintObj = this._currentConstraint[id];
 	            var scripts = constraintObj.owner._scripts;
 	            if (constraintObj.enabled && constraintObj._isBreakConstrained()) {
-	                for (i = 0, n = scripts.length; i < n; i++) {
-	                    scripts[i].onJointBreak();
+	                if (scripts.length != 0) {
+	                    for (i = 0, n = scripts.length; i < n; i++) {
+	                        scripts[i].onJointBreak();
+	                    }
 	                }
 	            }
 	        }
@@ -18842,6 +18849,1038 @@
 	}
 	DynamicBatchManager._managers = [];
 
+	class CannonPhysicsUpdateList extends SingletonList {
+	    constructor() {
+	        super();
+	    }
+	    add(element) {
+	        var index = element._inPhysicUpdateListIndex;
+	        if (index !== -1)
+	            throw "PhysicsUpdateList:element has  in  PhysicsUpdateList.";
+	        this._add(element);
+	        element._inPhysicUpdateListIndex = this.length++;
+	    }
+	    remove(element) {
+	        var index = element._inPhysicUpdateListIndex;
+	        this.length--;
+	        if (index !== this.length) {
+	            var end = this.elements[this.length];
+	            this.elements[index] = end;
+	            end._inPhysicUpdateListIndex = index;
+	        }
+	        element._inPhysicUpdateListIndex = -1;
+	    }
+	}
+
+	class CannonContactPoint {
+	    constructor() {
+	        this._idCounter = 0;
+	        this.colliderA = null;
+	        this.colliderB = null;
+	        this.distance = 0;
+	        this.normal = new Vector3();
+	        this.positionOnA = new Vector3();
+	        this.positionOnB = new Vector3();
+	        this._id = ++this._idCounter;
+	    }
+	}
+
+	class CannonHitResult {
+	    constructor() {
+	        this.succeeded = false;
+	        this.collider = null;
+	        this.point = new Vector3();
+	        this.normal = new Vector3();
+	        this.hitFraction = 0;
+	    }
+	}
+
+	class CannonCollision {
+	    constructor() {
+	        this._lastUpdateFrame = -2147483648;
+	        this._updateFrame = -2147483648;
+	        this._isTrigger = false;
+	        this.contacts = [];
+	    }
+	    _setUpdateFrame(farme) {
+	        this._lastUpdateFrame = this._updateFrame;
+	        this._updateFrame = farme;
+	    }
+	}
+
+	class CannonCollisionTool {
+	    constructor() {
+	        this._hitResultsPoolIndex = 0;
+	        this._hitResultsPool = [];
+	        this._contactPonintsPoolIndex = 0;
+	        this._contactPointsPool = [];
+	        this._collisionsPool = [];
+	        this._collisions = {};
+	    }
+	    getHitResult() {
+	        var hitResult = this._hitResultsPool[this._hitResultsPoolIndex++];
+	        if (!hitResult) {
+	            hitResult = new CannonHitResult();
+	            this._hitResultsPool.push(hitResult);
+	        }
+	        return hitResult;
+	    }
+	    recoverAllHitResultsPool() {
+	        this._hitResultsPoolIndex = 0;
+	    }
+	    getContactPoints() {
+	        var contactPoint = this._contactPointsPool[this._contactPonintsPoolIndex++];
+	        if (!contactPoint) {
+	            contactPoint = new CannonContactPoint();
+	            this._contactPointsPool.push(contactPoint);
+	        }
+	        return contactPoint;
+	    }
+	    recoverAllContactPointsPool() {
+	        this._contactPonintsPoolIndex = 0;
+	    }
+	    getCollision(physicComponentA, physicComponentB) {
+	        var collision;
+	        var idA = physicComponentA.id;
+	        var idB = physicComponentB.id;
+	        var subCollisionFirst = this._collisions[idA];
+	        if (subCollisionFirst)
+	            collision = subCollisionFirst[idB];
+	        if (!collision) {
+	            if (!subCollisionFirst) {
+	                subCollisionFirst = {};
+	                this._collisions[idA] = subCollisionFirst;
+	            }
+	            collision = this._collisionsPool.length === 0 ? new CannonCollision() : this._collisionsPool.pop();
+	            collision._colliderA = physicComponentA;
+	            collision._colliderB = physicComponentB;
+	            subCollisionFirst[idB] = collision;
+	        }
+	        return collision;
+	    }
+	    recoverCollision(collision) {
+	        var idA = collision._colliderA.id;
+	        var idB = collision._colliderB.id;
+	        this._collisions[idA][idB] = null;
+	        this._collisionsPool.push(collision);
+	    }
+	    garbageCollection() {
+	        this._hitResultsPoolIndex = 0;
+	        this._hitResultsPool.length = 0;
+	        this._contactPonintsPoolIndex = 0;
+	        this._contactPointsPool.length = 0;
+	        this._collisionsPool.length = 0;
+	        for (var subCollisionsKey in this._collisionsPool) {
+	            var subCollisions = this._collisionsPool[subCollisionsKey];
+	            var wholeDelete = true;
+	            for (var collisionKey in subCollisions) {
+	                if (subCollisions[collisionKey])
+	                    wholeDelete = false;
+	                else
+	                    delete subCollisions[collisionKey];
+	            }
+	            if (wholeDelete)
+	                delete this._collisionsPool[subCollisionsKey];
+	        }
+	    }
+	}
+
+	class CannonColliderShape {
+	    constructor() {
+	        this._scale = new Vector3(1, 1, 1);
+	        this._centerMatrix = new Matrix4x4();
+	        this._attatched = false;
+	        this._indexInCompound = -1;
+	        this._compoundParent = null;
+	        this._attatchedCollisionObject = null;
+	        this._referenceCount = 0;
+	        this._localOffset = new Vector3(0, 0, 0);
+	        this._localRotation = new Quaternion(0, 0, 0, 1);
+	        this.needsCustomCollisionCallback = false;
+	    }
+	    static __init__() {
+	        CannonColliderShape._btScale = new CANNON.Vec3();
+	        CannonColliderShape._btVector30 = new CANNON.Vec3();
+	        CannonColliderShape._btQuaternion0 = new CANNON.Quaternion();
+	    }
+	    static _createAffineTransformation(trans, rot, outE) {
+	        var x = rot.x, y = rot.y, z = rot.z, w = rot.w, x2 = x + x, y2 = y + y, z2 = z + z;
+	        var xx = x * x2, xy = x * y2, xz = x * z2, yy = y * y2, yz = y * z2, zz = z * z2;
+	        var wx = w * x2, wy = w * y2, wz = w * z2;
+	        outE[0] = (1 - (yy + zz));
+	        outE[1] = (xy + wz);
+	        outE[2] = (xz - wy);
+	        outE[3] = 0;
+	        outE[4] = (xy - wz);
+	        outE[5] = (1 - (xx + zz));
+	        outE[6] = (yz + wx);
+	        outE[7] = 0;
+	        outE[8] = (xz + wy);
+	        outE[9] = (yz - wx);
+	        outE[10] = (1 - (xx + yy));
+	        outE[11] = 0;
+	        outE[12] = trans.x;
+	        outE[13] = trans.y;
+	        outE[14] = trans.z;
+	        outE[15] = 1;
+	    }
+	    get type() {
+	        return this._type;
+	    }
+	    get localOffset() {
+	        return this._localOffset;
+	    }
+	    set localOffset(value) {
+	        this._localOffset = value;
+	        if (this._compoundParent)
+	            this._compoundParent._updateChildTransform(this);
+	    }
+	    get localRotation() {
+	        return this._localRotation;
+	    }
+	    set localRotation(value) {
+	        this._localRotation = value;
+	        if (this._compoundParent)
+	            this._compoundParent._updateChildTransform(this);
+	    }
+	    _setScale(value) {
+	    }
+	    _addReference() {
+	        this._referenceCount++;
+	    }
+	    _removeReference() {
+	        this._referenceCount--;
+	    }
+	    updateLocalTransformations() {
+	        if (this._compoundParent) {
+	            var offset = CannonColliderShape._tempVector30;
+	            Vector3.multiply(this.localOffset, this._scale, offset);
+	            CannonColliderShape._createAffineTransformation(offset, this.localRotation, this._centerMatrix.elements);
+	        }
+	        else {
+	            CannonColliderShape._createAffineTransformation(this.localOffset, this.localRotation, this._centerMatrix.elements);
+	        }
+	    }
+	    cloneTo(destObject) {
+	        var destColliderShape = destObject;
+	        this._localOffset.cloneTo(destColliderShape.localOffset);
+	        this._localRotation.cloneTo(destColliderShape.localRotation);
+	        destColliderShape.localOffset = destColliderShape.localOffset;
+	        destColliderShape.localRotation = destColliderShape.localRotation;
+	    }
+	    clone() {
+	        return null;
+	    }
+	    destroy() {
+	        if (this._btShape) {
+	            this._btShape = null;
+	        }
+	    }
+	}
+	CannonColliderShape.SHAPEORIENTATION_UPX = 0;
+	CannonColliderShape.SHAPEORIENTATION_UPY = 1;
+	CannonColliderShape.SHAPEORIENTATION_UPZ = 2;
+	CannonColliderShape.SHAPETYPES_BOX = 0;
+	CannonColliderShape.SHAPETYPES_SPHERE = 1;
+	CannonColliderShape.SHAPETYPES_CYLINDER = 2;
+	CannonColliderShape.SHAPETYPES_CAPSULE = 3;
+	CannonColliderShape.SHAPETYPES_CONVEXHULL = 4;
+	CannonColliderShape.SHAPETYPES_COMPOUND = 5;
+	CannonColliderShape.SHAPETYPES_STATICPLANE = 6;
+	CannonColliderShape.SHAPETYPES_CONE = 7;
+	CannonColliderShape._tempVector30 = new Vector3();
+
+	class CannonBoxColliderShape extends CannonColliderShape {
+	    constructor(sizeX = 1.0, sizeY = 1.0, sizeZ = 1.0) {
+	        super();
+	        this._sizeX = sizeX;
+	        this._sizeY = sizeY;
+	        this._sizeZ = sizeZ;
+	        this._type = CannonColliderShape.SHAPETYPES_BOX;
+	        var btsize = new CANNON.Vec3(sizeX / 2, sizeY / 2, sizeZ / 2);
+	        this._btShape = new CANNON.Box(btsize);
+	    }
+	    static __init__() {
+	        CannonBoxColliderShape._btSize = new CANNON.Vec3();
+	    }
+	    get sizeX() {
+	        return this._sizeX;
+	    }
+	    get sizeY() {
+	        return this._sizeY;
+	    }
+	    get sizeZ() {
+	        return this._sizeZ;
+	    }
+	    clone() {
+	        var dest = new CannonBoxColliderShape(this._sizeX, this._sizeY, this._sizeZ);
+	        this.cloneTo(dest);
+	        return dest;
+	    }
+	}
+
+	class CannonSphereColliderShape extends CannonColliderShape {
+	    constructor(radius = 0.5) {
+	        super();
+	        this._radius = radius;
+	        this._type = CannonColliderShape.SHAPETYPES_SPHERE;
+	        this._btShape = new CANNON.Sphere(radius);
+	    }
+	    get radius() {
+	        return this._radius;
+	    }
+	    clone() {
+	        var dest = new CannonSphereColliderShape(this._radius);
+	        this.cloneTo(dest);
+	        return dest;
+	    }
+	}
+
+	class CannonPhysicsComponent extends Laya.Component {
+	    constructor(collisionGroup, canCollideWith) {
+	        super();
+	        this._restitution = 0.0;
+	        this._friction = 0.5;
+	        this._collisionGroup = Physics3DUtils.COLLISIONFILTERGROUP_DEFAULTFILTER;
+	        this._canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER;
+	        this._colliderShape = null;
+	        this._transformFlag = 2147483647;
+	        this._controlBySimulation = false;
+	        this._enableProcessCollisions = true;
+	        this._inPhysicUpdateListIndex = -1;
+	        this.canScaleShape = true;
+	        this._collisionGroup = collisionGroup;
+	        this._canCollideWith = canCollideWith;
+	        CannonPhysicsComponent._physicObjectsMap[this.id] = this;
+	    }
+	    static __init__() {
+	        CannonPhysicsComponent._btVector30 = new CANNON.Vec3(0, 0, 0);
+	        CannonPhysicsComponent._btQuaternion0 = new CANNON.Quaternion(0, 0, 0, 1);
+	    }
+	    static _createAffineTransformationArray(tranX, tranY, tranZ, rotX, rotY, rotZ, rotW, scale, outE) {
+	        var x2 = rotX + rotX, y2 = rotY + rotY, z2 = rotZ + rotZ;
+	        var xx = rotX * x2, xy = rotX * y2, xz = rotX * z2, yy = rotY * y2, yz = rotY * z2, zz = rotZ * z2;
+	        var wx = rotW * x2, wy = rotW * y2, wz = rotW * z2, sx = scale[0], sy = scale[1], sz = scale[2];
+	        outE[0] = (1 - (yy + zz)) * sx;
+	        outE[1] = (xy + wz) * sx;
+	        outE[2] = (xz - wy) * sx;
+	        outE[3] = 0;
+	        outE[4] = (xy - wz) * sy;
+	        outE[5] = (1 - (xx + zz)) * sy;
+	        outE[6] = (yz + wx) * sy;
+	        outE[7] = 0;
+	        outE[8] = (xz + wy) * sz;
+	        outE[9] = (yz - wx) * sz;
+	        outE[10] = (1 - (xx + yy)) * sz;
+	        outE[11] = 0;
+	        outE[12] = tranX;
+	        outE[13] = tranY;
+	        outE[14] = tranZ;
+	        outE[15] = 1;
+	    }
+	    static _creatShape(shapeData) {
+	        var colliderShape;
+	        switch (shapeData.type) {
+	            case "BoxColliderShape":
+	                var sizeData = shapeData.size;
+	                colliderShape = sizeData ? new CannonBoxColliderShape(sizeData[0], sizeData[1], sizeData[2]) : new CannonBoxColliderShape();
+	                break;
+	            case "SphereColliderShape":
+	                colliderShape = new CannonSphereColliderShape(shapeData.radius);
+	                break;
+	            default:
+	                throw "unknown shape type.";
+	        }
+	        if (shapeData.center) {
+	            var localOffset = colliderShape.localOffset;
+	            localOffset.fromArray(shapeData.center);
+	            colliderShape.localOffset = localOffset;
+	        }
+	        return colliderShape;
+	    }
+	    static physicVector3TransformQuat(source, qx, qy, qz, qw, out) {
+	        var x = source.x, y = source.y, z = source.z, ix = qw * x + qy * z - qz * y, iy = qw * y + qz * x - qx * z, iz = qw * z + qx * y - qy * x, iw = -qx * x - qy * y - qz * z;
+	        out.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+	        out.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+	        out.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+	    }
+	    static physicQuaternionMultiply(lx, ly, lz, lw, right, out) {
+	        var rx = right.x;
+	        var ry = right.y;
+	        var rz = right.z;
+	        var rw = right.w;
+	        var a = (ly * rz - lz * ry);
+	        var b = (lz * rx - lx * rz);
+	        var c = (lx * ry - ly * rx);
+	        var d = (lx * rx + ly * ry + lz * rz);
+	        out.x = (lx * rw + rx * lw) + a;
+	        out.y = (ly * rw + ry * lw) + b;
+	        out.z = (lz * rw + rz * lw) + c;
+	        out.w = lw * rw - d;
+	    }
+	    get restitution() {
+	        return this._restitution;
+	    }
+	    set restitution(value) {
+	        this._restitution = value;
+	        this._btColliderObject && (this._btColliderObject.material.restitution = value);
+	    }
+	    get friction() {
+	        return this._friction;
+	    }
+	    set friction(value) {
+	        this._friction = value;
+	        this._btColliderObject && (this._btColliderObject.material.friction = value);
+	    }
+	    get colliderShape() {
+	        return this._colliderShape;
+	    }
+	    set colliderShape(value) {
+	        var lastColliderShape = this._colliderShape;
+	        if (lastColliderShape) {
+	            lastColliderShape._attatched = false;
+	            lastColliderShape._attatchedCollisionObject = null;
+	        }
+	        this._colliderShape = value;
+	        if (value) {
+	            if (value._attatched) {
+	                throw "PhysicsComponent: this shape has attatched to other entity.";
+	            }
+	            else {
+	                value._attatched = true;
+	                value._attatchedCollisionObject = this;
+	            }
+	            if (this._btColliderObject) {
+	                this._btColliderObject.shapes.length = 0;
+	                this._btColliderObject.shapeOffsets.length = 0;
+	                this._btColliderObject.shapeOrientations.length = 0;
+	                this._btColliderObject.addShape(this._colliderShape._btShape);
+	                this._btColliderObject.updateBoundingRadius();
+	                var canInSimulation = this._simulation && this._enabled;
+	                (canInSimulation && lastColliderShape) && (this._removeFromSimulation());
+	                this._onShapeChange(value);
+	                if (canInSimulation) {
+	                    this._derivePhysicsTransformation(true);
+	                    this._addToSimulation();
+	                }
+	            }
+	        }
+	        else {
+	            if (this._simulation && this._enabled)
+	                lastColliderShape && this._removeFromSimulation();
+	        }
+	    }
+	    get simulation() {
+	        return this._simulation;
+	    }
+	    get collisionGroup() {
+	        return this._collisionGroup;
+	    }
+	    set collisionGroup(value) {
+	        if (this._collisionGroup !== value) {
+	            this._collisionGroup = value;
+	            this._btColliderObject.collisionFilterGroup = value;
+	            if (this._simulation && this._colliderShape && this._enabled) {
+	                this._removeFromSimulation();
+	                this._addToSimulation();
+	            }
+	        }
+	    }
+	    get canCollideWith() {
+	        return this._canCollideWith;
+	    }
+	    set canCollideWith(value) {
+	        if (this._canCollideWith !== value) {
+	            this._canCollideWith = value;
+	            this._btColliderObject.collisionFilterMask = value;
+	            if (this._simulation && this._colliderShape && this._enabled) {
+	                this._removeFromSimulation();
+	                this._addToSimulation();
+	            }
+	        }
+	    }
+	    _parseShape(shapesData) {
+	        var shapeCount = shapesData.length;
+	        if (shapeCount === 1) {
+	            var shape = CannonPhysicsComponent._creatShape(shapesData[0]);
+	            this.colliderShape = shape;
+	        }
+	    }
+	    _onScaleChange(scale) {
+	        this._colliderShape._setScale(scale);
+	    }
+	    _onEnable() {
+	        this._simulation = this.owner._scene._cannonPhysicsSimulation;
+	        if (this._colliderShape) {
+	            this._derivePhysicsTransformation(true);
+	            this._addToSimulation();
+	        }
+	    }
+	    _onDisable() {
+	        if (this._colliderShape) {
+	            this._removeFromSimulation();
+	            (this._inPhysicUpdateListIndex !== -1) && (this._simulation._physicsUpdateList.remove(this));
+	        }
+	        this._simulation = null;
+	    }
+	    _onDestroy() {
+	        delete CannonPhysicsComponent._physicObjectsMap[this.id];
+	        this._btColliderObject = null;
+	        this._colliderShape.destroy();
+	        super._onDestroy();
+	        this._btColliderObject = null;
+	        this._colliderShape = null;
+	        this._simulation = null;
+	        this.owner.transform.off(Laya.Event.TRANSFORM_CHANGED, this, this._onTransformChanged);
+	    }
+	    _isValid() {
+	        return this._simulation && this._colliderShape && this._enabled;
+	    }
+	    _parse(data) {
+	        (data.collisionGroup != null) && (this.collisionGroup = data.collisionGroup);
+	        (data.canCollideWith != null) && (this.canCollideWith = data.canCollideWith);
+	    }
+	    _setTransformFlag(type, value) {
+	        if (value)
+	            this._transformFlag |= type;
+	        else
+	            this._transformFlag &= ~type;
+	    }
+	    _getTransformFlag(type) {
+	        return (this._transformFlag & type) != 0;
+	    }
+	    _addToSimulation() {
+	    }
+	    _removeFromSimulation() {
+	    }
+	    _derivePhysicsTransformation(force) {
+	        var btColliderObject = this._btColliderObject;
+	        this._innerDerivePhysicsTransformation(btColliderObject, force);
+	    }
+	    _innerDerivePhysicsTransformation(physicTransformOut, force) {
+	        var transform = this.owner._transform;
+	        if (force || this._getTransformFlag(Transform3D.TRANSFORM_WORLDPOSITION)) {
+	            var shapeOffset = this._colliderShape.localOffset;
+	            var position = transform.position;
+	            var btPosition = CannonPhysicsComponent._btVector30;
+	            if (shapeOffset.x !== 0 || shapeOffset.y !== 0 || shapeOffset.z !== 0) {
+	                var physicPosition = CannonPhysicsComponent._tempVector30;
+	                var worldMat = transform.worldMatrix;
+	                Vector3.transformCoordinate(shapeOffset, worldMat, physicPosition);
+	                btPosition.set(physicPosition.x, physicPosition.y, physicPosition.z);
+	            }
+	            else {
+	                btPosition.set(position.x, position.y, position.z);
+	            }
+	            physicTransformOut.position.set(btPosition.x, btPosition.y, btPosition.z);
+	            this._setTransformFlag(Transform3D.TRANSFORM_WORLDPOSITION, false);
+	        }
+	        if (force || this._getTransformFlag(Transform3D.TRANSFORM_WORLDQUATERNION)) {
+	            var shapeRotation = this._colliderShape.localRotation;
+	            var btRotation = CannonPhysicsComponent._btQuaternion0;
+	            var rotation = transform.rotation;
+	            if (shapeRotation.x !== 0 || shapeRotation.y !== 0 || shapeRotation.z !== 0 || shapeRotation.w !== 1) {
+	                var physicRotation = CannonPhysicsComponent._tempQuaternion0;
+	                CannonPhysicsComponent.physicQuaternionMultiply(rotation.x, rotation.y, rotation.z, rotation.w, shapeRotation, physicRotation);
+	                btRotation.set(physicRotation.x, physicRotation.y, physicRotation.z, physicRotation.w);
+	            }
+	            else {
+	                btRotation.set(rotation.x, rotation.y, rotation.z, rotation.w);
+	            }
+	            physicTransformOut.quaternion.set(btRotation.x, btRotation.y, btRotation.z, btRotation.w);
+	            this._setTransformFlag(Transform3D.TRANSFORM_WORLDQUATERNION, false);
+	        }
+	        if (force || this._getTransformFlag(Transform3D.TRANSFORM_WORLDSCALE)) {
+	            this._onScaleChange(transform.getWorldLossyScale());
+	            this._setTransformFlag(Transform3D.TRANSFORM_WORLDSCALE, false);
+	        }
+	    }
+	    _updateTransformComponent(physicsTransform) {
+	        var colliderShape = this._colliderShape;
+	        var localOffset = colliderShape.localOffset;
+	        var localRotation = colliderShape.localRotation;
+	        var transform = this.owner._transform;
+	        var position = transform.position;
+	        var rotation = transform.rotation;
+	        var btPosition = physicsTransform.position;
+	        var btRotation = physicsTransform.quaternion;
+	        var btRotX = btRotation.x;
+	        var btRotY = btRotation.y;
+	        var btRotZ = btRotation.z;
+	        var btRotW = btRotation.w;
+	        if (localRotation.x !== 0 || localRotation.y !== 0 || localRotation.z !== 0 || localRotation.w !== 1) {
+	            var invertShapeRotaion = CannonPhysicsComponent._tempQuaternion0;
+	            localRotation.invert(invertShapeRotaion);
+	            CannonPhysicsComponent.physicQuaternionMultiply(btRotX, btRotY, btRotZ, btRotW, invertShapeRotaion, rotation);
+	        }
+	        else {
+	            rotation.x = btRotX;
+	            rotation.y = btRotY;
+	            rotation.z = btRotZ;
+	            rotation.w = btRotW;
+	        }
+	        transform.rotation = rotation;
+	        if (localOffset.x !== 0 || localOffset.y !== 0 || localOffset.z !== 0) {
+	            var rotShapePosition = CannonPhysicsComponent._tempVector30;
+	            rotShapePosition.x = localOffset.x;
+	            rotShapePosition.y = localOffset.y;
+	            rotShapePosition.z = localOffset.z;
+	            Vector3.transformQuat(rotShapePosition, rotation, rotShapePosition);
+	            position.x = btPosition.x - rotShapePosition.x;
+	            position.y = btPosition.y - rotShapePosition.z;
+	            position.z = btPosition.z - rotShapePosition.y;
+	        }
+	        else {
+	            position.x = btPosition.x;
+	            position.y = btPosition.y;
+	            position.z = btPosition.z;
+	        }
+	        transform.position = position;
+	    }
+	    _onShapeChange(colShape) {
+	    }
+	    _onAdded() {
+	        this.enabled = this._enabled;
+	        this.restitution = this._restitution;
+	        this.friction = this._friction;
+	        this.owner.transform.on(Laya.Event.TRANSFORM_CHANGED, this, this._onTransformChanged);
+	    }
+	    _onTransformChanged(flag) {
+	        if (CannonPhysicsComponent._addUpdateList || !this._controlBySimulation) {
+	            flag &= Transform3D.TRANSFORM_WORLDPOSITION | Transform3D.TRANSFORM_WORLDQUATERNION | Transform3D.TRANSFORM_WORLDSCALE;
+	            if (flag) {
+	                this._transformFlag |= flag;
+	                if (this._isValid() && this._inPhysicUpdateListIndex === -1)
+	                    this._simulation._physicsUpdateList.add(this);
+	            }
+	        }
+	    }
+	    _cloneTo(dest) {
+	        var destPhysicsComponent = dest;
+	        destPhysicsComponent.restitution = this._restitution;
+	        destPhysicsComponent.friction = this._friction;
+	        destPhysicsComponent.collisionGroup = this._collisionGroup;
+	        destPhysicsComponent.canCollideWith = this._canCollideWith;
+	        destPhysicsComponent.canScaleShape = this.canScaleShape;
+	        (this._colliderShape) && (destPhysicsComponent.colliderShape = this._colliderShape.clone());
+	    }
+	}
+	CannonPhysicsComponent.ACTIVATIONSTATE_ACTIVE_TAG = 1;
+	CannonPhysicsComponent.ACTIVATIONSTATE_ISLAND_SLEEPING = 2;
+	CannonPhysicsComponent.ACTIVATIONSTATE_WANTS_DEACTIVATION = 3;
+	CannonPhysicsComponent.ACTIVATIONSTATE_DISABLE_DEACTIVATION = 4;
+	CannonPhysicsComponent.ACTIVATIONSTATE_DISABLE_SIMULATION = 5;
+	CannonPhysicsComponent.COLLISIONFLAGS_STATIC_OBJECT = 1;
+	CannonPhysicsComponent.COLLISIONFLAGS_KINEMATIC_OBJECT = 2;
+	CannonPhysicsComponent.COLLISIONFLAGS_NO_CONTACT_RESPONSE = 4;
+	CannonPhysicsComponent.COLLISIONFLAGS_CUSTOM_MATERIAL_CALLBACK = 8;
+	CannonPhysicsComponent.COLLISIONFLAGS_CHARACTER_OBJECT = 16;
+	CannonPhysicsComponent.COLLISIONFLAGS_DISABLE_VISUALIZE_OBJECT = 32;
+	CannonPhysicsComponent.COLLISIONFLAGS_DISABLE_SPU_COLLISION_PROCESSING = 64;
+	CannonPhysicsComponent._tempVector30 = new Vector3();
+	CannonPhysicsComponent._tempQuaternion0 = new Quaternion();
+	CannonPhysicsComponent._tempQuaternion1 = new Quaternion();
+	CannonPhysicsComponent._tempMatrix4x40 = new Matrix4x4();
+	CannonPhysicsComponent._physicObjectsMap = {};
+	CannonPhysicsComponent._addUpdateList = true;
+
+	class CannonPhysicsSimulation {
+	    constructor(configuration, flags = 0) {
+	        this._gravity = new Vector3(0, -10, 0);
+	        this._btClosestRayResultCallback = new CANNON.RaycastResult();
+	        this._btRayoption = {};
+	        this._collisionsUtils = new CannonCollisionTool();
+	        this._previousFrameCollisions = [];
+	        this._currentFrameCollisions = [];
+	        this._physicsUpdateList = new CannonPhysicsUpdateList();
+	        this._updatedRigidbodies = 0;
+	        this.maxSubSteps = 1;
+	        this.fixedTimeStep = 1.0 / 60.0;
+	        this.maxSubSteps = configuration.maxSubSteps;
+	        this.fixedTimeStep = configuration.fixedTimeStep;
+	        this._btDiscreteDynamicsWorld = new CANNON.World();
+	        this._btBroadphase = new CANNON.NaiveBroadphase();
+	        this._btDiscreteDynamicsWorld.broadphase = this._btBroadphase;
+	        this._btDiscreteDynamicsWorld.defaultContactMaterial.contactEquationRelaxation = configuration.contactEquationRelaxation;
+	        this._btDiscreteDynamicsWorld.defaultContactMaterial.contactEquationStiffness = configuration.contactEquationStiffness;
+	        this.gravity = this._gravity;
+	    }
+	    static __init__() {
+	        CannonPhysicsSimulation._btTempVector30 = new CANNON.Vec3(0, 0, 0);
+	        CannonPhysicsSimulation._btTempVector31 = new CANNON.Vec3(0, 0, 0);
+	    }
+	    static createConstraint() {
+	    }
+	    get continuousCollisionDetection() {
+	        return false;
+	    }
+	    set continuousCollisionDetection(value) {
+	        throw "Simulation:Cannon physical engine does not support this feature";
+	    }
+	    get gravity() {
+	        if (!this._btDiscreteDynamicsWorld)
+	            throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+	        return this._gravity;
+	    }
+	    set gravity(value) {
+	        if (!this._btDiscreteDynamicsWorld)
+	            throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+	        this._gravity = value;
+	        this._btDiscreteDynamicsWorld.gravity.set(value.x, value.y, value.z);
+	    }
+	    get solverIterations() {
+	        if (!(this._btDiscreteDynamicsWorld && this._btDiscreteDynamicsWorld.solver))
+	            throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+	        return this._iterations;
+	    }
+	    set solverIterations(value) {
+	        if (!(this._btDiscreteDynamicsWorld && this._btDiscreteDynamicsWorld.solver))
+	            throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+	        this._btDiscreteDynamicsWorld.solver.iterations = value;
+	        this._iterations = value;
+	    }
+	    get speculativeContactRestitution() {
+	        return false;
+	    }
+	    set speculativeContactRestitution(value) {
+	    }
+	    _simulate(deltaTime) {
+	        this._updatedRigidbodies = 0;
+	        if (this._btDiscreteDynamicsWorld)
+	            this._btDiscreteDynamicsWorld.step(this.fixedTimeStep, deltaTime, this.maxSubSteps);
+	        var callBackBody = this._btDiscreteDynamicsWorld.callBackBody;
+	        for (var i = 0, n = callBackBody.length; i < n; i++) {
+	            var cannonBody = callBackBody[i];
+	            var rigidbody = CannonPhysicsComponent._physicObjectsMap[cannonBody.layaID];
+	            rigidbody._simulation._updatedRigidbodies++;
+	            rigidbody._updateTransformComponent(rigidbody._btColliderObject);
+	        }
+	    }
+	    _destroy() {
+	        this._btDiscreteDynamicsWorld = null;
+	        this._btBroadphase = null;
+	    }
+	    _addPhysicsCollider(component) {
+	        this._btDiscreteDynamicsWorld.addBody(component._btColliderObject);
+	    }
+	    _removePhysicsCollider(component) {
+	        this._btDiscreteDynamicsWorld.removeBody(component._btColliderObject);
+	    }
+	    _addRigidBody(rigidBody) {
+	        if (!this._btDiscreteDynamicsWorld)
+	            throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+	        this._btDiscreteDynamicsWorld.addBody(rigidBody._btColliderObject);
+	    }
+	    _removeRigidBody(rigidBody) {
+	        if (!this._btDiscreteDynamicsWorld)
+	            throw "Simulation:Cannot perform this action when the physics engine is set to CollisionsOnly";
+	        this._btDiscreteDynamicsWorld.removeBody(rigidBody._btColliderObject);
+	    }
+	    raycastFromTo(from, to, out = null, collisonGroup = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER, collisionMask = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+	        var rayResultCall = this._btClosestRayResultCallback;
+	        rayResultCall.hasHit = false;
+	        var rayOptions = this._btRayoption;
+	        var rayFrom = CannonPhysicsSimulation._btTempVector30;
+	        var rayTo = CannonPhysicsSimulation._btTempVector31;
+	        rayFrom.set(from.x, from.y, from.z);
+	        rayTo.set(to.x, to.y, to.z);
+	        rayOptions.skipBackfaces = true;
+	        rayOptions.collisionFilterMask = collisionMask;
+	        rayOptions.collisionFilterGroup = collisonGroup;
+	        rayOptions.result = rayResultCall;
+	        this._btDiscreteDynamicsWorld.raycastAny(rayFrom, rayTo, rayOptions, rayResultCall);
+	        if (rayResultCall.hasHit) {
+	            if (out) {
+	                out.succeeded = true;
+	                out.collider = CannonPhysicsComponent._physicObjectsMap[rayResultCall.body.layaID];
+	                var point = out.point;
+	                var normal = out.normal;
+	                var resultPoint = rayResultCall.hitPointWorld;
+	                var resultNormal = rayResultCall.hitNormalWorld;
+	                point.setValue(resultPoint.x, resultPoint.y, resultPoint.z);
+	                normal.setValue(resultNormal.x, resultNormal.y, resultNormal.z);
+	            }
+	            return true;
+	        }
+	        else {
+	            out.succeeded = false;
+	        }
+	        return false;
+	    }
+	    raycastAllFromTo(from, to, out, collisonGroup = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER, collisionMask = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+	        var rayOptions = this._btRayoption;
+	        var rayFrom = CannonPhysicsSimulation._btTempVector30;
+	        var rayTo = CannonPhysicsSimulation._btTempVector31;
+	        rayFrom.set(from.x, from.y, from.z);
+	        rayTo.set(to.x, to.y, to.z);
+	        rayOptions.skipBackfaces = true;
+	        rayOptions.collisionFilterMask = collisionMask;
+	        rayOptions.collisionFilterGroup = collisonGroup;
+	        out.length = 0;
+	        this._btDiscreteDynamicsWorld.raycastAll(rayFrom, rayTo, rayOptions, function (result) {
+	            var hitResult = this._collisionsUtils.getHitResult();
+	            out.push(hitResult);
+	            hitResult.succeeded = true;
+	            hitResult.collider = CannonPhysicsComponent._physicObjectsMap[result.body.layaID];
+	            var point = hitResult.point;
+	            var normal = hitResult.normal;
+	            var resultPoint = result.hitPointWorld;
+	            var resultNormal = result.hitNormalWorld;
+	            point.setValue(resultPoint.x, resultPoint.y, resultPoint.z);
+	            normal.setValue(resultNormal.x, resultNormal.y, resultNormal.z);
+	        });
+	        if (out.length != 0)
+	            return true;
+	        else
+	            return false;
+	    }
+	    rayCast(ray, outHitResult = null, distance = 2147483647, collisonGroup = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER, collisionMask = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+	        var from = ray.origin;
+	        var to = CannonPhysicsSimulation._tempVector30;
+	        Vector3.normalize(ray.direction, to);
+	        Vector3.scale(to, distance, to);
+	        Vector3.add(from, to, to);
+	        return this.raycastFromTo(from, to, outHitResult, collisonGroup, collisionMask);
+	    }
+	    rayCastAll(ray, out, distance = 2147483647, collisonGroup = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER, collisionMask = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+	        var from = ray.origin;
+	        var to = CannonPhysicsSimulation._tempVector30;
+	        Vector3.normalize(ray.direction, to);
+	        Vector3.scale(to, distance, to);
+	        Vector3.add(from, to, to);
+	        return this.raycastAllFromTo(from, to, out, collisonGroup, collisionMask);
+	    }
+	    _updatePhysicsTransformFromRender() {
+	        var elements = this._physicsUpdateList.elements;
+	        for (var i = 0, n = this._physicsUpdateList.length; i < n; i++) {
+	            var physicCollider = elements[i];
+	            physicCollider._derivePhysicsTransformation(false);
+	            physicCollider._inPhysicUpdateListIndex = -1;
+	        }
+	        this._physicsUpdateList.length = 0;
+	    }
+	    _updateCollisions() {
+	        this._collisionsUtils.recoverAllContactPointsPool();
+	        var previous = this._currentFrameCollisions;
+	        this._currentFrameCollisions = this._previousFrameCollisions;
+	        this._currentFrameCollisions.length = 0;
+	        this._previousFrameCollisions = previous;
+	        var loopCount = Laya.Stat.loopCount;
+	        var allContacts = this._btDiscreteDynamicsWorld.allContacts;
+	        var numManifolds = allContacts.length;
+	        for (var i = 0; i < numManifolds; i++) {
+	            var contactEquation = allContacts[i];
+	            var componentA = CannonPhysicsComponent._physicObjectsMap[contactEquation.bi.layaID];
+	            var componentB = CannonPhysicsComponent._physicObjectsMap[contactEquation.bj.layaID];
+	            var collision = null;
+	            var isFirstCollision;
+	            var contacts = null;
+	            var isTrigger = componentA.isTrigger || componentB.isTrigger;
+	            if (isTrigger && (componentA.owner._needProcessTriggers || componentB.owner._needProcessTriggers)) {
+	                collision = this._collisionsUtils.getCollision(componentA, componentB);
+	                contacts = collision.contacts;
+	                isFirstCollision = collision._updateFrame !== loopCount;
+	                if (isFirstCollision) {
+	                    collision._isTrigger = true;
+	                    contacts.length = 0;
+	                }
+	                break;
+	            }
+	            else if (componentA.owner._needProcessCollisions || componentB.owner._needProcessCollisions) {
+	                if (componentA._enableProcessCollisions || componentB._enableProcessCollisions) {
+	                    var contactPoint = this._collisionsUtils.getContactPoints();
+	                    contactPoint.colliderA = componentA;
+	                    contactPoint.colliderB = componentB;
+	                    var normal = contactPoint.normal;
+	                    var positionOnA = contactPoint.positionOnA;
+	                    var positionOnB = contactPoint.positionOnB;
+	                    var connectNormal = contactEquation.ni;
+	                    var connectOnA = contactEquation.ri;
+	                    var connectOnB = contactEquation.rj;
+	                    normal.setValue(connectNormal.x, connectNormal.y, connectNormal.z);
+	                    positionOnA.setValue(connectOnA.x, connectOnA.y, connectOnA.z);
+	                    positionOnB.setValue(connectOnB.x, connectOnB.y, -connectOnB.z);
+	                    collision = this._collisionsUtils.getCollision(componentA, componentB);
+	                    contacts = collision.contacts;
+	                    isFirstCollision = collision._updateFrame !== loopCount;
+	                    if (isFirstCollision) {
+	                        collision._isTrigger = false;
+	                        contacts.length = 0;
+	                    }
+	                    contacts.push(contactPoint);
+	                }
+	            }
+	            if (collision && isFirstCollision) {
+	                this._currentFrameCollisions.push(collision);
+	                collision._setUpdateFrame(loopCount);
+	            }
+	        }
+	    }
+	    _eventScripts() {
+	        var loopCount = Laya.Stat.loopCount;
+	        for (var i = 0, n = this._currentFrameCollisions.length; i < n; i++) {
+	            var curFrameCol = this._currentFrameCollisions[i];
+	            var colliderA = curFrameCol._colliderA;
+	            var colliderB = curFrameCol._colliderB;
+	            if (colliderA.destroyed || colliderB.destroyed)
+	                continue;
+	            if (loopCount - curFrameCol._lastUpdateFrame === 1) {
+	                var ownerA = colliderA.owner;
+	                var scriptsA = ownerA._scripts;
+	                if (scriptsA) {
+	                    if (curFrameCol._isTrigger) {
+	                        if (ownerA._needProcessTriggers) {
+	                            for (var j = 0, m = scriptsA.length; j < m; j++)
+	                                scriptsA[j].onTriggerStay(colliderB);
+	                        }
+	                    }
+	                    else {
+	                        if (ownerA._needProcessCollisions) {
+	                            for (j = 0, m = scriptsA.length; j < m; j++) {
+	                                curFrameCol.other = colliderB;
+	                                scriptsA[j].onCollisionStay(curFrameCol);
+	                            }
+	                        }
+	                    }
+	                }
+	                var ownerB = colliderB.owner;
+	                var scriptsB = ownerB._scripts;
+	                if (scriptsB) {
+	                    if (curFrameCol._isTrigger) {
+	                        if (ownerB._needProcessTriggers) {
+	                            for (j = 0, m = scriptsB.length; j < m; j++)
+	                                scriptsB[j].onTriggerStay(colliderA);
+	                        }
+	                    }
+	                    else {
+	                        if (ownerB._needProcessCollisions) {
+	                            for (j = 0, m = scriptsB.length; j < m; j++) {
+	                                curFrameCol.other = colliderA;
+	                                scriptsB[j].onCollisionStay(curFrameCol);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	            else {
+	                ownerA = colliderA.owner;
+	                scriptsA = ownerA._scripts;
+	                if (scriptsA) {
+	                    if (curFrameCol._isTrigger) {
+	                        if (ownerA._needProcessTriggers) {
+	                            for (j = 0, m = scriptsA.length; j < m; j++)
+	                                scriptsA[j].onTriggerEnter(colliderB);
+	                        }
+	                    }
+	                    else {
+	                        if (ownerA._needProcessCollisions) {
+	                            for (j = 0, m = scriptsA.length; j < m; j++) {
+	                                curFrameCol.other = colliderB;
+	                                scriptsA[j].onCollisionEnter(curFrameCol);
+	                            }
+	                        }
+	                    }
+	                }
+	                ownerB = colliderB.owner;
+	                scriptsB = ownerB._scripts;
+	                if (scriptsB) {
+	                    if (curFrameCol._isTrigger) {
+	                        if (ownerB._needProcessTriggers) {
+	                            for (j = 0, m = scriptsB.length; j < m; j++)
+	                                scriptsB[j].onTriggerEnter(colliderA);
+	                        }
+	                    }
+	                    else {
+	                        if (ownerB._needProcessCollisions) {
+	                            for (j = 0, m = scriptsB.length; j < m; j++) {
+	                                curFrameCol.other = colliderA;
+	                                scriptsB[j].onCollisionEnter(curFrameCol);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        for (i = 0, n = this._previousFrameCollisions.length; i < n; i++) {
+	            var preFrameCol = this._previousFrameCollisions[i];
+	            var preColliderA = preFrameCol._colliderA;
+	            var preColliderB = preFrameCol._colliderB;
+	            if (preColliderA.destroyed || preColliderB.destroyed)
+	                continue;
+	            if (loopCount - preFrameCol._updateFrame === 1) {
+	                this._collisionsUtils.recoverCollision(preFrameCol);
+	                ownerA = preColliderA.owner;
+	                scriptsA = ownerA._scripts;
+	                if (scriptsA) {
+	                    if (preFrameCol._isTrigger) {
+	                        if (ownerA._needProcessTriggers) {
+	                            for (j = 0, m = scriptsA.length; j < m; j++)
+	                                scriptsA[j].onTriggerExit(preColliderB);
+	                        }
+	                    }
+	                    else {
+	                        if (ownerA._needProcessCollisions) {
+	                            for (j = 0, m = scriptsA.length; j < m; j++) {
+	                                preFrameCol.other = preColliderB;
+	                                scriptsA[j].onCollisionExit(preFrameCol);
+	                            }
+	                        }
+	                    }
+	                }
+	                ownerB = preColliderB.owner;
+	                scriptsB = ownerB._scripts;
+	                if (scriptsB) {
+	                    if (preFrameCol._isTrigger) {
+	                        if (ownerB._needProcessTriggers) {
+	                            for (j = 0, m = scriptsB.length; j < m; j++)
+	                                scriptsB[j].onTriggerExit(preColliderA);
+	                        }
+	                    }
+	                    else {
+	                        if (ownerB._needProcessCollisions) {
+	                            for (j = 0, m = scriptsB.length; j < m; j++) {
+	                                preFrameCol.other = preColliderA;
+	                                scriptsB[j].onCollisionExit(preFrameCol);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    }
+	    clearForces() {
+	        if (!this._btDiscreteDynamicsWorld)
+	            throw "Cannot perform this action when the physics engine is set to CollisionsOnly";
+	    }
+	}
+	CannonPhysicsSimulation.PHYSICSENGINEFLAGS_NONE = 0x0;
+	CannonPhysicsSimulation.PHYSICSENGINEFLAGS_COLLISIONSONLY = 0x1;
+	CannonPhysicsSimulation.PHYSICSENGINEFLAGS_SOFTBODYSUPPORT = 0x2;
+	CannonPhysicsSimulation.PHYSICSENGINEFLAGS_MULTITHREADED = 0x4;
+	CannonPhysicsSimulation.PHYSICSENGINEFLAGS_USEHARDWAREWHENPOSSIBLE = 0x8;
+	CannonPhysicsSimulation.SOLVERMODE_RANDMIZE_ORDER = 1;
+	CannonPhysicsSimulation.SOLVERMODE_FRICTION_SEPARATE = 2;
+	CannonPhysicsSimulation.SOLVERMODE_USE_WARMSTARTING = 4;
+	CannonPhysicsSimulation.SOLVERMODE_USE_2_FRICTION_DIRECTIONS = 16;
+	CannonPhysicsSimulation.SOLVERMODE_ENABLE_FRICTION_DIRECTION_CACHING = 32;
+	CannonPhysicsSimulation.SOLVERMODE_DISABLE_VELOCITY_DEPENDENT_FRICTION_DIRECTION = 64;
+	CannonPhysicsSimulation.SOLVERMODE_CACHE_FRIENDLY = 128;
+	CannonPhysicsSimulation.SOLVERMODE_SIMD = 256;
+	CannonPhysicsSimulation.SOLVERMODE_INTERLEAVE_CONTACT_AND_FRICTION_CONSTRAINTS = 512;
+	CannonPhysicsSimulation.SOLVERMODE_ALLOW_ZERO_LENGTH_FRICTION_DIRECTIONS = 1024;
+	CannonPhysicsSimulation._tempVector30 = new Vector3();
+	CannonPhysicsSimulation.disableSimulation = false;
+
+	class CannonPhysicsSettings {
+	    constructor() {
+	        this.flags = 0;
+	        this.maxSubSteps = 3;
+	        this.fixedTimeStep = 1.0 / 60.0;
+	        this.contactEquationRelaxation = 10;
+	        this.contactEquationStiffness = 1e6;
+	    }
+	}
+
 	(function (AmbientMode) {
 	    AmbientMode[AmbientMode["SolidColor"] = 0] = "SolidColor";
 	    AmbientMode[AmbientMode["SphericalHarmonics"] = 1] = "SphericalHarmonics";
@@ -18882,6 +19921,11 @@
 	        this._reflectionMode = 0;
 	        if (Physics3D._enablePhysics)
 	            this._physicsSimulation = new PhysicsSimulation(Scene3D.physicsSettings);
+	        if (CANNON) {
+	            if (!Scene3D.cannonPhysicsSettings)
+	                Scene3D.cannonPhysicsSettings = new CannonPhysicsSettings();
+	            this._cannonPhysicsSimulation = new CannonPhysicsSimulation(Scene3D.cannonPhysicsSettings);
+	        }
 	        this._shaderValues = new ShaderData(null);
 	        this.enableFog = false;
 	        this.fogStart = 300;
@@ -19140,6 +20184,15 @@
 	            PhysicsComponent._addUpdateList = true;
 	            simulation._updateCollisions();
 	            simulation._eventScripts();
+	        }
+	        if (CANNON) {
+	            var cannonSimulation = this._cannonPhysicsSimulation;
+	            cannonSimulation._updatePhysicsTransformFromRender();
+	            CannonPhysicsComponent._addUpdateList = false;
+	            cannonSimulation._simulate(delta);
+	            PhysicsComponent._addUpdateList = true;
+	            cannonSimulation._updateCollisions();
+	            cannonSimulation._eventScripts();
 	        }
 	        this._input._update();
 	        this._clearScript();
@@ -23698,12 +24751,12 @@
 	    constructor() {
 	    }
 	}
-	VertexShuriKenParticle.PARTICLE_CORNERTEXTURECOORDINATE0 = 0;
+	VertexShuriKenParticle.PARTICLE_CORNERTEXTURECOORDINATE0 = 5;
 	VertexShuriKenParticle.PARTICLE_POSITION0 = 1;
 	VertexShuriKenParticle.PARTICLE_COLOR0 = 2;
 	VertexShuriKenParticle.PARTICLE_TEXTURECOORDINATE0 = 3;
 	VertexShuriKenParticle.PARTICLE_SHAPEPOSITIONSTARTLIFETIME = 4;
-	VertexShuriKenParticle.PARTICLE_DIRECTIONTIME = 5;
+	VertexShuriKenParticle.PARTICLE_DIRECTIONTIME = 0;
 	VertexShuriKenParticle.PARTICLE_STARTCOLOR0 = 6;
 	VertexShuriKenParticle.PARTICLE_ENDCOLOR0 = 7;
 	VertexShuriKenParticle.PARTICLE_STARTSIZE = 8;
@@ -30499,13 +31552,13 @@
 	        spriteMap[nodeData.instanceID] = node;
 	        return node;
 	    }
-	    static _createComponentInstance(nodeData, spriteMap) {
+	    static _createComponentInstance(nodeData, spriteMap, interactMap) {
 	        var node = spriteMap[nodeData.instanceID];
 	        node._parse(nodeData.props, spriteMap);
 	        var childData = nodeData.child;
 	        if (childData) {
 	            for (var i = 0, n = childData.length; i < n; i++)
-	                Scene3DUtils._createComponentInstance(childData[i], spriteMap);
+	                Scene3DUtils._createComponentInstance(childData[i], spriteMap, interactMap);
 	        }
 	        var componentsData = nodeData.components;
 	        if (componentsData) {
@@ -30514,7 +31567,7 @@
 	                var clas = Laya.ClassUtils.getRegClass(data.type);
 	                if (clas) {
 	                    var component = node.addComponent(clas);
-	                    component._parse(data);
+	                    component._parse(data, interactMap);
 	                }
 	                else {
 	                    console.warn("Unkown component type.");
@@ -30524,9 +31577,18 @@
 	    }
 	    static _createNodeByJson02(nodeData, outBatchSprites) {
 	        var spriteMap = {};
+	        var interactMap = { component: [], data: [] };
 	        var node = Scene3DUtils._createSprite3DInstance(nodeData, spriteMap, outBatchSprites);
-	        Scene3DUtils._createComponentInstance(nodeData, spriteMap);
+	        Scene3DUtils._createComponentInstance(nodeData, spriteMap, interactMap);
+	        Scene3DUtils._createInteractInstance(interactMap, spriteMap);
 	        return node;
+	    }
+	    static _createInteractInstance(interatMap, spriteMap) {
+	        var components = interatMap.component;
+	        var data = interatMap.data;
+	        for (var i = 0, n = components.length; i < n; i++) {
+	            components[i]._parseInteractive(data[i], spriteMap);
+	        }
 	    }
 	    static _parse(data, propertyParams = null, constructParams = null) {
 	        var json = data.data;
@@ -31136,6 +32198,555 @@
 	SkyPanoramicMaterial.TEXTURE = Shader3D.propertyNameToID("u_Texture");
 	SkyPanoramicMaterial.TEXTURE_HDR_PARAMS = Shader3D.propertyNameToID("u_TextureHDRParams");
 
+	class ConstraintComponent extends Laya.Component {
+	    constructor(constraintType) {
+	        super();
+	        this._feedbackEnabled = false;
+	        this._getJointFeedBack = false;
+	        this._currentForce = new Vector3();
+	        this._currentTorque = new Vector3();
+	        this._constraintType = constraintType;
+	    }
+	    get enabled() {
+	        return super.enabled;
+	    }
+	    set enabled(value) {
+	        super.enabled = value;
+	    }
+	    get appliedImpulse() {
+	        if (!this._feedbackEnabled) {
+	            this._btConstraint.EnableFeedback(true);
+	            this._feedbackEnabled = true;
+	        }
+	        return this._btConstraint.AppliedImpulse;
+	    }
+	    set connectedBody(value) {
+	        this._connectedBody = value;
+	    }
+	    get connectedBody() {
+	        return this._connectedBody;
+	    }
+	    get ownBody() {
+	        return this._ownBody;
+	    }
+	    set ownBody(value) {
+	        this._ownBody = value;
+	    }
+	    get currentForce() {
+	        if (!this._getJointFeedBack)
+	            this._getFeedBackInfo();
+	        return this._currentForce;
+	    }
+	    get currentToque() {
+	        if (!this._getJointFeedBack)
+	            this._getFeedBackInfo();
+	        return this._currentTorque;
+	    }
+	    get breakForce() {
+	        return this._breakForce;
+	    }
+	    set breakForce(value) {
+	        this._breakForce = value;
+	    }
+	    get breakTorque() {
+	        return this._breakTorque;
+	    }
+	    set breakTorque(value) {
+	        this._breakTorque = value;
+	    }
+	    setOverrideNumSolverIterations(overideNumIterations) {
+	        var bt = Physics3D._bullet;
+	        bt.btTypedConstraint_setOverrideNumSolverIterations(this._btConstraint, overideNumIterations);
+	    }
+	    setConstraintEnabled(enable) {
+	        var bt = Physics3D._bullet;
+	        bt.btTypedConstraint_setEnabled(this._btConstraint, enable);
+	    }
+	    _onEnable() {
+	        super._onEnable();
+	        this.enabled = true;
+	    }
+	    _onDisable() {
+	        super._onDisable();
+	        this.enabled = false;
+	    }
+	    _addToSimulation() {
+	    }
+	    _removeFromSimulation() {
+	    }
+	    _createConstraint() {
+	    }
+	    setConnectRigidBody(ownerRigid, connectRigidBody) {
+	        var ownerCanInSimulation = (ownerRigid) && (!!(ownerRigid._simulation && ownerRigid._enabled && ownerRigid.colliderShape));
+	        var connectCanInSimulation = (connectRigidBody) && (!!(connectRigidBody._simulation && connectRigidBody._enabled && connectRigidBody.colliderShape));
+	        if (!(ownerCanInSimulation && connectCanInSimulation))
+	            throw "ownerRigid or connectRigidBody is not in Simulation";
+	        if (ownerRigid != this._ownBody || connectRigidBody != this._connectedBody) {
+	            var canInSimulation = !!(this.enabled && this._simulation);
+	            canInSimulation && this._removeFromSimulation();
+	            this._ownBody = ownerRigid;
+	            this._connectedBody = connectRigidBody;
+	            this._ownBody.constaintRigidbodyA = this;
+	            this._connectedBody.constaintRigidbodyB = this;
+	            this._createConstraint();
+	            this._addToSimulation();
+	        }
+	    }
+	    getcurrentForce(out) {
+	        if (!this._btJointFeedBackObj)
+	            throw "this Constraint is not simulation";
+	        var bt = Physics3D._bullet;
+	        var applyForce = bt.btJointFeedback_getAppliedForceBodyA(this._btJointFeedBackObj);
+	        out.setValue(bt.btVector3_x(applyForce), bt.btVector3_y(applyForce), bt.btVector3_z(applyForce));
+	        return;
+	    }
+	    getcurrentTorque(out) {
+	        if (!this._btJointFeedBackObj)
+	            throw "this Constraint is not simulation";
+	        var bt = Physics3D._bullet;
+	        var applyTorque = bt.btJointFeedback_getAppliedTorqueBodyA(this._btJointFeedBackObj);
+	        out.setValue(bt.btVector3_x(applyTorque), bt.btVector3_y(applyTorque), bt.btVector3_z(applyTorque));
+	        return;
+	    }
+	    _onDestroy() {
+	        var physics3D = Physics3D._bullet;
+	        this._removeFromSimulation();
+	        if (this._btConstraint && this._btJointFeedBackObj && this._simulation) {
+	            physics3D.btTypedConstraint_destroy(this._btConstraint);
+	            physics3D.btJointFeedback_destroy(this._btJointFeedBackObj);
+	            this._btJointFeedBackObj = null;
+	            this._btConstraint = null;
+	        }
+	        super._onDisable();
+	    }
+	    _isBreakConstrained() {
+	        this._getJointFeedBack = false;
+	        if (this.breakForce == -1 && this.breakTorque == -1)
+	            return false;
+	        this._getFeedBackInfo();
+	        var isBreakForce = this._breakForce != -1 && (Vector3.scalarLength(this._currentForce) > this._breakForce);
+	        var isBreakToque = this._breakTorque != -1 && (Vector3.scalarLength(this._currentTorque) > this._breakTorque);
+	        if (isBreakForce || isBreakToque) {
+	            this._breakConstrained();
+	            return true;
+	        }
+	        return false;
+	    }
+	    _getFeedBackInfo() {
+	        var bt = Physics3D._bullet;
+	        var applyForce = bt.btJointFeedback_getAppliedForceBodyA(this._btJointFeedBackObj);
+	        var applyTorque = bt.btJointFeedback_getAppliedTorqueBodyA(this._btJointFeedBackObj);
+	        this._currentTorque.setValue(bt.btVector3_x(applyTorque), bt.btVector3_y(applyTorque), bt.btVector3_z(applyTorque));
+	        this._currentForce.setValue(bt.btVector3_x(applyForce), bt.btVector3_y(applyForce), bt.btVector3_z(applyForce));
+	        this._getJointFeedBack = true;
+	    }
+	    _breakConstrained() {
+	        this.ownBody.constaintRigidbodyA = null;
+	        this.connectedBody.constaintRigidbodyB = null;
+	        this.destroy();
+	    }
+	}
+	ConstraintComponent.CONSTRAINT_POINT2POINT_CONSTRAINT_TYPE = 3;
+	ConstraintComponent.CONSTRAINT_HINGE_CONSTRAINT_TYPE = 4;
+	ConstraintComponent.CONSTRAINT_CONETWIST_CONSTRAINT_TYPE = 5;
+	ConstraintComponent.CONSTRAINT_D6_CONSTRAINT_TYPE = 6;
+	ConstraintComponent.CONSTRAINT_SLIDER_CONSTRAINT_TYPE = 7;
+	ConstraintComponent.CONSTRAINT_CONTACT_CONSTRAINT_TYPE = 8;
+	ConstraintComponent.CONSTRAINT_D6_SPRING_CONSTRAINT_TYPE = 9;
+	ConstraintComponent.CONSTRAINT_GEAR_CONSTRAINT_TYPE = 10;
+	ConstraintComponent.CONSTRAINT_FIXED_CONSTRAINT_TYPE = 11;
+	ConstraintComponent.CONSTRAINT_MAX_CONSTRAINT_TYPE = 12;
+	ConstraintComponent.tempForceV3 = new Vector3();
+
+	class FixedConstraint extends ConstraintComponent {
+	    constructor() {
+	        super(ConstraintComponent.CONSTRAINT_FIXED_CONSTRAINT_TYPE);
+	        this.breakForce = -1;
+	        this.breakTorque = -1;
+	    }
+	    _addToSimulation() {
+	        this._simulation && this._simulation.addConstraint(this, this.enabled);
+	    }
+	    _removeFromSimulation() {
+	        this._simulation.removeConstraint(this);
+	        this._simulation = null;
+	    }
+	    _createConstraint() {
+	        var bt = Physics3D._bullet;
+	        var physicsTransform = bt.btCollisionObject_getWorldTransform(this.ownBody.btColliderObject);
+	        var origin = bt.btTransform_getOrigin(physicsTransform);
+	        this._btConstraint = bt.btFixedConstraint_create(this.ownBody.btColliderObject, this.connectedBody.btColliderObject, origin);
+	        this._btJointFeedBackObj = bt.btJointFeedback_create(this._btConstraint);
+	        bt.btTypedConstraint_setJointFeedback(this._btConstraint, this._btJointFeedBackObj);
+	        this._simulation = this.owner._scene.physicsSimulation;
+	    }
+	    _onAdded() {
+	        super._onAdded();
+	    }
+	    _onEnable() {
+	        super._onEnable();
+	        if (!this._btConstraint) {
+	            if (this.ownBody && this.ownBody.physicsSimulation && this.connectedBody && this.connectedBody.physicsSimulation)
+	                this._createConstraint();
+	            this._addToSimulation();
+	        }
+	        if (this._btConstraint)
+	            Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint, true);
+	    }
+	    _onDisable() {
+	        super._onDisable();
+	        if (!this.connectedBody)
+	            this._removeFromSimulation();
+	        if (this._btConstraint)
+	            Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint, false);
+	    }
+	    _onDestroy() {
+	        super._onDestroy();
+	    }
+	    _parse(data, interactMap = null) {
+	        if (data.rigidbodyID != -1 && data.connectRigidbodyID != -1) {
+	            interactMap.component.push(this);
+	            interactMap.data.push(data);
+	        }
+	        (data.breakForce != undefined) && (this.breakForce = data.breakForce);
+	        (data.breakTorque != undefined) && (this.breakTorque = data.breakTorque);
+	    }
+	    _parseInteractive(data = null, spriteMap = null) {
+	        var rigidBodySprite = spriteMap[data.rigidbodyID];
+	        var rigidBody = rigidBodySprite.getComponent(Rigidbody3D);
+	        var connectSprite = spriteMap[data.connectRigidbodyID];
+	        var connectRigidbody = connectSprite.getComponent(Rigidbody3D);
+	        this.ownBody = rigidBody;
+	        this.connectedBody = connectRigidbody;
+	    }
+	    _cloneTo(dest) {
+	    }
+	}
+
+	class CannonPhysicsTriggerComponent extends CannonPhysicsComponent {
+	    constructor(collisionGroup, canCollideWith) {
+	        super(collisionGroup, canCollideWith);
+	        this._isTrigger = false;
+	    }
+	    get isTrigger() {
+	        return this._isTrigger;
+	    }
+	    set isTrigger(value) {
+	        this._isTrigger = value;
+	        if (this._btColliderObject) {
+	            this._btColliderObject.isTrigger = value;
+	            if (value) {
+	                var flag = this._btColliderObject.type;
+	                this._btColliderObject.collisionResponse = false;
+	                if ((flag & CANNON.Body.STATIC) === 0)
+	                    this._btColliderObject.type |= CANNON.Body.STATIC;
+	            }
+	            else {
+	                this._btColliderObject.collisionResponse = true;
+	                if ((flag & CANNON.Body.STATIC) !== 0)
+	                    this._btColliderObject.type ^= CANNON.Body.STATIC;
+	            }
+	        }
+	    }
+	    _onAdded() {
+	        super._onAdded();
+	        this.isTrigger = this._isTrigger;
+	    }
+	    _cloneTo(dest) {
+	        super._cloneTo(dest);
+	        dest.isTrigger = this._isTrigger;
+	    }
+	}
+
+	class CannonPhysicsCollider extends CannonPhysicsTriggerComponent {
+	    constructor(collisionGroup = -1, canCollideWith = -1) {
+	        super(collisionGroup, canCollideWith);
+	        this._enableProcessCollisions = false;
+	    }
+	    _addToSimulation() {
+	        this._simulation._addPhysicsCollider(this);
+	    }
+	    _removeFromSimulation() {
+	        this._simulation._removePhysicsCollider(this);
+	    }
+	    _parse(data) {
+	        (data.friction != null) && (this.friction = data.friction);
+	        (data.restitution != null) && (this.restitution = data.restitution);
+	        (data.isTrigger != null) && (this.isTrigger = data.isTrigger);
+	        super._parse(data);
+	        this._parseShape(data.shapes);
+	    }
+	    _onAdded() {
+	        this._btColliderObject = new CANNON.Body();
+	        this._btColliderObject.material = new CANNON.Material();
+	        this._btColliderObject.layaID = this._id;
+	        this._btColliderObject.type = CANNON.Body.STATIC;
+	        this._btColliderObject.collisionFilterGroup = this._collisionGroup;
+	        this._btColliderObject.collisionFilterMask = this._canCollideWith;
+	        super._onAdded();
+	    }
+	}
+
+	class CannonRigidbody3D extends CannonPhysicsCollider {
+	    constructor(collisionGroup = -1, canCollideWith = Physics3DUtils.COLLISIONFILTERGROUP_ALLFILTER) {
+	        super(collisionGroup, canCollideWith);
+	        this._isKinematic = false;
+	        this._mass = 1.0;
+	        this._gravity = new Vector3(0, -10, 0);
+	        this._angularDamping = 0.0;
+	        this._linearDamping = 0.0;
+	        this._totalTorque = new Vector3(0, 0, 0);
+	        this._totalForce = new Vector3(0, 0, 0);
+	        this._linearVelocity = new Vector3();
+	        this._angularVelocity = new Vector3();
+	        this._controlBySimulation = true;
+	    }
+	    static __init__() {
+	        CannonRigidbody3D._btTempVector30 = new CANNON.Vec3();
+	        CannonRigidbody3D._btTempVector31 = new CANNON.Vec3();
+	    }
+	    get mass() {
+	        return this._mass;
+	    }
+	    set mass(value) {
+	        value = Math.max(value, 1e-07);
+	        this._mass = value;
+	        (this._isKinematic) || (this._updateMass(value));
+	    }
+	    get isKinematic() {
+	        return this._isKinematic;
+	    }
+	    set isKinematic(value) {
+	        this._isKinematic = value;
+	        this._controlBySimulation = !value;
+	        var canInSimulation = !!(this._simulation && this._enabled && this._colliderShape);
+	        canInSimulation && this._removeFromSimulation();
+	        var natColObj = this._btColliderObject;
+	        var flags = natColObj.type;
+	        if (value) {
+	            flags = flags | CANNON.Body.KINEMATIC;
+	            natColObj.type = flags;
+	            this._enableProcessCollisions = false;
+	            this._updateMass(0);
+	        }
+	        else {
+	            if ((flags & CANNON.Body.KINEMATIC) > 0)
+	                flags = flags ^ CANNON.Body.KINEMATIC;
+	            natColObj.allowSleep = true;
+	            natColObj.type = flags;
+	            this._enableProcessCollisions = true;
+	            this._updateMass(this._mass);
+	        }
+	        natColObj.velocity.set(0.0, 0.0, 0.0);
+	        natColObj.angularVelocity.set(0.0, 0.0, 0.0);
+	        canInSimulation && this._addToSimulation();
+	    }
+	    get linearDamping() {
+	        return this._linearDamping;
+	    }
+	    set linearDamping(value) {
+	        this._linearDamping = value;
+	        if (this._btColliderObject)
+	            this._btColliderObject.linearDamping = value;
+	    }
+	    get angularDamping() {
+	        return this._angularDamping;
+	    }
+	    set angularDamping(value) {
+	        this._angularDamping = value;
+	        if (this._btColliderObject)
+	            this._btColliderObject.angularDamping = value;
+	    }
+	    get totalForce() {
+	        if (this._btColliderObject) {
+	            var btTotalForce = this.btColliderObject.force;
+	            this.totalForce.setValue(btTotalForce.x, btTotalForce.y, btTotalForce.z);
+	            return this._totalForce;
+	        }
+	        return null;
+	    }
+	    get linearVelocity() {
+	        if (this._btColliderObject) {
+	            var phylinear = this.btColliderObject.velocity;
+	            this._linearVelocity.setValue(phylinear.x, phylinear.y, phylinear.z);
+	        }
+	        return this._linearVelocity;
+	    }
+	    set linearVelocity(value) {
+	        this._linearVelocity = value;
+	        if (this._btColliderObject) {
+	            var btValue = this.btColliderObject.velocity;
+	            (this.isSleeping) && (this.wakeUp());
+	            btValue.set(value.x, value.y, value.z);
+	            this.btColliderObject.velocity = btValue;
+	        }
+	    }
+	    get angularVelocity() {
+	        if (this._btColliderObject) {
+	            var phtqua = this._btColliderObject.angularVelocity;
+	            this.angularVelocity.setValue(phtqua.x, phtqua.y, phtqua.z);
+	        }
+	        return this._angularVelocity;
+	    }
+	    set angularVelocity(value) {
+	        this._angularVelocity = value;
+	        if (this._btColliderObject) {
+	            var btValue = this.btColliderObject.angularVelocity;
+	            (this.isSleeping) && (this.wakeUp());
+	            btValue.set(value.x, value.y, value.z);
+	            this.btColliderObject.velocity = btValue;
+	        }
+	    }
+	    get totalTorque() {
+	        if (this._btColliderObject) {
+	            var btTotalTorque = this._btColliderObject.torque;
+	            this._totalTorque.setValue(btTotalTorque.x, btTotalTorque.y, btTotalTorque.z);
+	            return this._totalTorque;
+	        }
+	        return null;
+	    }
+	    get isSleeping() {
+	        if (this._btColliderObject)
+	            return this._btColliderObject.sleepState != CANNON.Body.AWAKE;
+	        return false;
+	    }
+	    get sleepLinearVelocity() {
+	        return this._btColliderObject.sleepSpeedLimit;
+	    }
+	    set sleepLinearVelocity(value) {
+	        this._btColliderObject.sleepSpeedLimit = value;
+	    }
+	    get btColliderObject() {
+	        return this._btColliderObject;
+	    }
+	    _updateMass(mass) {
+	        if (this._btColliderObject && this._colliderShape) {
+	            this._btColliderObject.mass = mass;
+	            this._btColliderObject.updateMassProperties();
+	            this._btColliderObject.updateSolveMassProperties();
+	        }
+	    }
+	    _onScaleChange(scale) {
+	        super._onScaleChange(scale);
+	        this._updateMass(this._isKinematic ? 0 : this._mass);
+	    }
+	    _derivePhysicsTransformation(force) {
+	        this._innerDerivePhysicsTransformation(this.btColliderObject, force);
+	    }
+	    _onAdded() {
+	        var btRigid = new CANNON.Body();
+	        btRigid.material = new CANNON.Material();
+	        btRigid.layaID = this.id;
+	        btRigid.collisionFilterGroup = this.collisionGroup;
+	        btRigid.collisionFilterMask = this._canCollideWith;
+	        this._btColliderObject = btRigid;
+	        super._onAdded();
+	        this.mass = this._mass;
+	        this.linearDamping = this._linearDamping;
+	        this.angularDamping = this._angularDamping;
+	        this.isKinematic = this._isKinematic;
+	        if (!this.isKinematic)
+	            this._btColliderObject.type = CANNON.Body.DYNAMIC;
+	        else
+	            this._btColliderObject.type = CANNON.Body.KINEMATIC;
+	    }
+	    _onShapeChange(colShape) {
+	        super._onShapeChange(colShape);
+	        if (this._isKinematic) {
+	            this._updateMass(0);
+	        }
+	        else {
+	            this._updateMass(this._mass);
+	        }
+	    }
+	    _parse(data) {
+	        (data.friction != null) && (this.friction = data.friction);
+	        (data.restitution != null) && (this.restitution = data.restitution);
+	        (data.isTrigger != null) && (this.isTrigger = data.isTrigger);
+	        (data.mass != null) && (this.mass = data.mass);
+	        (data.isKinematic != null) && (this.isKinematic = data.isKinematic);
+	        (data.linearDamping != null) && (this.linearDamping = data.linearDamping);
+	        (data.angularDamping != null) && (this.angularDamping = data.angularDamping);
+	        super._parse(data);
+	        this._parseShape(data.shapes);
+	    }
+	    _onDestroy() {
+	        super._onDestroy();
+	        this._gravity = null;
+	        this._totalTorque = null;
+	        this._linearVelocity = null;
+	        this._angularVelocity = null;
+	    }
+	    _addToSimulation() {
+	        this._simulation._addRigidBody(this);
+	    }
+	    _removeFromSimulation() {
+	        this._simulation._removeRigidBody(this);
+	    }
+	    _cloneTo(dest) {
+	        super._cloneTo(dest);
+	        var destRigidbody3D = dest;
+	        destRigidbody3D.isKinematic = this._isKinematic;
+	        destRigidbody3D.mass = this._mass;
+	        destRigidbody3D.angularDamping = this._angularDamping;
+	        destRigidbody3D.linearDamping = this._linearDamping;
+	        destRigidbody3D.linearVelocity = this._linearVelocity;
+	        destRigidbody3D.angularVelocity = this._angularVelocity;
+	    }
+	    applyForce(force, localOffset = null) {
+	        if (this._btColliderObject == null)
+	            throw "Attempted to call a Physics function that is avaliable only when the Entity has been already added to the Scene.";
+	        var btForce = CannonRigidbody3D._btTempVector30;
+	        btForce.set(force.x, force.y, force.z);
+	        var btOffset = CannonRigidbody3D._btTempVector31;
+	        if (localOffset)
+	            btOffset.set(localOffset.x, localOffset.y, localOffset.z);
+	        else
+	            btOffset.set(0.0, 0.0, 0.0);
+	        this.btColliderObject.applyLocalForce(btForce, btOffset);
+	    }
+	    applyTorque(torque) {
+	        if (this._btColliderObject == null)
+	            throw "Attempted to call a Physics function that is avaliable only when the Entity has been already added to the Scene.";
+	        var btTorque = CannonRigidbody3D._btTempVector30;
+	        btTorque.set(torque.x, torque.y, torque.z);
+	        var oriTorque = this.btColliderObject.torque;
+	        oriTorque.set(oriTorque.x + btTorque.x, oriTorque.y + btTorque.y, oriTorque.z + btTorque.z);
+	        this.btColliderObject.torque = oriTorque;
+	    }
+	    applyImpulse(impulse, localOffset = null) {
+	        if (this._btColliderObject == null)
+	            throw "Attempted to call a Physics function that is avaliable only when the Entity has been already added to the Scene.";
+	        if (this._btColliderObject == null)
+	            throw "Attempted to call a Physics function that is avaliable only when the Entity has been already added to the Scene.";
+	        var btForce = CannonRigidbody3D._btTempVector30;
+	        btForce.set(impulse.x, impulse.y, impulse.z);
+	        var btOffset = CannonRigidbody3D._btTempVector31;
+	        if (localOffset)
+	            btOffset.set(localOffset.x, localOffset.y, localOffset.z);
+	        else
+	            btOffset.set(0.0, 0.0, 0.0);
+	        this.btColliderObject.applyLocalImplse(btForce, btOffset);
+	    }
+	    wakeUp() {
+	        this._btColliderObject && this._btColliderObject.wakeUp();
+	    }
+	    clearForces() {
+	        var rigidBody = this._btColliderObject;
+	        if (rigidBody == null)
+	            throw "Attempted to call a Physics function that is avaliable only when the Entity has been already added to the Scene.";
+	        rigidBody.velocity.set(0.0, 0.0, 0.0);
+	        rigidBody.velocity = rigidBody.velocity;
+	        rigidBody.angularVelocity.set(0.0, 0.0, 0.0);
+	        rigidBody.angularVelocity = rigidBody.angularVelocity;
+	    }
+	}
+	CannonRigidbody3D.TYPE_STATIC = 0;
+	CannonRigidbody3D.TYPE_DYNAMIC = 1;
+	CannonRigidbody3D.TYPE_KINEMATIC = 2;
+	CannonRigidbody3D._BT_DISABLE_WORLD_GRAVITY = 1;
+	CannonRigidbody3D._BT_ENABLE_GYROPSCOPIC_FORCE = 2;
+
 	class Laya3D {
 	    constructor() {
 	    }
@@ -31203,6 +32814,13 @@
 	            CharacterController.__init__();
 	            Rigidbody3D.__init__();
 	        }
+	        if (CANNON) {
+	            CannonColliderShape.__init__();
+	            CannonPhysicsComponent.__init__();
+	            CannonPhysicsSimulation.__init__();
+	            CannonBoxColliderShape.__init__();
+	            CannonRigidbody3D.__init__();
+	        }
 	        ShaderInit3D.__init__();
 	        ShadowUtils.init();
 	        PBRMaterial.__init__();
@@ -31253,6 +32871,7 @@
 	        Laya.ClassUtils.regClass("CharacterController", CharacterController);
 	        Laya.ClassUtils.regClass("Animator", Animator);
 	        Laya.ClassUtils.regClass("Rigidbody3D", Rigidbody3D);
+	        Laya.ClassUtils.regClass("FixedJoint", FixedConstraint);
 	        PixelLineMaterial.defaultMaterial = new PixelLineMaterial();
 	        BlinnPhongMaterial.defaultMaterial = new BlinnPhongMaterial();
 	        EffectMaterial.defaultMaterial = new EffectMaterial();
@@ -32490,160 +34109,296 @@
 	    }
 	}
 
-	class ConstraintComponent extends Laya.Component {
-	    constructor(constraintType) {
-	        super();
-	        this._feedbackEnabled = false;
-	        this._getJointFeedBack = false;
-	        this._currentForce = new Vector3();
-	        this._currentTorque = new Vector3();
-	        this._constraintType = constraintType;
-	    }
-	    get enabled() {
-	        return super.enabled;
-	    }
-	    set enabled(value) {
-	        super.enabled = value;
-	    }
-	    get appliedImpulse() {
-	        if (!this._feedbackEnabled) {
-	            this._btConstraint.EnableFeedback(true);
-	            this._feedbackEnabled = true;
-	        }
-	        return this._btConstraint.AppliedImpulse;
-	    }
-	    set connectedBody(value) {
-	        this._connectedBody = value;
-	    }
-	    get connectedBody() {
-	        return this._connectedBody;
-	    }
-	    get ownBody() {
-	        return this._ownBody;
-	    }
-	    get currentForce() {
-	        if (!this._getJointFeedBack)
-	            this._getFeedBackInfo();
-	        return this._currentForce;
-	    }
-	    get currentToque() {
-	        if (!this._getJointFeedBack)
-	            this._getFeedBackInfo();
-	        return this._currentTorque;
-	    }
-	    get breakForce() {
-	        return this._breakForce;
-	    }
-	    set breakForce(value) {
-	        this._breakForce = value;
-	    }
-	    get breakTorque() {
-	        return this._breakTorque;
-	    }
-	    set breakTorque(value) {
-	        this._breakTorque = value;
-	    }
-	    _onEnable() {
-	        super._onEnable();
-	        this.enabled = true;
-	    }
-	    _onDisable() {
-	        super._onDisable();
-	        this.enabled = false;
-	    }
-	    _addToSimulation() {
-	    }
-	    _removeFromSimulation() {
-	    }
-	    _createConstraint() {
-	    }
-	    setConnectRigidBody(ownerRigid, connectRigidBody) {
-	        var ownerCanInSimulation = (ownerRigid) && (!!(ownerRigid._simulation && ownerRigid._enabled && ownerRigid.colliderShape));
-	        var connectCanInSimulation = (connectRigidBody) && (!!(connectRigidBody._simulation && connectRigidBody._enabled && connectRigidBody.colliderShape));
-	        if (!(ownerCanInSimulation && connectCanInSimulation))
-	            throw "ownerRigid or connectRigidBody is not in Simulation";
-	        if (ownerRigid != this._ownBody || connectRigidBody != this._connectedBody) {
-	            var canInSimulation = !!(this.enabled && this._simulation);
-	            canInSimulation && this._removeFromSimulation();
-	            this._ownBody = ownerRigid;
-	            this._connectedBody = connectRigidBody;
-	            this._ownBody.constaintRigidbodyA = this;
-	            this._connectedBody.constaintRigidbodyB = this;
-	            this._createConstraint();
-	            this._addToSimulation();
-	        }
-	    }
-	    getcurrentForce(out) {
-	        if (!this._btJointFeedBackObj)
-	            throw "this Constraint is not simulation";
-	        var bt = Physics3D._bullet;
-	        var applyForce = bt.btJointFeedback_getAppliedForceBodyA(this._btJointFeedBackObj);
-	        out.setValue(bt.btVector3_x(applyForce), bt.btVector3_y(applyForce), bt.btVector3_z(applyForce));
-	        return;
-	    }
-	    getcurrentTorque(out) {
-	        if (!this._btJointFeedBackObj)
-	            throw "this Constraint is not simulation";
-	        var bt = Physics3D._bullet;
-	        var applyTorque = bt.btJointFeedback_getAppliedTorqueBodyA(this._btJointFeedBackObj);
-	        out.setValue(bt.btVector3_x(applyTorque), bt.btVector3_y(applyTorque), bt.btVector3_z(applyTorque));
-	        return;
-	    }
-	    _onDestroy() {
-	        var physics3D = Physics3D._bullet;
-	        this._removeFromSimulation();
-	        if (this._btConstraint && this._btJointFeedBackObj && this._simulation) {
-	            physics3D.btFixedConstraint_destroy(this._btConstraint);
-	            physics3D.btJointFeedback_destroy(this._btJointFeedBackObj);
-	            this._btJointFeedBackObj = null;
-	            this._btConstraint = null;
-	        }
-	        super._onDisable();
-	    }
-	    _isBreakConstrained() {
-	        this._getJointFeedBack = false;
-	        if (this.breakForce == -1 && this.breakTorque == -1)
-	            return false;
-	        this._getFeedBackInfo();
-	        var isBreakForce = this._breakForce != -1 && (Vector3.scalarLength(this._currentForce) > this._breakForce);
-	        var isBreakToque = this._breakTorque != -1 && (Vector3.scalarLength(this._currentTorque) > this._breakTorque);
-	        if (isBreakForce || isBreakToque) {
-	            this._breakConstrained();
-	            return true;
-	        }
-	        return false;
-	    }
-	    _getFeedBackInfo() {
-	        var bt = Physics3D._bullet;
-	        var applyForce = bt.btJointFeedback_getAppliedForceBodyA(this._btJointFeedBackObj);
-	        var applyTorque = bt.btJointFeedback_getAppliedTorqueBodyA(this._btJointFeedBackObj);
-	        this._currentTorque.setValue(bt.btVector3_x(applyTorque), bt.btVector3_y(applyTorque), bt.btVector3_z(applyTorque));
-	        this._currentForce.setValue(bt.btVector3_x(applyForce), bt.btVector3_y(applyForce), bt.btVector3_z(applyForce));
-	        this._getJointFeedBack = true;
-	    }
-	    _breakConstrained() {
-	        this.ownBody.constaintRigidbodyA = null;
-	        this.connectedBody.constaintRigidbodyB = null;
-	        this.destroy();
-	    }
-	}
-	ConstraintComponent.CONSTRAINT_POINT2POINT_CONSTRAINT_TYPE = 3;
-	ConstraintComponent.CONSTRAINT_HINGE_CONSTRAINT_TYPE = 4;
-	ConstraintComponent.CONSTRAINT_CONETWIST_CONSTRAINT_TYPE = 5;
-	ConstraintComponent.CONSTRAINT_D6_CONSTRAINT_TYPE = 6;
-	ConstraintComponent.CONSTRAINT_SLIDER_CONSTRAINT_TYPE = 7;
-	ConstraintComponent.CONSTRAINT_CONTACT_CONSTRAINT_TYPE = 8;
-	ConstraintComponent.CONSTRAINT_D6_SPRING_CONSTRAINT_TYPE = 9;
-	ConstraintComponent.CONSTRAINT_GEAR_CONSTRAINT_TYPE = 10;
-	ConstraintComponent.CONSTRAINT_FIXED_CONSTRAINT_TYPE = 11;
-	ConstraintComponent.CONSTRAINT_MAX_CONSTRAINT_TYPE = 12;
-	ConstraintComponent.tempForceV3 = new Vector3();
-
-	class FixedConstraint extends ConstraintComponent {
+	class ConfigurableJoint extends ConstraintComponent {
 	    constructor() {
-	        super(ConstraintComponent.CONSTRAINT_FIXED_CONSTRAINT_TYPE);
+	        super(ConstraintComponent.CONSTRAINT_D6_SPRING_CONSTRAINT_TYPE);
+	        this._axis = new Vector3();
+	        this._secondaryAxis = new Vector3();
+	        this._minLinearLimit = new Vector3();
+	        this._maxLinearLimit = new Vector3();
+	        this._minAngularLimit = new Vector3();
+	        this._maxAngularLimit = new Vector3();
+	        this._linearLimitSpring = new Vector3();
+	        this._angularLimitSpring = new Vector3();
+	        this._linearBounce = new Vector3();
+	        this._angularBounce = new Vector3();
+	        this._linearDamp = new Vector3();
+	        this._angularDamp = new Vector3();
+	        this._anchor = new Vector3();
+	        this._connectAnchor = new Vector3();
+	        this._xMotion = 0;
+	        this._yMotion = 0;
+	        this._zMotion = 0;
+	        this._angularXMotion = 0;
+	        this._angularYMotion = 0;
+	        this._angularZMotion = 0;
+	        var bt = Physics3D._bullet;
+	        this._btAxis = bt.btVector3_create(-1.0, 0.0, 0.0);
+	        this._btSecondaryAxis = bt.btVector3_create(0.0, 1.0, 0.0);
+	        this._btframATrans = bt.btTransform_create();
+	        this._btframBTrans = bt.btTransform_create();
+	        bt.btTransform_setIdentity(this._btframATrans);
+	        bt.btTransform_setIdentity(this._btframBTrans);
+	        this._btframAPos = bt.btVector3_create(0, 0, 0);
+	        this._btframBPos = bt.btVector3_create(0, 0, 0);
+	        bt.btTransform_setOrigin(this._btframATrans, this._btframAPos);
+	        bt.btTransform_setOrigin(this._btframBTrans, this._btframBPos);
 	        this.breakForce = -1;
 	        this.breakTorque = -1;
+	    }
+	    get axis() {
+	        return this._axis;
+	    }
+	    get secondaryAxis() {
+	        return this._secondaryAxis;
+	    }
+	    set maxAngularLimit(value) {
+	        value.cloneTo(this._maxAngularLimit);
+	    }
+	    set minAngularLimit(value) {
+	        value.cloneTo(this._minAngularLimit);
+	    }
+	    get maxAngularLimit() {
+	        return this._maxAngularLimit;
+	    }
+	    get minAngularLimit() {
+	        return this._minAngularLimit;
+	    }
+	    set maxLinearLimit(value) {
+	        value.cloneTo(this._maxLinearLimit);
+	    }
+	    set minLinearLimit(value) {
+	        value.cloneTo(this._minLinearLimit);
+	    }
+	    get maxLinearLimit() {
+	        return this._maxLinearLimit;
+	    }
+	    get minLinearLimit() {
+	        return this._minLinearLimit;
+	    }
+	    set XMotion(value) {
+	        if (this._xMotion != value) {
+	            this._xMotion = value;
+	            this.setLimit(ConfigurableJoint.MOTION_LINEAR_INDEX_X, value, -this._maxLinearLimit.x, -this._minLinearLimit.x);
+	        }
+	    }
+	    get XMotion() {
+	        return this._xMotion;
+	    }
+	    set YMotion(value) {
+	        if (this._yMotion != value) {
+	            this._yMotion = value;
+	            this.setLimit(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, value, this._minLinearLimit.y, this._maxLinearLimit.y);
+	        }
+	    }
+	    get YMotion() {
+	        return this._yMotion;
+	    }
+	    set ZMotion(value) {
+	        if (this._zMotion != value) {
+	            this._zMotion = value;
+	            this.setLimit(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, value, this._minLinearLimit.z, this._maxLinearLimit.z);
+	        }
+	    }
+	    get ZMotion() {
+	        return this._zMotion;
+	    }
+	    set angularXMotion(value) {
+	        if (this._angularXMotion != value) {
+	            this._angularXMotion = value;
+	            this.setLimit(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, value, -this._maxAngularLimit.x, -this._minAngularLimit.x);
+	        }
+	    }
+	    get angularXMotion() {
+	        return this._angularXMotion;
+	    }
+	    set angularYMotion(value) {
+	        if (this._angularYMotion != value) {
+	            this._angularYMotion = value;
+	            this.setLimit(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, value, this._minAngularLimit.y, this._maxAngularLimit.y);
+	        }
+	    }
+	    get angularYMotion() {
+	        return this._angularYMotion;
+	    }
+	    set angularZMotion(value) {
+	        if (this._angularZMotion != value) {
+	            this._angularZMotion = value;
+	            this.setLimit(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, value, this._minAngularLimit.z, this._maxAngularLimit.z);
+	        }
+	    }
+	    get angularZMotion() {
+	        return this._angularZMotion;
+	    }
+	    set linearLimitSpring(value) {
+	        if (!Vector3.equals(this._linearLimitSpring, value)) {
+	            value.cloneTo(this._linearLimitSpring);
+	            this.setSpring(ConfigurableJoint.MOTION_LINEAR_INDEX_X, value.x);
+	            this.setSpring(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, value.y);
+	            this.setSpring(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, value.z);
+	        }
+	    }
+	    get linearLimitSpring() {
+	        return this._linearLimitSpring;
+	    }
+	    set angularLimitSpring(value) {
+	        if (!Vector3.equals(this._angularLimitSpring, value)) {
+	            value.cloneTo(this._angularLimitSpring);
+	            this.setSpring(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, value.x);
+	            this.setSpring(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, value.y);
+	            this.setSpring(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, value.z);
+	        }
+	    }
+	    get angularLimitSpring() {
+	        return this._angularLimitSpring;
+	    }
+	    set linearBounce(value) {
+	        if (!Vector3.equals(this._linearBounce, value)) {
+	            value.cloneTo(this._linearBounce);
+	            this.setBounce(ConfigurableJoint.MOTION_LINEAR_INDEX_X, value.x);
+	            this.setBounce(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, value.y);
+	            this.setBounce(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, value.z);
+	        }
+	    }
+	    get linearBounce() {
+	        return this._linearBounce;
+	    }
+	    set angularBounce(value) {
+	        if (!Vector3.equals(this._angularBounce, value)) {
+	            value.cloneTo(this._angularBounce);
+	            this.setBounce(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, value.x);
+	            this.setBounce(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, value.y);
+	            this.setBounce(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, value.z);
+	        }
+	    }
+	    get angularBounce() {
+	        return this._angularBounce;
+	    }
+	    set linearDamp(value) {
+	        if (!Vector3.equals(this._linearDamp, value)) {
+	            value.cloneTo(this._linearDamp);
+	            this.setDamping(ConfigurableJoint.MOTION_LINEAR_INDEX_X, value.x);
+	            this.setDamping(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, value.y);
+	            this.setDamping(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, value.z);
+	        }
+	    }
+	    get linearDamp() {
+	        return this._linearDamp;
+	    }
+	    set angularDamp(value) {
+	        if (!Vector3.equals(this._angularDamp, value)) {
+	            value.cloneTo(this._angularDamp);
+	            this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, value.x);
+	            this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, value.y);
+	            this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, value.z);
+	        }
+	    }
+	    get angularDamp() {
+	        return this._angularDamp;
+	    }
+	    set anchor(value) {
+	        value.cloneTo(this._anchor);
+	        this.setFrames();
+	    }
+	    get anchor() {
+	        return this._anchor;
+	    }
+	    set connectAnchor(value) {
+	        value.cloneTo(this._connectAnchor);
+	        this.setFrames();
+	    }
+	    get connectAnchor() {
+	        return this._connectAnchor;
+	    }
+	    setAxis(axis, secondaryAxis) {
+	        if (!this._btConstraint)
+	            return;
+	        var bt = Physics3D._bullet;
+	        this._axis.setValue(axis.x, axis.y, axis.y);
+	        this._secondaryAxis.setValue(secondaryAxis.x, secondaryAxis.y, secondaryAxis.z);
+	        this._btAxis = bt.btVector3_setValue(-axis.x, axis.y, axis.z);
+	        this._btSecondaryAxis = bt.btVector3_setValue(-secondaryAxis.x, secondaryAxis.y, secondaryAxis.z);
+	        bt.btGeneric6DofSpring2Constraint_setAxis(this._btConstraint, this._btAxis, this._btSecondaryAxis);
+	    }
+	    setLimit(axis, motionType, low, high) {
+	        if (!this._btConstraint)
+	            return;
+	        var bt = Physics3D._bullet;
+	        switch (motionType) {
+	            case ConfigurableJoint.CONFIG_MOTION_TYPE_LOCKED:
+	                bt.btGeneric6DofSpring2Constraint_setLimit(this._btConstraint, axis, 0, 0);
+	                break;
+	            case ConfigurableJoint.CONFIG_MOTION_TYPE_LIMITED:
+	                if (low < high)
+	                    bt.btGeneric6DofSpring2Constraint_setLimit(this._btConstraint, axis, low, high);
+	                break;
+	            case ConfigurableJoint.CONFIG_MOTION_TYPE_FREE:
+	                bt.btGeneric6DofSpring2Constraint_setLimit(this._btConstraint, axis, 1, 0);
+	                break;
+	            default:
+	                throw "No Type of Axis Motion";
+	        }
+	    }
+	    setSpring(axis, springValue) {
+	        if (!this._btConstraint)
+	            return;
+	        var bt = Physics3D._bullet;
+	        var enableSpring = springValue > 0;
+	        bt.btGeneric6DofSpring2Constraint_enableSpring(this._btConstraint, axis, enableSpring);
+	        if (enableSpring)
+	            bt.btGeneric6DofSpring2Constraint_setStiffness(this._btConstraint, axis, springValue);
+	    }
+	    setBounce(axis, bounce) {
+	        if (!this._btConstraint)
+	            return;
+	        var bt = Physics3D._bullet;
+	        bounce = bounce <= 0 ? 0 : bounce;
+	        bt.btGeneric6DofSpring2Constraint_setBounce(this._btConstraint, axis, bounce);
+	    }
+	    setDamping(axis, damp) {
+	        if (!this._btConstraint)
+	            return;
+	        var bt = Physics3D._bullet;
+	        damp = damp <= 0 ? 0 : damp;
+	        bt.btGeneric6DofSpring2Constraint_setDamping(this._btConstraint, axis, damp);
+	    }
+	    setEquilibriumPoint(axis, equilibriumPoint) {
+	        var bt = Physics3D._bullet;
+	        bt.btGeneric6DofSpring2Constraint_setEquilibriumPoint(this._btConstraint, axis, equilibriumPoint);
+	    }
+	    enableMotor(axis, isEnableMotor) {
+	        var bt = Physics3D._bullet;
+	        bt.btGeneric6DofSpring2Constraint_enableMotor(this._btConstraint, axis, isEnableMotor);
+	    }
+	    setServo(axis, onOff) {
+	        var bt = Physics3D._bullet;
+	        bt.btGeneric6DofSpring2Constraint_setServo(this._btConstraint, axis, onOff);
+	    }
+	    setTargetVelocity(axis, velocity) {
+	        var bt = Physics3D._bullet;
+	        bt.btGeneric6DofSpring2Constraint_setTargetVelocity(this._btConstraint, axis, velocity);
+	    }
+	    setTargetPosition(axis, target) {
+	        var bt = Physics3D._bullet;
+	        bt.btGeneric6DofSpring2Constraint_setServoTarget(this._btConstraint, axis, target);
+	    }
+	    setMaxMotorForce(axis, force) {
+	        var bt = Physics3D._bullet;
+	        bt.btGeneric6DofSpring2Constraint_setMaxMotorForce(this._btConstraint, axis, force);
+	    }
+	    setParam(axis, constraintParams, value) {
+	        var bt = Physics3D._bullet;
+	        bt.btTypedConstraint_setParam(this._btConstraint, axis, constraintParams, value);
+	    }
+	    setFrames() {
+	        var bt = Physics3D._bullet;
+	        bt.btVector3_setValue(this._btframAPos, -this._anchor.x, this.anchor.y, this.anchor.z);
+	        bt.btVector3_setValue(this._btframBPos, -this._connectAnchor.x, this._connectAnchor.y, this._connectAnchor.z);
+	        bt.btTransform_setOrigin(this._btframATrans, this._btframAPos);
+	        bt.btTransform_setOrigin(this._btframBTrans, this._btframBPos);
+	        if (!this._btConstraint)
+	            return;
+	        bt.btGeneric6DofSpring2Constraint_setFrames(this._btConstraint, this._btframATrans, this._btframBTrans);
 	    }
 	    _addToSimulation() {
 	        this._simulation && this._simulation.addConstraint(this, this.enabled);
@@ -32654,27 +34409,110 @@
 	    }
 	    _createConstraint() {
 	        var bt = Physics3D._bullet;
-	        var physicsTransform = bt.btCollisionObject_getWorldTransform(this.ownBody.btColliderObject);
-	        var origin = bt.btTransform_getOrigin(physicsTransform);
-	        this._btConstraint = bt.btFixedConstraint_create(this.ownBody.btColliderObject, this.connectedBody.btColliderObject, origin);
+	        this._btConstraint = bt.btGeneric6DofSpring2Constraint_create(this.ownBody.btColliderObject, this._btframAPos, this.connectedBody.btColliderObject, this._btframBPos);
 	        this._btJointFeedBackObj = bt.btJointFeedback_create(this._btConstraint);
-	        bt.btFixedConstraint_setJointFeedback(this._btConstraint, this._btJointFeedBackObj);
+	        bt.btTypedConstraint_setJointFeedback(this._btConstraint, this._btJointFeedBackObj);
 	        this._simulation = this.owner._scene.physicsSimulation;
+	        this._initAllConstraintInfo();
+	    }
+	    _initAllConstraintInfo() {
+	        this.setLimit(ConfigurableJoint.MOTION_LINEAR_INDEX_X, this._xMotion, -this._maxLinearLimit.x, -this._minLinearLimit.x);
+	        this.setLimit(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, this._yMotion, this._minLinearLimit.y, this._maxLinearLimit.y);
+	        this.setLimit(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, this._zMotion, this._minLinearLimit.z, this._maxLinearLimit.z);
+	        this.setLimit(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, this._angularXMotion, -this._maxAngularLimit.x, -this._minAngularLimit.x);
+	        this.setLimit(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, this._angularYMotion, this._minAngularLimit.y, this._maxAngularLimit.y);
+	        this.setLimit(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, this._angularZMotion, this._minAngularLimit.z, this._maxAngularLimit.z);
+	        this.setSpring(ConfigurableJoint.MOTION_LINEAR_INDEX_X, this._linearLimitSpring.x);
+	        this.setSpring(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, this._linearLimitSpring.y);
+	        this.setSpring(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, this._linearLimitSpring.z);
+	        this.setSpring(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, this._angularLimitSpring.x);
+	        this.setSpring(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, this._angularLimitSpring.y);
+	        this.setSpring(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, this._angularLimitSpring.z);
+	        this.setBounce(ConfigurableJoint.MOTION_LINEAR_INDEX_X, this._linearBounce.x);
+	        this.setBounce(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, this._linearBounce.y);
+	        this.setBounce(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, this._linearBounce.z);
+	        this.setBounce(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, this._angularBounce.x);
+	        this.setBounce(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, this._angularBounce.y);
+	        this.setBounce(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, this._angularBounce.z);
+	        this.setDamping(ConfigurableJoint.MOTION_LINEAR_INDEX_X, this._linearDamp.x);
+	        this.setDamping(ConfigurableJoint.MOTION_LINEAR_INDEX_Y, this._linearDamp.y);
+	        this.setDamping(ConfigurableJoint.MOTION_LINEAR_INDEX_Z, this._linearDamp.z);
+	        this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_X, this._angularDamp.x);
+	        this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_Y, this._angularDamp.y);
+	        this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z, this._angularDamp.z);
+	        this.setFrames();
+	        this.setEquilibriumPoint(0, 0);
 	    }
 	    _onAdded() {
 	        super._onAdded();
 	    }
 	    _onEnable() {
 	        super._onEnable();
+	        if (!this._btConstraint) {
+	            if (this.ownBody && this.ownBody.physicsSimulation && this.connectedBody && this.connectedBody.physicsSimulation)
+	                this._createConstraint();
+	            this._addToSimulation();
+	        }
 	        if (this._btConstraint)
-	            Physics3D._bullet.btFixedConstraint_setEnabled(this._btConstraint, true);
+	            Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint, true);
 	    }
 	    _onDisable() {
 	        super._onDisable();
 	        if (!this.connectedBody)
 	            this._removeFromSimulation();
 	        if (this._btConstraint)
-	            Physics3D._bullet.btFixedConstraint_setEnabled(this._btConstraint, false);
+	            Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint, false);
+	    }
+	    _parse(data, interactMap = null) {
+	        this._anchor.fromArray(data.anchor);
+	        this._connectAnchor.fromArray(data.connectAnchor);
+	        this._axis.fromArray(data.axis);
+	        this._secondaryAxis.fromArray(data.secondaryAxis);
+	        var limitlimit = data.linearLimit;
+	        this._minLinearLimit.setValue(-limitlimit, -limitlimit, -limitlimit);
+	        this._maxLinearLimit.setValue(limitlimit, limitlimit, limitlimit);
+	        var limitSpring = data.limitSpring;
+	        this._linearLimitSpring.setValue(limitSpring, limitSpring, limitSpring);
+	        var limitDamp = data.damp;
+	        this._linearDamp.setValue(limitDamp, limitDamp, limitDamp);
+	        var limitBounciness = data.bounciness;
+	        this._linearBounce.setValue(limitBounciness, limitBounciness, limitBounciness);
+	        var xlowAngularLimit = data.lowAngularXLimit;
+	        var xhighAngularLimit = data.highAngularXLimit;
+	        var yAngularLimit = data.angularYLimit;
+	        var zAngularLimit = data.angularZLimit;
+	        this._minAngularLimit.setValue(xlowAngularLimit, -yAngularLimit, -zAngularLimit);
+	        this._maxAngularLimit.setValue(xhighAngularLimit, yAngularLimit, zAngularLimit);
+	        var xhighAngularBounciness = data.highAngularXBounciness;
+	        var ybounciness = data.angularYBounciness;
+	        var zbounciness = data.angularZBounciness;
+	        this._angularBounce.setValue(xhighAngularBounciness, ybounciness, zbounciness);
+	        var xAngularSpring = data.angularXLimitSpring;
+	        var yzAngularSpriny = data.angularYZLimitSpring;
+	        this._angularLimitSpring.setValue(xAngularSpring, yzAngularSpriny, yzAngularSpriny);
+	        var xAngularDamper = data.XAngularDamper;
+	        var yzAngularDamper = data.YZAngularDamper;
+	        this._angularDamp.setValue(xAngularDamper, yzAngularDamper, yzAngularDamper);
+	        this.XMotion = data.XMotion;
+	        this.YMotion = data.YMotion;
+	        this.ZMotion = data.ZMotion;
+	        this.angularXMotion = data.angularXMotion;
+	        this.angularYMotion = data.angularYMotion;
+	        this.angularZMotion = data.angularZMotion;
+	        if (data.rigidbodyID != -1 && data.connectRigidbodyID != -1) {
+	            interactMap.component.push(this);
+	            interactMap.data.push(data);
+	        }
+	        (data.breakForce != undefined) && (this.breakForce = data.breakForce);
+	        (data.breakTorque != undefined) && (this.breakTorque = data.breakTorque);
+	    }
+	    _parseInteractive(data = null, spriteMap = null) {
+	        var rigidBodySprite = spriteMap[data.rigidbodyID];
+	        var rigidBody = rigidBodySprite.getComponent(Rigidbody3D);
+	        var connectSprite = spriteMap[data.connectRigidbodyID];
+	        var connectRigidbody = connectSprite.getComponent(Rigidbody3D);
+	        this.ownBody = rigidBody;
+	        this.connectedBody = connectRigidbody;
 	    }
 	    _onDestroy() {
 	        super._onDestroy();
@@ -32682,6 +34520,15 @@
 	    _cloneTo(dest) {
 	    }
 	}
+	ConfigurableJoint.CONFIG_MOTION_TYPE_LOCKED = 0;
+	ConfigurableJoint.CONFIG_MOTION_TYPE_LIMITED = 1;
+	ConfigurableJoint.CONFIG_MOTION_TYPE_FREE = 2;
+	ConfigurableJoint.MOTION_LINEAR_INDEX_X = 0;
+	ConfigurableJoint.MOTION_LINEAR_INDEX_Y = 1;
+	ConfigurableJoint.MOTION_LINEAR_INDEX_Z = 2;
+	ConfigurableJoint.MOTION_ANGULAR_INDEX_X = 3;
+	ConfigurableJoint.MOTION_ANGULAR_INDEX_Y = 4;
+	ConfigurableJoint.MOTION_ANGULAR_INDEX_Z = 5;
 
 	class Point2PointConstraint {
 	    constructor() {
@@ -32810,6 +34657,20 @@
 	exports.Burst = Burst;
 	exports.Camera = Camera;
 	exports.CameraCullInfo = CameraCullInfo;
+	exports.CannonBoxColliderShape = CannonBoxColliderShape;
+	exports.CannonColliderShape = CannonColliderShape;
+	exports.CannonCollision = CannonCollision;
+	exports.CannonCollisionTool = CannonCollisionTool;
+	exports.CannonContactPoint = CannonContactPoint;
+	exports.CannonHitResult = CannonHitResult;
+	exports.CannonPhysicsCollider = CannonPhysicsCollider;
+	exports.CannonPhysicsComponent = CannonPhysicsComponent;
+	exports.CannonPhysicsSettings = CannonPhysicsSettings;
+	exports.CannonPhysicsSimulation = CannonPhysicsSimulation;
+	exports.CannonPhysicsTriggerComponent = CannonPhysicsTriggerComponent;
+	exports.CannonPhysicsUpdateList = CannonPhysicsUpdateList;
+	exports.CannonRigidbody3D = CannonRigidbody3D;
+	exports.CannonSphereColliderShape = CannonSphereColliderShape;
 	exports.CapsuleColliderShape = CapsuleColliderShape;
 	exports.CastShadowList = CastShadowList;
 	exports.CharacterController = CharacterController;
@@ -32830,6 +34691,7 @@
 	exports.ConeColliderShape = ConeColliderShape;
 	exports.ConeShape = ConeShape;
 	exports.Config3D = Config3D;
+	exports.ConfigurableJoint = ConfigurableJoint;
 	exports.Constraint3D = Constraint3D;
 	exports.ConstraintComponent = ConstraintComponent;
 	exports.ContactPoint = ContactPoint;

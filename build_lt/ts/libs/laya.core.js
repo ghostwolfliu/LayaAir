@@ -10634,6 +10634,23 @@ window.Laya= (function (exports) {
     }
     Draw9GridTexture.ID = "Draw9GridTexture";
 
+    class SaveCmd {
+        static create() {
+            var cmd = Pool.getItemByClass("SaveCmd", SaveCmd);
+            return cmd;
+        }
+        recover() {
+            Pool.recover("SaveCmd", this);
+        }
+        run(context, gx, gy) {
+            context.save();
+        }
+        get cmdID() {
+            return SaveCmd.ID;
+        }
+    }
+    SaveCmd.ID = "Save";
+
     class GraphicsBounds {
         constructor() {
             this._cacheBoundsType = false;
@@ -10692,6 +10709,7 @@ window.Laya= (function (exports) {
                 cmd = cmds[i];
                 switch (cmd.cmdID) {
                     case AlphaCmd.ID:
+                    case SaveCmd.ID:
                         matrixs.push(tMatrix);
                         tMatrix = tMatrix.clone();
                         break;
@@ -11098,23 +11116,6 @@ window.Laya= (function (exports) {
     }
     FillTextCmd.ID = "FillText";
     FillTextCmd._defFontObj = new FontInfo(null);
-
-    class SaveCmd {
-        static create() {
-            var cmd = Pool.getItemByClass("SaveCmd", SaveCmd);
-            return cmd;
-        }
-        recover() {
-            Pool.recover("SaveCmd", this);
-        }
-        run(context, gx, gy) {
-            context.save();
-        }
-        get cmdID() {
-            return SaveCmd.ID;
-        }
-    }
-    SaveCmd.ID = "Save";
 
     class CacheManger {
         constructor() {
@@ -11853,7 +11854,7 @@ window.Laya= (function (exports) {
         }
         _custom(sprite, context, x, y) {
             sprite.customRender(context, x, y);
-            this._next._fun.call(this._next, sprite, context, x - sprite.pivotX, y - sprite.pivotY);
+            this._next._fun.call(this._next, sprite, context, 0, 0);
         }
         _clip(sprite, context, x, y) {
             var next = this._next;
@@ -17238,17 +17239,8 @@ window.Laya= (function (exports) {
             }
         }
         _tryClearBuffer(sourceNode) {
-            if (!Browser.onMac) {
-                try {
-                    sourceNode.buffer = null;
-                }
-                catch (e) {
-                    WebAudioSoundChannel._tryCleanFailed = true;
-                }
-                return;
-            }
             try {
-                sourceNode.buffer = ILaya.WebAudioSound._miniBuffer;
+                sourceNode.buffer = null;
             }
             catch (e) {
                 WebAudioSoundChannel._tryCleanFailed = true;
@@ -20278,7 +20270,9 @@ window.Laya= (function (exports) {
         }
         onReset() {
         }
-        _parse(data) {
+        _parse(data, interactMap = null) {
+        }
+        _parseInteractive(data = null, spriteMap = null) {
         }
         _cloneTo(dest) {
         }
@@ -22117,6 +22111,7 @@ window.Laya= (function (exports) {
             return Mouse._style.cursor;
         }
         static __init__() {
+            Mouse._style = Browser.document.body.style;
         }
         static hide() {
             if (Mouse.cursor != "none") {
