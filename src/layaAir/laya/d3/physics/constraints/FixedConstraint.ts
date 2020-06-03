@@ -41,16 +41,19 @@ export class FixedConstraint extends ConstraintComponent{
 	 * @internal
 	 */
 	_createConstraint():void{
-		var bt = Physics3D._bullet;
-		var physicsTransform = bt.btCollisionObject_getWorldTransform(this.ownBody.btColliderObject);
-		var origin = bt.btTransform_getOrigin(physicsTransform);
-		this._btConstraint = bt.btFixedConstraint_create(this.ownBody.btColliderObject,this.connectedBody.btColliderObject,origin);
-		this._btJointFeedBackObj = bt.btJointFeedback_create(this._btConstraint);
-		bt.btTypedConstraint_setJointFeedback(this._btConstraint,this._btJointFeedBackObj);
-		this._simulation = ((<Scene3D>this.owner._scene)).physicsSimulation;
+		if(this.ownBody&&this.ownBody._simulation&&this.connectedBody&&this.connectedBody._simulation){
+			var bt = Physics3D._bullet;
+			this._btConstraint = bt.btFixedConstraint_create(this.ownBody.btColliderObject, this._btframATrans, this.connectedBody.btColliderObject, this._btframBTrans)
+			this._btJointFeedBackObj = bt.btJointFeedback_create(this._btConstraint);	
+			bt.btTypedConstraint_setJointFeedback(this._btConstraint,this._btJointFeedBackObj);
+			this._simulation = ((<Scene3D>this.owner._scene)).physicsSimulation;
+			this._addToSimulation();
+			Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint,true);
+		}
 	}
 
 	
+
 	/**
 	 * @inheritDoc
 	 * @override
@@ -65,12 +68,9 @@ export class FixedConstraint extends ConstraintComponent{
 	 * @internal
 	 */
 	_onEnable():void{
+		if(!this._btConstraint)
+			return;
 		super._onEnable();
-		if(!this._btConstraint){
-			if(this.ownBody&&this.ownBody.physicsSimulation&&this.connectedBody&&this.connectedBody.physicsSimulation)
-			this._createConstraint();
-			this._addToSimulation();
-		}
 		if(this._btConstraint)
 		Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint,true);
 	}
@@ -98,6 +98,7 @@ export class FixedConstraint extends ConstraintComponent{
 	 * @override
 	 */
 	_parse(data: any,interactMap:any = null): void {
+		super._parse(data);
 		if(data.rigidbodyID!=-1&&data.connectRigidbodyID!=-1){
 			interactMap.component.push(this);
 			interactMap.data.push(data);

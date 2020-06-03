@@ -3,7 +3,6 @@ import { Matrix4x4 } from "../../math/Matrix4x4";
 import { Quaternion } from "../../math/Quaternion";
 import { Vector3 } from "../../math/Vector3";
 import { CannonPhysicsComponent } from "../CannonPhysicsComponent";
-// import { CompoundColliderShape } from "./CompoundColliderShape";
 
 /**
  * <code>ColliderShape</code> 类用于创建形状碰撞器的父类，该类为抽象类。
@@ -79,7 +78,7 @@ export class CannonColliderShape implements IClone {
 	}
 
 	/**@internal */
-	protected _scale: Vector3 = new Vector3(1, 1, 1);
+	 _scale: Vector3 = new Vector3(1, 1, 1);
 
 	/**@internal */
 	_btShape: CANNON.Shape;
@@ -122,9 +121,7 @@ export class CannonColliderShape implements IClone {
 	}
 
 	set localOffset(value: Vector3) {
-		this._localOffset = value;
-		if (this._compoundParent)
-			this._compoundParent._updateChildTransform(this);
+		value.cloneTo(this._localOffset); 
 	}
 
 	/**

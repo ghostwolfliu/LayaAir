@@ -89,7 +89,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 	/**Hierarchy资源。*/
 	static HIERARCHY: string = "HIERARCHY";
 	/**@internal */
-	static physicsSettings: PhysicsSettings = new PhysicsSettings();
+	static physicsSettings: PhysicsSettings;
 	/**@internal */
 	static cannonPhysicsSettings:CannonPhysicsSettings;
 	/** 是否开启八叉树裁剪。*/
@@ -192,6 +192,11 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 				break;
 			default:
 				throw "Scene3D:unknown shader quality.";
+		}
+		if(config.isUseCannonPhysicsEngine){
+			Scene3D.cannonPhysicsSettings = new CannonPhysicsSettings(); 
+		}else{
+			Scene3D.physicsSettings = new PhysicsSettings();
 		}
 	}
 
@@ -483,6 +488,9 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		return this._physicsSimulation;
 	}
 
+	get cannonPhysicsSimulation():CannonPhysicsSimulation{
+		return this._cannonPhysicsSimulation;
+	}
 	/**
 	 * 场景时钟。
 	 * @override
@@ -537,11 +545,9 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 	 */
 	constructor() {
 		super();
-		if (Physics3D._enablePhysics)
+		if(!Config3D._config.isUseCannonPhysicsEngine&&Physics3D._bullet)
 			this._physicsSimulation = new PhysicsSimulation(Scene3D.physicsSettings);
-		if(CANNON){
-			if(!Scene3D.cannonPhysicsSettings) 
-				Scene3D.cannonPhysicsSettings = new CannonPhysicsSettings();
+		else if(Physics3D._cannon){
 			this._cannonPhysicsSimulation = new CannonPhysicsSimulation(Scene3D.cannonPhysicsSettings);
 		}
 			
@@ -622,7 +628,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		this._shaderValues.setNumber(Scene3D.TIME, this._time);
 
 		var simulation: PhysicsSimulation = this._physicsSimulation;
-		if (Physics3D._enablePhysics && !PhysicsSimulation.disableSimulation) {
+		if (Physics3D._enablePhysics && !PhysicsSimulation.disableSimulation&&!Config3D._config.isUseCannonPhysicsEngine) {
 			simulation._updatePhysicsTransformFromRender();
 			PhysicsComponent._addUpdateList = false;//物理模拟器会触发_updateTransformComponent函数,不加入更新队列
 			//simulate physics
@@ -636,13 +642,13 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 
 			//send contact events
 			simulation._eventScripts();
-		} 
-		if(CANNON){
+		}
+		if(Physics3D._cannon&&Config3D._config.isUseCannonPhysicsEngine){
 			var cannonSimulation:CannonPhysicsSimulation = this._cannonPhysicsSimulation;
 			cannonSimulation._updatePhysicsTransformFromRender();
 			CannonPhysicsComponent._addUpdateList = false;
 			cannonSimulation._simulate(delta);
-			PhysicsComponent._addUpdateList = true;
+			CannonPhysicsComponent._addUpdateList = true;
 			cannonSimulation._updateCollisions();
 			cannonSimulation._eventScripts();
 		}
@@ -817,6 +823,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 			if (dirCount > 0) {
 				var sunLightIndex: number = this._directionLights.getBrightestLight();//get the brightest light as sun
 				this._mainDirectionLight = dirElements[sunLightIndex];
+				this._directionLights.normalLightOrdering(sunLightIndex);
 				for (var i: number = 0; i < dirCount; i++ , curCount++) {
 					var dirLight: DirectionLight = dirElements[i];
 					var dir: Vector3 = dirLight._direction;
@@ -831,7 +838,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 					ligPix[off + 4] = dir.x;
 					ligPix[off + 5] = dir.y;
 					ligPix[off + 6] = dir.z;
-					if (i == sunLightIndex) {
+					if (i == 0) {
 						shaderValues.setVector3(Scene3D.SUNLIGHTDIRCOLOR, intCor);
 						shaderValues.setVector3(Scene3D.SUNLIGHTDIRECTION, dir);
 					}
@@ -847,6 +854,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 				var poiElements: PointLight[] = this._pointLights._elements;
 				var mainPointLightIndex:number = this._pointLights.getBrightestLight();
 				this._mainPointLight = poiElements[mainPointLightIndex];
+				this._pointLights.normalLightOrdering(mainPointLightIndex);
 				for (var i: number = 0; i < poiCount; i++ , curCount++) {
 					var poiLight: PointLight = poiElements[i];
 					var pos: Vector3 = poiLight.transform.position;
@@ -872,6 +880,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 				var spoElements: SpotLight[] = this._spotLights._elements;
 				var mainSpotLightIndex:number = this._spotLights.getBrightestLight();
 				this._mainSpotLight = spoElements[mainSpotLightIndex];
+				this._spotLights.normalLightOrdering(mainSpotLightIndex)
 				for (var i: number = 0; i < spoCount; i++ , curCount++) {
 					var spoLight: SpotLight = spoElements[i];
 					var dir: Vector3 = spoLight._direction;

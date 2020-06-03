@@ -12,26 +12,25 @@ import { DirectionLight } from "laya/d3/core/light/DirectionLight";
 import { Matrix4x4 } from "laya/d3/math/Matrix4x4";
 import { MeshSprite3D } from "laya/d3/core/MeshSprite3D";
 import { Texture2D } from "laya/resource/Texture2D";
-import { Vector4 } from "laya/d3/math/Vector4";
 import { PrimitiveMesh } from "laya/d3/resource/models/PrimitiveMesh";
 import { CannonPhysicsCollider } from "laya/d3/physicsCannon/CannonPhysicsCollider";
 import { CannonBoxColliderShape } from "laya/d3/physicsCannon/shape/CannonBoxColliderShape";
 import { Transform3D } from "laya/d3/core/Transform3D";
 import { CannonRigidbody3D } from "laya/d3/physicsCannon/CannonRigidbody3D";
+import { CannonSphereColliderShape } from "laya/d3/physicsCannon/shape/CannonSphereColliderShape";
+import { Config3D } from "Config3D";
 
-export class CannonPhysicsWorld_BaseCollider{
+/**
+ * 示例基本碰撞
+ */
+export class CannonPhysicsWorld_PhysicsProperty{
     private scene:Scene3D;
-    private tmpVector:Vector3 = new Vector3(0,0,0);
-    private mat1:BlinnPhongMaterial;
-	private mat2: BlinnPhongMaterial;
-	private mat3: BlinnPhongMaterial;
-	private mat4: BlinnPhongMaterial;
-	private mat5: BlinnPhongMaterial;
+
     constructor(){
+		Config3D.useCannonPhysics(true);
         Laya3D.init(0, 0, null, Handler.create(null, () => {
 			Laya.stage.scaleMode = Stage.SCALE_FULL;
 			Laya.stage.screenMode = Stage.SCREEN_NONE;
-			//显示性能面板
 			Stat.show();
 
 			this.scene = (<Scene3D>Laya.stage.addChild(new Scene3D()));
@@ -50,66 +49,65 @@ export class CannonPhysicsWorld_BaseCollider{
 			var mat: Matrix4x4 = directionLight.transform.worldMatrix;
 			mat.setForward(new Vector3(-1.0, -1.0, -1.0));
             directionLight.transform.worldMatrix = mat;
-            var plane: MeshSprite3D = (<MeshSprite3D>this.scene.addChild(new MeshSprite3D(PrimitiveMesh.createPlane(10, 10, 10, 10))));
+            var plane: MeshSprite3D = (<MeshSprite3D>this.scene.addChild(new MeshSprite3D(PrimitiveMesh.createPlane(20, 20, 10, 10))));
 			var planeMat: BlinnPhongMaterial = new BlinnPhongMaterial();
 			Texture2D.load("res/threeDimen/Physics/grass.png", Handler.create(this, function (tex: Texture2D): void {
 				planeMat.albedoTexture = tex;
             }));
-            	//设置纹理平铺和偏移
-			var tilingOffset: Vector4 = planeMat.tilingOffset;
-			tilingOffset.setValue(5, 5, 0, 0);
-			planeMat.tilingOffset = tilingOffset;
 			//设置材质
             plane.meshRenderer.material = planeMat;
-            
             var planeCollider:CannonPhysicsCollider = plane.addComponent(CannonPhysicsCollider);
-            var planeShape:CannonBoxColliderShape = new CannonBoxColliderShape(10,0.01,10);
-            planeCollider.colliderShape = planeShape;
-            planeCollider.friction = 2;
-            planeCollider.restitution = 0.3;
-            
-
-            this.mat1 = new BlinnPhongMaterial();
-			this.mat2 = new BlinnPhongMaterial();
-			this.mat3 = new BlinnPhongMaterial();
-			this.mat4 = new BlinnPhongMaterial();
-            this.mat5 = new BlinnPhongMaterial();
-            Texture2D.load("res/threeDimen/Physics/rocks.jpg", Handler.create(this, function (tex: Texture2D): void {
-				this.mat1.albedoTexture = tex;
-			}));
-
-			Texture2D.load("res/threeDimen/Physics/plywood.jpg", Handler.create(this, function (tex: Texture2D): void {
-				this.mat2.albedoTexture = tex;
-			}));
-
-			Texture2D.load("res/threeDimen/Physics/wood.jpg", Handler.create(this, function (tex: Texture2D): void {
-				this.mat3.albedoTexture = tex;
-			}));
-
-			Texture2D.load("res/threeDimen/Physics/steel2.jpg", Handler.create(this, function (tex: Texture2D): void {
-				this.mat4.albedoTexture = tex;
-			}));
-			Texture2D.load("res/threeDimen/Physics/steel.jpg", Handler.create(this, function (tex: Texture2D): void {
-				this.mat5.albedoTexture = tex;
-            }));
-            Laya.timer.loop(1000, this, function (): void {
-                this.addBox();
-            });
-            
-        }));
+			var planeShape:CannonBoxColliderShape = new CannonBoxColliderShape(20,0.01,20);
+			planeCollider.restitution = 1.0;
+			planeCollider.colliderShape = planeShape;
+			planeCollider.friction = 0.1;
+			//测试弹力
+			//实际弹力是两个解除物理组件的弹力乘积
+			this.addSphere(-4,5,0,0,0);
+			this.addSphere(-2,5,0,0.5,0);
+			this.addSphere(0,5,0,0.9,0);
+			//测试滚动阻尼
+			this.addSphere(2,1,0,0,0.5).linearVelocity=new Vector3(0,0,-5);
+			this.addSphere(4,1,0,0,0.8).linearVelocity=(new Vector3(0,0,-5));
+			//测试摩擦力区别于阻尼  是两个基础物理物体的摩擦力之和
+			this.addBox(6,0.6,0,0.1).linearVelocity = new Vector3(0,0,-10);
+			this.addBox(8,0.6,0,0.5).linearVelocity = new Vector3(0,0,-10);
+		}));
     }
-    addBox(){
+  
+    addSphere(x:number,y:number,z:number,restitution:number,damp:number){
+	   var radius:number = 1;
+	   var sphere:MeshSprite3D = <MeshSprite3D>this.scene.addChild(new MeshSprite3D(PrimitiveMesh.createSphere(1)));
+	   var sphereTransform:Transform3D = sphere.transform;
+	   var pos:Vector3 =sphereTransform.position;
+	   pos.setValue(x, y,z);
+	   var scale:Vector3 = sphereTransform.getWorldLossyScale();
+	   scale.setValue(0.5,0.5,0.5);
+	   sphereTransform.setWorldLossyScale(scale);
+
+	   sphereTransform.position = pos;
+	     //创建刚体碰撞器
+         var rigidBody: CannonRigidbody3D = sphere.addComponent(CannonRigidbody3D);
+         //创建盒子形状碰撞器
+         var sphereShape: CannonSphereColliderShape = new CannonSphereColliderShape(radius);
+         //设置盒子的碰撞形状
+         rigidBody.colliderShape = sphereShape;
+         //设置刚体的质量
+		 rigidBody.mass = 10;
+		 rigidBody.restitution = restitution;
+		 rigidBody.angularDamping = damp;
+		 rigidBody.linearDamping = 0.1;
+		 return rigidBody;
+	}
+	addBox(x:number,y:number,z:number,friction:number){
         var sX: number =1;
 		var sY: number =1;
         var sZ: number =1;
-         //创建盒型MeshSprite3D
          var box: MeshSprite3D = (<MeshSprite3D>this.scene.addChild(new MeshSprite3D(PrimitiveMesh.createBox(sX, sY, sZ))));
-         //设置材质
-         box.meshRenderer.material = this.mat1;
          var transform: Transform3D = box.transform;
          var pos: Vector3 = transform.position;
-         pos.setValue(Math.random() * 4 - 2, 10, Math.random() * 4 - 2);
-         transform.position = pos;
+         pos.setValue(x,y,z);
+		 transform.position = pos;
          //创建刚体碰撞器
          var rigidBody: CannonRigidbody3D = box.addComponent(CannonRigidbody3D);
          //创建盒子形状碰撞器
@@ -117,9 +115,9 @@ export class CannonPhysicsWorld_BaseCollider{
          //设置盒子的碰撞形状
          rigidBody.colliderShape = boxShape;
          //设置刚体的质量
-         rigidBody.mass = 10;
+		 rigidBody.mass = 10;
+		 rigidBody.friction = friction;
+		 return rigidBody;
     }
-    addSphere(){
-       
-    }
+
 }
