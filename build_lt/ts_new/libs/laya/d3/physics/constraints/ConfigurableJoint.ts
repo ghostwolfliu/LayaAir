@@ -22,7 +22,18 @@ export class ConfigurableJoint extends ConstraintComponent{
 	static MOTION_ANGULAR_INDEX_Y:number = 4;
 	/** @internal */
 	static MOTION_ANGULAR_INDEX_Z:number = 5;
-
+	/** @internal */
+	static RO_XYZ:number = 0;
+	/** @internal */
+	static RO_XZY:number = 1;
+	/** @internal */
+	static RO_YXZ:number = 2;
+	/** @internal */
+	static RO_YZX:number = 3;
+	/** @internal */
+	static RO_ZXY:number = 4;
+	/** @internal */
+	static RO_ZYX:number = 5;
 	/** @internal */
 	private _btAxis:number;
 	/** @internal */
@@ -52,18 +63,6 @@ export class ConfigurableJoint extends ConstraintComponent{
 	/** @internal */
 	private _angularDamp:Vector3 = new Vector3();
 	/** @internal */
-	private _btframATrans:number;
-	/** @internal */
-	private _btframBTrans:number;
-	/** @internal */
-	private _btframAPos:number;
-	/** @internal */
-	private _btframBPos:number;
-	/** @internal */
-	private _anchor:Vector3 = new Vector3();
-	/** @internal */
-	private _connectAnchor:Vector3 = new Vector3();
-	/** @internal */
 	private _xMotion:number = 0;
 	/** @internal */
 	private _yMotion:number = 0;
@@ -83,16 +82,6 @@ export class ConfigurableJoint extends ConstraintComponent{
 		var bt = Physics3D._bullet;
 		this._btAxis =bt.btVector3_create(-1.0,0.0,0.0);
 		this._btSecondaryAxis = bt.btVector3_create(0.0,1.0,0.0);
-		this._btframATrans = bt.btTransform_create();
-		this._btframBTrans = bt.btTransform_create();
-		bt.btTransform_setIdentity(this._btframATrans);
-		bt.btTransform_setIdentity(this._btframBTrans);
-		this._btframAPos = bt.btVector3_create(0, 0, 0);
-		this._btframBPos= bt.btVector3_create(0, 0, 0);
-		bt.btTransform_setOrigin(this._btframATrans,  this._btframAPos);
-		bt.btTransform_setOrigin(this._btframBTrans,  this._btframBPos);
-		this.breakForce = -1;
-		this.breakTorque = -1;	
 	}
 
 	/**
@@ -376,14 +365,14 @@ export class ConfigurableJoint extends ConstraintComponent{
 	/**
 	 * @internal
 	 */
-	setSpring(axis:number, springValue:number): void {
+	setSpring(axis:number, springValue:number, limitIfNeeded:boolean = true): void {
 		if(!this._btConstraint)
 			return;
 		var bt = Physics3D._bullet;
 		var enableSpring:Boolean = springValue>0;
 		bt.btGeneric6DofSpring2Constraint_enableSpring(this._btConstraint, axis, enableSpring);
 		if(enableSpring)
-		bt.btGeneric6DofSpring2Constraint_setStiffness(this._btConstraint, axis, springValue);
+		bt.btGeneric6DofSpring2Constraint_setStiffness(this._btConstraint, axis, springValue, limitIfNeeded);
 	}
 	/**
 	 * @internal
@@ -399,12 +388,12 @@ export class ConfigurableJoint extends ConstraintComponent{
 	/**
 	 * @internal
 	 */
-	setDamping(axis:number, damp:number): void {
+	setDamping(axis:number, damp:number, limitIfNeeded:boolean = true): void {
 		if(!this._btConstraint)
 			return;
 		var bt = Physics3D._bullet;
 		damp = damp<=0?0:damp;
-		bt.btGeneric6DofSpring2Constraint_setDamping(this._btConstraint, axis, damp);
+		bt.btGeneric6DofSpring2Constraint_setDamping(this._btConstraint, axis, damp, limitIfNeeded);
 	} 
 	/**
 	 * TODO
@@ -462,15 +451,13 @@ export class ConfigurableJoint extends ConstraintComponent{
 		bt.btTypedConstraint_setParam(this._btConstraint, axis, constraintParams, value);
 	}
 	/**
-	 *
+	 * @inheritDoc
+	 * @override
 	 * @internal
 	 */
 	setFrames(): void {
+		super.setFrames();
 		var bt = Physics3D._bullet;
-		bt.btVector3_setValue(this._btframAPos,-this._anchor.x,this.anchor.y,this.anchor.z);
-		bt.btVector3_setValue(this._btframBPos,-this._connectAnchor.x,this._connectAnchor.y,this._connectAnchor.z);
-		bt.btTransform_setOrigin(this._btframATrans,this._btframAPos);
-		bt.btTransform_setOrigin(this._btframBTrans,this._btframBPos);
 		if(!this._btConstraint)
 			return;
 		bt.btGeneric6DofSpring2Constraint_setFrames(this._btConstraint, this._btframATrans, this._btframBTrans);
@@ -498,12 +485,13 @@ export class ConfigurableJoint extends ConstraintComponent{
 	 */
 	_createConstraint():void{
 		var bt = Physics3D._bullet;
-		this._btConstraint = bt.btGeneric6DofSpring2Constraint_create(this.ownBody.btColliderObject, this._btframAPos, this.connectedBody.btColliderObject, this._btframBPos);
+		this._btConstraint = bt.btGeneric6DofSpring2Constraint_create(this.ownBody.btColliderObject, this._btframAPos, this.connectedBody.btColliderObject, this._btframBPos, ConfigurableJoint.RO_XYZ);
 		this._btJointFeedBackObj = bt.btJointFeedback_create(this._btConstraint);
 		bt.btTypedConstraint_setJointFeedback(this._btConstraint,this._btJointFeedBackObj);
-		//TODO:需要初始化数据
 		this._simulation = ((<Scene3D>this.owner._scene)).physicsSimulation;
 		this._initAllConstraintInfo();
+		this._addToSimulation();
+		Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint,true);
 	}
 
 	_initAllConstraintInfo():void{
@@ -534,7 +522,6 @@ export class ConfigurableJoint extends ConstraintComponent{
 		this.setDamping(ConfigurableJoint.MOTION_ANGULAR_INDEX_Z,this._angularDamp.z);
 		this.setFrames();
 		this.setEquilibriumPoint(0,0);
-		
 	}
 	
 	/**
@@ -551,12 +538,11 @@ export class ConfigurableJoint extends ConstraintComponent{
 	 * @internal
 	 */
 	_onEnable():void{
+		if(!this._btConstraint)
+			return;
 		super._onEnable();
-		if(!this._btConstraint){
-			if(this.ownBody&&this.ownBody.physicsSimulation&&this.connectedBody&&this.connectedBody.physicsSimulation)
-			this._createConstraint();
-			this._addToSimulation();
-		}
+
+	
 		if(this._btConstraint)
 		Physics3D._bullet.btTypedConstraint_setEnabled(this._btConstraint,true);
 	}
@@ -575,18 +561,17 @@ export class ConfigurableJoint extends ConstraintComponent{
 	 * @override
 	 */
 	_parse(data: any,interactMap:any = null): void {
-		this._anchor.fromArray(data.anchor);
-		this._connectAnchor.fromArray(data.connectAnchor);
+		super._parse(data);
 		this._axis.fromArray(data.axis);
 		this._secondaryAxis.fromArray(data.secondaryAxis);
 		var limitlimit:number = data.linearLimit;
 		this._minLinearLimit.setValue(-limitlimit,-limitlimit,-limitlimit);
 		this._maxLinearLimit.setValue(limitlimit,limitlimit,limitlimit);
-		var limitSpring:number = data.limitSpring;
+		var limitSpring:number = data.linearLimitSpring;
 		this._linearLimitSpring.setValue(limitSpring,limitSpring,limitSpring);
-		var limitDamp:number = data.damp;
+		var limitDamp:number = data.linearLimitDamper;
 		this._linearDamp.setValue(limitDamp,limitDamp,limitDamp);
-		var limitBounciness:number = data.bounciness;
+		var limitBounciness:number = data.linearLimitBounciness;
 		this._linearBounce.setValue(limitBounciness,limitBounciness,limitBounciness);
 		var xlowAngularLimit:number = data.lowAngularXLimit;
 		var xhighAngularLimit:number = data.highAngularXLimit;
@@ -594,21 +579,20 @@ export class ConfigurableJoint extends ConstraintComponent{
 		var zAngularLimit:number = data.angularZLimit;
 		this._minAngularLimit.setValue(xlowAngularLimit,-yAngularLimit,-zAngularLimit);
 		this._maxAngularLimit.setValue(xhighAngularLimit,yAngularLimit,zAngularLimit);
-		//var xlowAngularBounciness:number = data.lowAngularXBounciness;
-		var xhighAngularBounciness:number = data.highAngularXBounciness;
-		var ybounciness:number = data.angularYBounciness;
-		var zbounciness:number = data.angularZBounciness;
+		var xhighAngularBounciness:number = data.highAngularXLimitBounciness;
+		var ybounciness:number = data.angularYLimitBounciness;
+		var zbounciness:number = data.angularZLimitBounciness;
 		this._angularBounce.setValue(xhighAngularBounciness,ybounciness,zbounciness);
 		var xAngularSpring:number = data.angularXLimitSpring;
 		var yzAngularSpriny:number = data.angularYZLimitSpring;
 		this._angularLimitSpring.setValue(xAngularSpring,yzAngularSpriny,yzAngularSpriny);
-		var xAngularDamper:number = data.XAngularDamper;
-		var yzAngularDamper:number = data.YZAngularDamper;
+		var xAngularDamper:number = data.angularXLimitDamper;
+		var yzAngularDamper:number = data.angularYZLimitDamper;
 		this._angularDamp.setValue(xAngularDamper,yzAngularDamper,yzAngularDamper);
 
-		this.XMotion = data.XMotion;
-		this.YMotion = data.YMotion;
-		this.ZMotion = data.ZMotion;
+		this.XMotion = data.xMotion;
+		this.YMotion = data.yMotion;
+		this.ZMotion = data.zMotion;
 		this.angularXMotion = data.angularXMotion;
 		this.angularYMotion = data.angularYMotion;
 		this.angularZMotion = data.angularZMotion;	

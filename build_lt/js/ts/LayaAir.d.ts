@@ -60,6 +60,7 @@
 	 * <code>Config3D</code> 类用于创建3D初始化配置。
 	 */
 	declare class Config3D implements laya.d3.core.IClone  {
+		static useCannonPhysics(IsUseCannonPhysics:boolean):void;
 
 		/**
 		 * 是否开启抗锯齿。
@@ -122,6 +123,11 @@
 		 * PBR材质渲染质量。
 		 */
 		pbrRenderQuality:laya.d3.core.material.PBRRenderQuality;
+
+		/**
+		 * 是否使用CANNONJS物理引擎
+		 */
+		isUseCannonPhysicsEngine:boolean;
 
 		/**
 		 * 默认物理功能初始化内存，单位为M。
@@ -9049,6 +9055,7 @@ enum AmbientMode {
 		 * 物理模拟器。
 		 */
 		get physicsSimulation():laya.d3.physics.PhysicsSimulation;
+		get cannonPhysicsSimulation():laya.d3.physicsCannon.CannonPhysicsSimulation;
 
 		/**
 		 * 场景时钟。
@@ -14012,6 +14019,10 @@ declare module laya.d3.physics.constraints {
 		 */
 		get breakTorque():number;
 		set breakTorque(value:number);
+		set anchor(value:laya.d3.math.Vector3);
+		get anchor():laya.d3.math.Vector3;
+		set connectAnchor(value:laya.d3.math.Vector3);
+		get connectAnchor():laya.d3.math.Vector3;
 
 		/**
 		 * 创建一个 <code>ConstraintComponent</code> 实例。
@@ -14183,6 +14194,7 @@ declare module laya.d3.physics {
 
 declare module laya.d3.physics {
 	class Physics3D  {
+		static __cannoninit__():void;
 	}
 
 }
@@ -15553,6 +15565,12 @@ declare module laya.d3.physicsCannon.shape {
 		 * @inheritDoc 
 		 * @override 
 		 */
+		_setScale(scale:laya.d3.math.Vector3):void;
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
 		clone():any;
 	}
 
@@ -15632,6 +15650,63 @@ declare module laya.d3.physicsCannon.shape {
 declare module laya.d3.physicsCannon.shape {
 
 	/**
+	 * <code>CompoundColliderShape</code> 类用于创建盒子形状碰撞器。
+	 */
+	class CannonCompoundColliderShape extends laya.d3.physicsCannon.shape.CannonColliderShape  {
+		private static _tempCannonQue:any;
+		private static _tempCannonVec:any;
+		private physicColliderObject:any;
+
+		/**
+		 * 创建一个新的 <code>CompoundColliderShape</code> 实例。
+		 */
+
+		constructor();
+		addChildShape(shape:laya.d3.physicsCannon.shape.CannonColliderShape,localOffset?:laya.d3.math.Vector3):void;
+
+		/**
+		 * 移除子碰撞器形状。
+		 * @param shape 子碰撞器形状。
+		 */
+		removeChildShape(shape:laya.d3.physicsCannon.shape.CannonColliderShape):void;
+		bindRigidBody(rigidbody:laya.d3.physicsCannon.CannonPhysicsComponent):void;
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		_setScale(scale:laya.d3.math.Vector3):void;
+
+		/**
+		 * 获取子形状数量。
+		 * @return 
+		 */
+		getChildShapeCount():number;
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		cloneTo(destObject:any):void;
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		clone():any;
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		destroy():void;
+	}
+
+}
+
+declare module laya.d3.physicsCannon.shape {
+
+	/**
 	 * <code>SphereColliderShape</code> 类用于创建球形碰撞器。
 	 */
 	class CannonSphereColliderShape extends laya.d3.physicsCannon.shape.CannonColliderShape  {
@@ -15647,6 +15722,12 @@ declare module laya.d3.physicsCannon.shape {
 		 */
 
 		constructor(radius?:number);
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		_setScale(scale:laya.d3.math.Vector3):void;
 
 		/**
 		 * @inheritDoc 
@@ -28129,7 +28210,7 @@ declare module laya.media.webaudio {
 		 * @param loops 循环次数
 		 * @return 
 		 */
-		play(startTime?:number,loops?:number,channel?:laya.media.SoundChannel):laya.media.SoundChannel;
+		play(startTime?:number,loops?:number,channel?:laya.media.webaudio.WebAudioSoundChannel):laya.media.SoundChannel;
 		get duration():number;
 		dispose():void;
 	}
@@ -39850,6 +39931,16 @@ declare module laya.utils {
 		static onBLMiniGame:boolean;
 
 		/**
+		 * 字节跳动小游戏
+		 */
+		static onTTMiniGame:boolean;
+
+		/**
+		 * 华为快游戏
+		 */
+		static onHWMiniGame:boolean;
+
+		/**
 		 * @private 
 		 */
 		static onFirefox:boolean;
@@ -46797,6 +46888,12 @@ enum FrustumCorner {
 	 */
 
 	class CannonColliderShape extends laya.d3.physicsCannon.shape.CannonColliderShape {}
+
+	/**
+	 * <code>CompoundColliderShape</code> 类用于创建盒子形状碰撞器。
+	 */
+
+	class CannonCompoundColliderShape extends laya.d3.physicsCannon.shape.CannonCompoundColliderShape {}
 
 	/**
 	 * <code>SphereColliderShape</code> 类用于创建球形碰撞器。

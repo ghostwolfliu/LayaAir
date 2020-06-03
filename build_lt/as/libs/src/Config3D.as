@@ -7,6 +7,7 @@ package  {
 	 * <code>Config3D</code> 类用于创建3D初始化配置。
 	 */
 	public class Config3D implements IClone {
+		public static function useCannonPhysics(IsUseCannonPhysics:Boolean):void{}
 
 		/**
 		 * 是否开启抗锯齿。
@@ -69,6 +70,11 @@ package  {
 		 * PBR材质渲染质量。
 		 */
 		public var pbrRenderQuality:PBRRenderQuality;
+
+		/**
+		 * 是否使用CANNONJS物理引擎
+		 */
+		public var isUseCannonPhysicsEngine:Boolean;
 
 		/**
 		 * 默认物理功能初始化内存，单位为M。

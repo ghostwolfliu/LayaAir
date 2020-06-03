@@ -357,18 +357,18 @@ gulp.task('buildJS', async function () {
 // 压缩
 // 下面两个方法，最好能合并
 gulp.task("compressJs", function () {
-    gulp.src("../build/as/jslibs/laya.physics3D.js")
+    gulp.src("../" + targetPath + "/as/jslibs/laya.physics3D.js")
         .pipe(rename({extname: ".min.js"}))
-        .pipe(gulp.dest("../build/as/jslibs/min"))
-        .pipe(gulp.dest("../build/js/libs/min"))
-        .pipe(gulp.dest("../build/ts/libs/min"));
+        .pipe(gulp.dest("../" + targetPath + "/as/jslibs/min"))
+        .pipe(gulp.dest("../" + targetPath + "/js/libs/min"))
+        .pipe(gulp.dest("../" + targetPath + "/ts/libs/min"));
 
-    gulp.src("../build/as/jslibs/laya.physics3D.wasm.wasm")
-        .pipe(gulp.dest("../build/as/jslibs/min"))
-        .pipe(gulp.dest("../build/js/libs/min"))
-        .pipe(gulp.dest("../build/ts/libs/min"));
+    gulp.src("../" + targetPath + "/as/jslibs/laya.physics3D.wasm.wasm")
+        .pipe(gulp.dest("../" + targetPath + "/as/jslibs/min"))
+        .pipe(gulp.dest("../" + targetPath + "/js/libs/min"))
+        .pipe(gulp.dest("../" + targetPath + "/ts/libs/min"));
 
-    return gulp.src(["../build/as/jslibs/*.js", "!../build/as/jslibs/{laya.physics3D.js}"])
+    return gulp.src(["../" + targetPath + "/as/jslibs/*.js", "!../" + targetPath + "/as/jslibs/{laya.physics3D.js}"])
         .pipe(uglify({
             mangle: {
                 keep_fnames: true
@@ -378,20 +378,20 @@ gulp.task("compressJs", function () {
             console.warn(err.toString());
         })
         .pipe(rename({extname: ".min.js"}))
-        .pipe(gulp.dest("../build/as/jslibs/min"))
-        .pipe(gulp.dest("../build/js/libs/min"))
-        .pipe(gulp.dest("../build/ts/libs/min"));
+        .pipe(gulp.dest("../" + targetPath + "/as/jslibs/min"))
+        .pipe(gulp.dest("../" + targetPath + "/js/libs/min"))
+        .pipe(gulp.dest("../" + targetPath + "/ts/libs/min"));
 });
 
 gulp.task("compresstsnewJs", function () {
-    gulp.src("../build/ts_new/jslibs/{laya.physics3D.js,box2d.js}")
+    gulp.src("../" + targetPath + "/ts_new/jslibs/{laya.physics3D.js,box2d.js}")
         .pipe(rename({extname: ".min.js"}))
-        .pipe(gulp.dest("../build/ts_new/jslibs/min"));
+        .pipe(gulp.dest("../" + targetPath + "/ts_new/jslibs/min"));
 
-    gulp.src("../build/ts_new/jslibs/laya.physics3D.wasm.wasm")
-        .pipe(gulp.dest("../build/ts_new/jslibs/min"));
+    gulp.src("../" + targetPath + "/ts_new/jslibs/laya.physics3D.wasm.wasm")
+        .pipe(gulp.dest("../" + targetPath + "/ts_new/jslibs/min"));
 
-    return gulp.src(["../build/ts_new/jslibs/*.js", "!../build/ts_new/jslibs/{laya.physics3D.js,box2d.js}"])
+    return gulp.src(["../" + targetPath + "/ts_new/jslibs/*.js", "!../" + targetPath + "/ts_new/jslibs/{laya.physics3D.js,box2d.js}"])
         .pipe(uglify({
             mangle: {
                 keep_fnames: true
@@ -401,7 +401,7 @@ gulp.task("compresstsnewJs", function () {
             console.warn(err.toString());
         })
         .pipe(rename({extname: ".min.js"}))
-        .pipe(gulp.dest("../build/ts_new/jslibs/min"));
+        .pipe(gulp.dest("../" + targetPath + "/ts_new/jslibs/min"));
 });
 
 gulp.task('build', gulp.series('buildJS', 'ModifierJs', 'ConcatBox2dPhysics', 'CopyJSLibsToJS', 'CopyTSFileToTS', 'CopyJSFileToAS', 'CopyTSJSLibsFileToTS', 'CopyJSFileToTSCompatible', 'CopyDTS', 'compressJs', 'compresstsnewJs'));

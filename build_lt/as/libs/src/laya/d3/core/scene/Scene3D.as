@@ -14,6 +14,7 @@ package laya.d3.core.scene {
 	import laya.d3.resource.models.SkyRenderer;
 	import laya.d3.resource.TextureCube;
 	import laya.d3.core.scene.Lightmap;
+	import laya.d3.physicsCannon.CannonPhysicsSimulation;
 
 	/**
 	 * 用于实现3D场景。
@@ -181,6 +182,7 @@ package laya.d3.core.scene {
 		 * 物理模拟器。
 		 */
 		public function get physicsSimulation():PhysicsSimulation{return null;}
+		public function get cannonPhysicsSimulation():CannonPhysicsSimulation{return null;}
 
 		/**
 		 * 场景时钟。

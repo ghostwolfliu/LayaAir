@@ -7098,17 +7098,26 @@ window.Laya= (function (exports) {
             if (u.indexOf('AlipayMiniGame') > -1 && "my" in Browser.window) {
                 window.aliPayMiniGame(Laya, Laya);
                 if (!Laya["ALIMiniAdapter"]) {
-                    console.error("请先添加阿里小游戏适配库");
+                    console.error("请先添加阿里小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-6-0");
                 }
                 else {
                     Laya["ALIMiniAdapter"].enable();
                 }
             }
             if (u.indexOf('OPPO') == -1 && u.indexOf("MiniGame") > -1 && "wx" in Browser.window) {
-                if ("bl" in Browser.window) {
+                if ("tt" in Browser.window) {
+                    window.ttMiniGame(Laya, Laya);
+                    if (!Laya["TTMiniAdapter"]) {
+                        console.error("请引入字节跳动小游戏的适配库");
+                    }
+                    else {
+                        Laya["TTMiniAdapter"].enable();
+                    }
+                }
+                else if ("bl" in Browser.window) {
                     window.biliMiniGame(Laya, Laya);
                     if (!Laya["BLMiniAdapter"]) {
-                        console.error("请引入bilibili小游戏的适配库：https://ldc2.layabox.com/doc/?nav=zh-ts-5-0-0");
+                        console.error("请引入bilibili小游戏的适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-7-0");
                     }
                     else {
                         Laya["BLMiniAdapter"].enable();
@@ -7117,7 +7126,7 @@ window.Laya= (function (exports) {
                 else if ("qq" in Browser.window) {
                     window.qqMiniGame(Laya, Laya);
                     if (!Laya["QQMiniAdapter"]) {
-                        console.error("请引入手机QQ小游戏的适配库：https://ldc2.layabox.com/doc/?nav=zh-ts-5-0-0");
+                        console.error("请引入手机QQ小游戏的适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-0-0");
                     }
                     else {
                         Laya["QQMiniAdapter"].enable();
@@ -7133,19 +7142,19 @@ window.Laya= (function (exports) {
                     }
                 }
             }
-            if (u.indexOf("MiniGame") > -1 && "qq" in Browser.window) {
-                window.qqMiniGame(Laya, Laya);
-                if (!Laya["QQMiniAdapter"]) {
-                    console.error("请先添加小游戏适配库,详细教程");
+            if ("hbs" in Browser.window) {
+                window.hbsMiniGame(Laya, Laya);
+                if (!Laya["HBSMiniAdapter"]) {
+                    console.error("请先添加小游戏适配库!");
                 }
                 else {
-                    Laya["QQMiniAdapter"].enable();
+                    Laya["HBSMiniAdapter"].enable();
                 }
             }
             if (u.indexOf("SwanGame") > -1) {
                 window.bdMiniGame(Laya, Laya);
                 if (!Laya["BMiniAdapter"]) {
-                    console.error("请先添加百度小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?nav=zh-ts-5-0-0");
+                    console.error("请先添加百度小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-1-0");
                 }
                 else {
                     Laya["BMiniAdapter"].enable();
@@ -7154,7 +7163,7 @@ window.Laya= (function (exports) {
             if (u.indexOf('QuickGame') > -1) {
                 window.miMiniGame(Laya, Laya);
                 if (!Laya["KGMiniAdapter"]) {
-                    console.error("请先添加小米小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?nav=zh-ts-5-0-0");
+                    console.error("请先添加小米小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-2-0");
                 }
                 else {
                     Laya["KGMiniAdapter"].enable();
@@ -7163,7 +7172,7 @@ window.Laya= (function (exports) {
             if (u.indexOf('OPPO') > -1 && u.indexOf('MiniGame') > -1) {
                 window.qgMiniGame(Laya, Laya);
                 if (!Laya["QGMiniAdapter"]) {
-                    console.error("请先添加OPPO小游戏适配库");
+                    console.error("请先添加OPPO小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-3-0");
                 }
                 else {
                     Laya["QGMiniAdapter"].enable();
@@ -7172,7 +7181,7 @@ window.Laya= (function (exports) {
             if (u.indexOf('VVGame') > -1) {
                 window.vvMiniGame(Laya, Laya);
                 if (!Laya["VVMiniAdapter"]) {
-                    console.error("请先添加VIVO小游戏适配库");
+                    console.error("请先添加VIVO小游戏适配库,详细教程：https://ldc2.layabox.com/doc/?language=zh&nav=zh-ts-5-4-0");
                 }
                 else {
                     Laya["VVMiniAdapter"].enable();
@@ -7229,8 +7238,13 @@ window.Laya= (function (exports) {
             }
             else if ("bl" in Browser.window && u.indexOf('MiniGame') > -1) {
                 Browser.onBLMiniGame = true;
-                Browser.onMiniGame = true;
+                Browser.onMiniGame = false;
             }
+            else if ("tt" in Browser.window && u.indexOf('MiniGame') > -1) {
+                Browser.onTTMiniGame = true;
+                Browser.onMiniGame = false;
+            }
+            Browser.onHWMiniGame = "hbs" in Browser.window;
             Browser.onVVMiniGame = u.indexOf('VVGame') > -1;
             Browser.onKGMiniGame = u.indexOf('QuickGame') > -1;
             if (u.indexOf('AlipayMiniGame') > -1) {
@@ -11882,9 +11896,9 @@ window.Laya= (function (exports) {
                 height = tex.height * hRate;
                 if (width <= 0 || height <= 0)
                     return null;
-                x = x - sprite.pivotX + tex.offsetX * wRate;
-                y = y - sprite.pivotY + tex.offsetY * hRate;
-                context.drawTexture(tex, x, y, width, height);
+                var px = x - sprite.pivotX + tex.offsetX * wRate;
+                var py = y - sprite.pivotY + tex.offsetY * hRate;
+                context.drawTexture(tex, px, py, width, height);
             }
             var next = this._next;
             if (next != RenderSprite.NORENDER)
@@ -15173,7 +15187,7 @@ window.Laya= (function (exports) {
             Input._createInputElement();
             if (ILaya.Browser.onMobile) {
                 var isTrue = false;
-                if (ILaya.Browser.onMiniGame || ILaya.Browser.onBDMiniGame || ILaya.Browser.onQGMiniGame || ILaya.Browser.onKGMiniGame || ILaya.Browser.onVVMiniGame || ILaya.Browser.onAlipayMiniGame || ILaya.Browser.onQQMiniGame || ILaya.Browser.onBLMiniGame) {
+                if (ILaya.Browser.onMiniGame || ILaya.Browser.onBDMiniGame || ILaya.Browser.onQGMiniGame || ILaya.Browser.onKGMiniGame || ILaya.Browser.onVVMiniGame || ILaya.Browser.onAlipayMiniGame || ILaya.Browser.onQQMiniGame || ILaya.Browser.onBLMiniGame || ILaya.Browser.onTTMiniGame || ILaya.Browser.onHWMiniGame) {
                     isTrue = true;
                 }
                 ILaya.Render.canvas.addEventListener(Input.IOS_IFRAME ? (isTrue ? "touchend" : "click") : "touchend", Input._popupInputMethod);
@@ -15336,7 +15350,7 @@ window.Laya= (function (exports) {
             this.event(Event.FOCUS);
             if (ILaya.Browser.onPC)
                 input.focus();
-            if (!ILaya.Browser.onMiniGame && !ILaya.Browser.onBDMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame) {
+            if (!ILaya.Browser.onMiniGame && !ILaya.Browser.onBDMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame) {
                 var temp = this._text;
                 this._text = null;
             }
@@ -17425,7 +17439,7 @@ window.Laya= (function (exports) {
             }
             channel.url = this.url;
             channel.loops = loops;
-            channel["audioBuffer"] = this.audioBuffer;
+            channel.audioBuffer = this.audioBuffer;
             channel.startTime = startTime;
             channel.play();
             ILaya.SoundManager.addChannel(channel);
@@ -17656,7 +17670,7 @@ window.Laya= (function (exports) {
                     return null;
             }
             var tSound;
-            if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame) {
+            if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame) {
                 tSound = ILaya.loader.getRes(url);
             }
             if (!soundClass)
@@ -17664,7 +17678,7 @@ window.Laya= (function (exports) {
             if (!tSound) {
                 tSound = new soundClass();
                 tSound.load(url);
-                if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame) {
+                if (!ILaya.Browser.onBDMiniGame && !ILaya.Browser.onMiniGame && !ILaya.Browser.onKGMiniGame && !ILaya.Browser.onQGMiniGame && !ILaya.Browser.onVVMiniGame && !ILaya.Browser.onAlipayMiniGame && !ILaya.Browser.onQQMiniGame && !ILaya.Browser.onBLMiniGame && !ILaya.Browser.onTTMiniGame && !ILaya.Browser.onHWMiniGame) {
                     ILaya.Loader.cacheRes(url, tSound);
                 }
             }
@@ -18340,7 +18354,7 @@ window.Laya= (function (exports) {
         send(url, data = null, method = "get", responseType = "text", headers = null) {
             this._responseType = responseType;
             this._data = null;
-            if (Browser.onVVMiniGame || Browser.onQGMiniGame || Browser.onQQMiniGame || Browser.onAlipayMiniGame || Browser.onBLMiniGame) {
+            if (Browser.onVVMiniGame || Browser.onQGMiniGame || Browser.onQQMiniGame || Browser.onAlipayMiniGame || Browser.onBLMiniGame || Browser.onHWMiniGame) {
                 url = HttpRequest._urlEncode(url);
             }
             this._url = url;
@@ -21188,7 +21202,7 @@ window.Laya= (function (exports) {
             this._view = [];
         }
         show(x = 0, y = 0) {
-            if (!Browser.onMiniGame && !ILaya.Render.isConchApp && !Browser.onBDMiniGame && !Browser.onKGMiniGame && !Browser.onQGMiniGame && !Browser.onQQMiniGame && !Browser.onAlipayMiniGame && !Browser.onBLMiniGame)
+            if (!Browser.onMiniGame && !ILaya.Render.isConchApp && !Browser.onBDMiniGame && !Browser.onKGMiniGame && !Browser.onQGMiniGame && !Browser.onQQMiniGame && !Browser.onAlipayMiniGame && !Browser.onBLMiniGame && !Browser.onTTMiniGame && !Browser.onHWMiniGame)
                 this._useCanvas = true;
             this._show = true;
             Stat._fpsData.length = 60;
@@ -22381,7 +22395,7 @@ window.Laya= (function (exports) {
     Laya.lateTimer = null;
     Laya.timer = null;
     Laya.loader = null;
-    Laya.version = "2.6.0";
+    Laya.version = "2.7.0beta";
     Laya._isinit = false;
     Laya.isWXOpenDataContext = false;
     Laya.isWXPosMsg = false;

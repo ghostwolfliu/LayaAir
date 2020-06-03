@@ -1,5 +1,6 @@
 package laya.d3.physicsCannon.shape {
 	import laya.d3.physicsCannon.shape.CannonColliderShape;
+	import laya.d3.math.Vector3;
 
 	/**
 	 * <code>BoxColliderShape</code> 类用于创建盒子形状碰撞器。
@@ -29,6 +30,12 @@ package laya.d3.physicsCannon.shape {
 		 */
 
 		public function CannonBoxColliderShape(sizeX:Number = undefined,sizeY:Number = undefined,sizeZ:Number = undefined){}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function _setScale(scale:Vector3):void{}
 
 		/**
 		 * @inheritDoc 
