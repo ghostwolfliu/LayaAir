@@ -1,81 +1,84 @@
 (function (exports, Laya) {
     'use strict';
 
-    class ParticleSetting {
-        constructor() {
-            this.textureName = null;
-            this.textureCount = 1;
-            this.maxPartices = 100;
-            this.duration = 1;
-            this.ageAddScale = 0;
-            this.emitterVelocitySensitivity = 1;
-            this.minStartSize = 100;
-            this.maxStartSize = 100;
-            this.minEndSize = 100;
-            this.maxEndSize = 100;
-            this.minHorizontalVelocity = 0;
-            this.maxHorizontalVelocity = 0;
-            this.minVerticalVelocity = 0;
-            this.maxVerticalVelocity = 0;
-            this.endVelocity = 1;
-            this.gravity = new Float32Array([0, 0, 0]);
-            this.minRotateSpeed = 0;
-            this.maxRotateSpeed = 0;
-            this.minStartRadius = 0;
-            this.maxStartRadius = 0;
-            this.minEndRadius = 0;
-            this.maxEndRadius = 0;
-            this.minHorizontalStartRadian = 0;
-            this.maxHorizontalStartRadian = 0;
-            this.minVerticalStartRadian = 0;
-            this.maxVerticalStartRadian = 0;
-            this.useEndRadian = true;
-            this.minHorizontalEndRadian = 0;
-            this.maxHorizontalEndRadian = 0;
-            this.minVerticalEndRadian = 0;
-            this.maxVerticalEndRadian = 0;
-            this.minStartColor = new Float32Array([1, 1, 1, 1]);
-            this.maxStartColor = new Float32Array([1, 1, 1, 1]);
-            this.minEndColor = new Float32Array([1, 1, 1, 1]);
-            this.maxEndColor = new Float32Array([1, 1, 1, 1]);
-            this.colorComponentInter = false;
-            this.disableColor = false;
-            this.blendState = 0;
-            this.emitterType = "null";
-            this.emissionRate = 0;
-            this.pointEmitterPosition = new Float32Array([0, 0, 0]);
-            this.pointEmitterPositionVariance = new Float32Array([0, 0, 0]);
-            this.pointEmitterVelocity = new Float32Array([0, 0, 0]);
-            this.pointEmitterVelocityAddVariance = new Float32Array([0, 0, 0]);
-            this.boxEmitterCenterPosition = new Float32Array([0, 0, 0]);
-            this.boxEmitterSize = new Float32Array([0, 0, 0]);
-            this.boxEmitterVelocity = new Float32Array([0, 0, 0]);
-            this.boxEmitterVelocityAddVariance = new Float32Array([0, 0, 0]);
-            this.sphereEmitterCenterPosition = new Float32Array([0, 0, 0]);
-            this.sphereEmitterRadius = 1;
-            this.sphereEmitterVelocity = 0;
-            this.sphereEmitterVelocityAddVariance = 0;
-            this.ringEmitterCenterPosition = new Float32Array([0, 0, 0]);
-            this.ringEmitterRadius = 30;
-            this.ringEmitterVelocity = 0;
-            this.ringEmitterVelocityAddVariance = 0;
-            this.ringEmitterUp = 2;
-            this.positionVariance = new Float32Array([0, 0, 0]);
-        }
-        static checkSetting(setting) {
-            var key;
-            for (key in ParticleSetting._defaultSetting) {
-                if (!(key in setting)) {
-                    setting[key] = ParticleSetting._defaultSetting[key];
-                }
+    let ParticleSetting = (() => {
+        class ParticleSetting {
+            constructor() {
+                this.textureName = null;
+                this.textureCount = 1;
+                this.maxPartices = 100;
+                this.duration = 1;
+                this.ageAddScale = 0;
+                this.emitterVelocitySensitivity = 1;
+                this.minStartSize = 100;
+                this.maxStartSize = 100;
+                this.minEndSize = 100;
+                this.maxEndSize = 100;
+                this.minHorizontalVelocity = 0;
+                this.maxHorizontalVelocity = 0;
+                this.minVerticalVelocity = 0;
+                this.maxVerticalVelocity = 0;
+                this.endVelocity = 1;
+                this.gravity = new Float32Array([0, 0, 0]);
+                this.minRotateSpeed = 0;
+                this.maxRotateSpeed = 0;
+                this.minStartRadius = 0;
+                this.maxStartRadius = 0;
+                this.minEndRadius = 0;
+                this.maxEndRadius = 0;
+                this.minHorizontalStartRadian = 0;
+                this.maxHorizontalStartRadian = 0;
+                this.minVerticalStartRadian = 0;
+                this.maxVerticalStartRadian = 0;
+                this.useEndRadian = true;
+                this.minHorizontalEndRadian = 0;
+                this.maxHorizontalEndRadian = 0;
+                this.minVerticalEndRadian = 0;
+                this.maxVerticalEndRadian = 0;
+                this.minStartColor = new Float32Array([1, 1, 1, 1]);
+                this.maxStartColor = new Float32Array([1, 1, 1, 1]);
+                this.minEndColor = new Float32Array([1, 1, 1, 1]);
+                this.maxEndColor = new Float32Array([1, 1, 1, 1]);
+                this.colorComponentInter = false;
+                this.disableColor = false;
+                this.blendState = 0;
+                this.emitterType = "null";
+                this.emissionRate = 0;
+                this.pointEmitterPosition = new Float32Array([0, 0, 0]);
+                this.pointEmitterPositionVariance = new Float32Array([0, 0, 0]);
+                this.pointEmitterVelocity = new Float32Array([0, 0, 0]);
+                this.pointEmitterVelocityAddVariance = new Float32Array([0, 0, 0]);
+                this.boxEmitterCenterPosition = new Float32Array([0, 0, 0]);
+                this.boxEmitterSize = new Float32Array([0, 0, 0]);
+                this.boxEmitterVelocity = new Float32Array([0, 0, 0]);
+                this.boxEmitterVelocityAddVariance = new Float32Array([0, 0, 0]);
+                this.sphereEmitterCenterPosition = new Float32Array([0, 0, 0]);
+                this.sphereEmitterRadius = 1;
+                this.sphereEmitterVelocity = 0;
+                this.sphereEmitterVelocityAddVariance = 0;
+                this.ringEmitterCenterPosition = new Float32Array([0, 0, 0]);
+                this.ringEmitterRadius = 30;
+                this.ringEmitterVelocity = 0;
+                this.ringEmitterVelocityAddVariance = 0;
+                this.ringEmitterUp = 2;
+                this.positionVariance = new Float32Array([0, 0, 0]);
             }
-            setting.endVelocity = +setting.endVelocity;
-            setting.gravity[0] = +setting.gravity[0];
-            setting.gravity[1] = +setting.gravity[1];
-            setting.gravity[2] = +setting.gravity[2];
+            static checkSetting(setting) {
+                var key;
+                for (key in ParticleSetting._defaultSetting) {
+                    if (!(key in setting)) {
+                        setting[key] = ParticleSetting._defaultSetting[key];
+                    }
+                }
+                setting.endVelocity = +setting.endVelocity;
+                setting.gravity[0] = +setting.gravity[0];
+                setting.gravity[1] = +setting.gravity[1];
+                setting.gravity[2] = +setting.gravity[2];
+            }
         }
-    }
-    ParticleSetting._defaultSetting = new ParticleSetting();
+        ParticleSetting._defaultSetting = new ParticleSetting();
+        return ParticleSetting;
+    })();
 
     class ParticleTemplateBase {
         constructor() {
@@ -84,68 +87,71 @@
         }
     }
 
-    class ParticleData {
-        constructor() {
-        }
-        static Create(settings, position, velocity, time) {
-            var particleData = new ParticleData();
-            particleData.position = position;
-            Laya.MathUtil.scaleVector3(velocity, settings.emitterVelocitySensitivity, ParticleData._tempVelocity);
-            var horizontalVelocity = Laya.MathUtil.lerp(settings.minHorizontalVelocity, settings.maxHorizontalVelocity, Math.random());
-            var horizontalAngle = Math.random() * Math.PI * 2;
-            ParticleData._tempVelocity[0] += horizontalVelocity * Math.cos(horizontalAngle);
-            ParticleData._tempVelocity[2] += horizontalVelocity * Math.sin(horizontalAngle);
-            ParticleData._tempVelocity[1] += Laya.MathUtil.lerp(settings.minVerticalVelocity, settings.maxVerticalVelocity, Math.random());
-            particleData.velocity = ParticleData._tempVelocity;
-            particleData.startColor = ParticleData._tempStartColor;
-            particleData.endColor = ParticleData._tempEndColor;
-            var i;
-            if (settings.disableColor) {
-                for (i = 0; i < 3; i++) {
-                    particleData.startColor[i] = 1;
-                    particleData.endColor[i] = 1;
-                }
-                particleData.startColor[i] = Laya.MathUtil.lerp(settings.minStartColor[i], settings.maxStartColor[i], Math.random());
-                particleData.endColor[i] = Laya.MathUtil.lerp(settings.minEndColor[i], settings.maxEndColor[i], Math.random());
+    let ParticleData = (() => {
+        class ParticleData {
+            constructor() {
             }
-            else {
-                if (settings.colorComponentInter) {
-                    for (i = 0; i < 4; i++) {
-                        particleData.startColor[i] = Laya.MathUtil.lerp(settings.minStartColor[i], settings.maxStartColor[i], Math.random());
-                        particleData.endColor[i] = Laya.MathUtil.lerp(settings.minEndColor[i], settings.maxEndColor[i], Math.random());
+            static Create(settings, position, velocity, time) {
+                var particleData = new ParticleData();
+                particleData.position = position;
+                Laya.MathUtil.scaleVector3(velocity, settings.emitterVelocitySensitivity, ParticleData._tempVelocity);
+                var horizontalVelocity = Laya.MathUtil.lerp(settings.minHorizontalVelocity, settings.maxHorizontalVelocity, Math.random());
+                var horizontalAngle = Math.random() * Math.PI * 2;
+                ParticleData._tempVelocity[0] += horizontalVelocity * Math.cos(horizontalAngle);
+                ParticleData._tempVelocity[2] += horizontalVelocity * Math.sin(horizontalAngle);
+                ParticleData._tempVelocity[1] += Laya.MathUtil.lerp(settings.minVerticalVelocity, settings.maxVerticalVelocity, Math.random());
+                particleData.velocity = ParticleData._tempVelocity;
+                particleData.startColor = ParticleData._tempStartColor;
+                particleData.endColor = ParticleData._tempEndColor;
+                var i;
+                if (settings.disableColor) {
+                    for (i = 0; i < 3; i++) {
+                        particleData.startColor[i] = 1;
+                        particleData.endColor[i] = 1;
                     }
+                    particleData.startColor[i] = Laya.MathUtil.lerp(settings.minStartColor[i], settings.maxStartColor[i], Math.random());
+                    particleData.endColor[i] = Laya.MathUtil.lerp(settings.minEndColor[i], settings.maxEndColor[i], Math.random());
                 }
                 else {
-                    Laya.MathUtil.lerpVector4(settings.minStartColor, settings.maxStartColor, Math.random(), particleData.startColor);
-                    Laya.MathUtil.lerpVector4(settings.minEndColor, settings.maxEndColor, Math.random(), particleData.endColor);
+                    if (settings.colorComponentInter) {
+                        for (i = 0; i < 4; i++) {
+                            particleData.startColor[i] = Laya.MathUtil.lerp(settings.minStartColor[i], settings.maxStartColor[i], Math.random());
+                            particleData.endColor[i] = Laya.MathUtil.lerp(settings.minEndColor[i], settings.maxEndColor[i], Math.random());
+                        }
+                    }
+                    else {
+                        Laya.MathUtil.lerpVector4(settings.minStartColor, settings.maxStartColor, Math.random(), particleData.startColor);
+                        Laya.MathUtil.lerpVector4(settings.minEndColor, settings.maxEndColor, Math.random(), particleData.endColor);
+                    }
                 }
+                particleData.sizeRotation = ParticleData._tempSizeRotation;
+                var sizeRandom = Math.random();
+                particleData.sizeRotation[0] = Laya.MathUtil.lerp(settings.minStartSize, settings.maxStartSize, sizeRandom);
+                particleData.sizeRotation[1] = Laya.MathUtil.lerp(settings.minEndSize, settings.maxEndSize, sizeRandom);
+                particleData.sizeRotation[2] = Laya.MathUtil.lerp(settings.minRotateSpeed, settings.maxRotateSpeed, Math.random());
+                particleData.radius = ParticleData._tempRadius;
+                var radiusRandom = Math.random();
+                particleData.radius[0] = Laya.MathUtil.lerp(settings.minStartRadius, settings.maxStartRadius, radiusRandom);
+                particleData.radius[1] = Laya.MathUtil.lerp(settings.minEndRadius, settings.maxEndRadius, radiusRandom);
+                particleData.radian = ParticleData._tempRadian;
+                particleData.radian[0] = Laya.MathUtil.lerp(settings.minHorizontalStartRadian, settings.maxHorizontalStartRadian, Math.random());
+                particleData.radian[1] = Laya.MathUtil.lerp(settings.minVerticalStartRadian, settings.maxVerticalStartRadian, Math.random());
+                var useEndRadian = settings.useEndRadian;
+                particleData.radian[2] = useEndRadian ? Laya.MathUtil.lerp(settings.minHorizontalEndRadian, settings.maxHorizontalEndRadian, Math.random()) : particleData.radian[0];
+                particleData.radian[3] = useEndRadian ? Laya.MathUtil.lerp(settings.minVerticalEndRadian, settings.maxVerticalEndRadian, Math.random()) : particleData.radian[1];
+                particleData.durationAddScale = settings.ageAddScale * Math.random();
+                particleData.time = time;
+                return particleData;
             }
-            particleData.sizeRotation = ParticleData._tempSizeRotation;
-            var sizeRandom = Math.random();
-            particleData.sizeRotation[0] = Laya.MathUtil.lerp(settings.minStartSize, settings.maxStartSize, sizeRandom);
-            particleData.sizeRotation[1] = Laya.MathUtil.lerp(settings.minEndSize, settings.maxEndSize, sizeRandom);
-            particleData.sizeRotation[2] = Laya.MathUtil.lerp(settings.minRotateSpeed, settings.maxRotateSpeed, Math.random());
-            particleData.radius = ParticleData._tempRadius;
-            var radiusRandom = Math.random();
-            particleData.radius[0] = Laya.MathUtil.lerp(settings.minStartRadius, settings.maxStartRadius, radiusRandom);
-            particleData.radius[1] = Laya.MathUtil.lerp(settings.minEndRadius, settings.maxEndRadius, radiusRandom);
-            particleData.radian = ParticleData._tempRadian;
-            particleData.radian[0] = Laya.MathUtil.lerp(settings.minHorizontalStartRadian, settings.maxHorizontalStartRadian, Math.random());
-            particleData.radian[1] = Laya.MathUtil.lerp(settings.minVerticalStartRadian, settings.maxVerticalStartRadian, Math.random());
-            var useEndRadian = settings.useEndRadian;
-            particleData.radian[2] = useEndRadian ? Laya.MathUtil.lerp(settings.minHorizontalEndRadian, settings.maxHorizontalEndRadian, Math.random()) : particleData.radian[0];
-            particleData.radian[3] = useEndRadian ? Laya.MathUtil.lerp(settings.minVerticalEndRadian, settings.maxVerticalEndRadian, Math.random()) : particleData.radian[1];
-            particleData.durationAddScale = settings.ageAddScale * Math.random();
-            particleData.time = time;
-            return particleData;
         }
-    }
-    ParticleData._tempVelocity = new Float32Array(3);
-    ParticleData._tempStartColor = new Float32Array(4);
-    ParticleData._tempEndColor = new Float32Array(4);
-    ParticleData._tempSizeRotation = new Float32Array(3);
-    ParticleData._tempRadius = new Float32Array(2);
-    ParticleData._tempRadian = new Float32Array(4);
+        ParticleData._tempVelocity = new Float32Array(3);
+        ParticleData._tempStartColor = new Float32Array(4);
+        ParticleData._tempEndColor = new Float32Array(4);
+        ParticleData._tempSizeRotation = new Float32Array(3);
+        ParticleData._tempRadius = new Float32Array(2);
+        ParticleData._tempRadian = new Float32Array(4);
+        return ParticleData;
+    })();
 
     class ParticleTemplateWebGL extends ParticleTemplateBase {
         constructor(parSetting) {
@@ -269,152 +275,161 @@
 
     var parps = "#ifdef GL_FRAGMENT_PRECISION_HIGH\r\nprecision highp float;\r\n#else\r\nprecision mediump float;\r\n#endif\r\n\r\nvarying vec4 v_Color;\r\nvarying vec2 v_TextureCoordinate;\r\nuniform sampler2D u_texture;\r\n\r\nvoid main()\r\n{\t\r\n\tgl_FragColor=texture2D(u_texture,v_TextureCoordinate)*v_Color;\r\n\tgl_FragColor.xyz *= v_Color.w;\r\n}";
 
-    class ParticleShader extends Laya.Shader {
-        constructor() {
-            super(parvs, parps, "ParticleShader", null, ['a_CornerTextureCoordinate', 0, 'a_Position', 1, 'a_Velocity', 2, 'a_StartColor', 3,
-                'a_EndColor', 4, 'a_SizeRotation', 5, 'a_Radius', 6, 'a_Radian', 7, 'a_AgeAddScale', 8, 'a_Time', 9]);
+    let ParticleShader = (() => {
+        class ParticleShader extends Laya.Shader {
+            constructor() {
+                super(parvs, parps, "ParticleShader", null, ['a_CornerTextureCoordinate', 0, 'a_Position', 1, 'a_Velocity', 2, 'a_StartColor', 3,
+                    'a_EndColor', 4, 'a_SizeRotation', 5, 'a_Radius', 6, 'a_Radian', 7, 'a_AgeAddScale', 8, 'a_Time', 9]);
+            }
         }
-    }
-    ParticleShader.vs = parvs;
-    ParticleShader.ps = parps;
+        ParticleShader.vs = parvs;
+        ParticleShader.ps = parps;
+        return ParticleShader;
+    })();
 
-    class ParticleShaderValue extends Laya.Value2D {
-        constructor() {
-            super(0, 0);
-            if (!ParticleShaderValue.pShader) {
-                ParticleShaderValue.pShader = new ParticleShader();
+    let ParticleShaderValue = (() => {
+        class ParticleShaderValue extends Laya.Value2D {
+            constructor() {
+                super(0, 0);
+                if (!ParticleShaderValue.pShader) {
+                    ParticleShaderValue.pShader = new ParticleShader();
+                }
+            }
+            upload() {
+                var size = this.size;
+                size[0] = Laya.RenderState2D.width;
+                size[1] = Laya.RenderState2D.height;
+                this.alpha = this.ALPHA * Laya.RenderState2D.worldAlpha;
+                ParticleShaderValue.pShader.upload(this);
             }
         }
-        upload() {
-            var size = this.size;
-            size[0] = Laya.RenderState2D.width;
-            size[1] = Laya.RenderState2D.height;
-            this.alpha = this.ALPHA * Laya.RenderState2D.worldAlpha;
-            ParticleShaderValue.pShader.upload(this);
-        }
-    }
-    ParticleShaderValue.pShader = null;
+        ParticleShaderValue.pShader = null;
+        return ParticleShaderValue;
+    })();
 
-    class ParticleTemplate2D extends ParticleTemplateWebGL {
-        constructor(parSetting) {
-            super(parSetting);
-            this.x = 0;
-            this.y = 0;
-            this.sv = new ParticleShaderValue();
-            this._key = {};
-            var _this = this;
-            Laya.ILaya.loader.load(this.settings.textureName, Laya.Handler.create(null, function (texture) {
-                _this.texture = texture;
-            }), null, Laya.Loader.IMAGE);
-            this.sv.u_Duration = this.settings.duration;
-            this.sv.u_Gravity = this.settings.gravity;
-            this.sv.u_EndVelocity = this.settings.endVelocity;
-            this._blendFn = Laya.BlendMode.fns[parSetting.blendState];
-            this._mesh = Laya.MeshParticle2D.getAMesh(this.settings.maxPartices);
-            this.initialize();
-        }
-        getRenderType() { return -111; }
-        releaseRender() { }
-        addParticleArray(position, velocity) {
-            position[0] += this.x;
-            position[1] += this.y;
-            super.addParticleArray(position, velocity);
-        }
-        addNewParticlesToVertexBuffer() {
-            var _vertexBuffer2D = this._mesh._vb;
-            _vertexBuffer2D.clear();
-            _vertexBuffer2D.append(this._vertices);
-            var start;
-            if (this._firstNewElement < this._firstFreeElement) {
-                start = this._firstNewElement * 4 * this._floatCountPerVertex * 4;
-                _vertexBuffer2D.subUpload(start, start, start + (this._firstFreeElement - this._firstNewElement) * 4 * this._floatCountPerVertex * 4);
+    let ParticleTemplate2D = (() => {
+        class ParticleTemplate2D extends ParticleTemplateWebGL {
+            constructor(parSetting) {
+                super(parSetting);
+                this.x = 0;
+                this.y = 0;
+                this.sv = new ParticleShaderValue();
+                this._key = {};
+                var _this = this;
+                Laya.ILaya.loader.load(this.settings.textureName, Laya.Handler.create(null, function (texture) {
+                    _this.texture = texture;
+                }), null, Laya.Loader.IMAGE);
+                this.sv.u_Duration = this.settings.duration;
+                this.sv.u_Gravity = this.settings.gravity;
+                this.sv.u_EndVelocity = this.settings.endVelocity;
+                this._blendFn = Laya.BlendMode.fns[parSetting.blendState];
+                this._mesh = Laya.MeshParticle2D.getAMesh(this.settings.maxPartices);
+                this.initialize();
             }
-            else {
-                start = this._firstNewElement * 4 * this._floatCountPerVertex * 4;
-                _vertexBuffer2D.subUpload(start, start, start + (this.settings.maxPartices - this._firstNewElement) * 4 * this._floatCountPerVertex * 4);
-                if (this._firstFreeElement > 0) {
-                    _vertexBuffer2D.setNeedUpload();
-                    _vertexBuffer2D.subUpload(0, 0, this._firstFreeElement * 4 * this._floatCountPerVertex * 4);
+            getRenderType() { return -111; }
+            releaseRender() { }
+            addParticleArray(position, velocity) {
+                position[0] += this.x;
+                position[1] += this.y;
+                super.addParticleArray(position, velocity);
+            }
+            addNewParticlesToVertexBuffer() {
+                var _vertexBuffer2D = this._mesh._vb;
+                _vertexBuffer2D.clear();
+                _vertexBuffer2D.append(this._vertices);
+                var start;
+                if (this._firstNewElement < this._firstFreeElement) {
+                    start = this._firstNewElement * 4 * this._floatCountPerVertex * 4;
+                    _vertexBuffer2D.subUpload(start, start, start + (this._firstFreeElement - this._firstNewElement) * 4 * this._floatCountPerVertex * 4);
+                }
+                else {
+                    start = this._firstNewElement * 4 * this._floatCountPerVertex * 4;
+                    _vertexBuffer2D.subUpload(start, start, start + (this.settings.maxPartices - this._firstNewElement) * 4 * this._floatCountPerVertex * 4);
+                    if (this._firstFreeElement > 0) {
+                        _vertexBuffer2D.setNeedUpload();
+                        _vertexBuffer2D.subUpload(0, 0, this._firstFreeElement * 4 * this._floatCountPerVertex * 4);
+                    }
+                }
+                this._firstNewElement = this._firstFreeElement;
+            }
+            renderSubmit() {
+                if (this.texture && this.texture.getIsReady()) {
+                    this.update(Laya.ILaya.timer._delta);
+                    this.sv.u_CurrentTime = this._currentTime;
+                    if (this._firstNewElement != this._firstFreeElement) {
+                        this.addNewParticlesToVertexBuffer();
+                    }
+                    this.blend();
+                    if (this._firstActiveElement != this._firstFreeElement) {
+                        var gl = Laya.WebGLContext.mainContext;
+                        this._mesh.useMesh(gl);
+                        this.sv.u_texture = this.texture._getSource();
+                        this.sv.upload();
+                        if (this._firstActiveElement < this._firstFreeElement) {
+                            gl.drawElements(gl.TRIANGLES, (this._firstFreeElement - this._firstActiveElement) * 6, gl.UNSIGNED_SHORT, this._firstActiveElement * 6 * 2);
+                        }
+                        else {
+                            Laya.WebGLContext.mainContext.drawElements(gl.TRIANGLES, (this.settings.maxPartices - this._firstActiveElement) * 6, gl.UNSIGNED_SHORT, this._firstActiveElement * 6 * 2);
+                            if (this._firstFreeElement > 0)
+                                gl.drawElements(gl.TRIANGLES, this._firstFreeElement * 6, gl.UNSIGNED_SHORT, 0);
+                        }
+                        Laya.Stat.renderBatches++;
+                    }
+                    this._drawCounter++;
+                }
+                return 1;
+            }
+            updateParticleForNative() {
+                if (this.texture && this.texture.getIsReady()) {
+                    this.update(Laya.ILaya.timer._delta);
+                    this.sv.u_CurrentTime = this._currentTime;
+                    if (this._firstNewElement != this._firstFreeElement) {
+                        this._firstNewElement = this._firstFreeElement;
+                    }
                 }
             }
-            this._firstNewElement = this._firstFreeElement;
-        }
-        renderSubmit() {
-            if (this.texture && this.texture.getIsReady()) {
-                this.update(Laya.ILaya.timer._delta);
-                this.sv.u_CurrentTime = this._currentTime;
-                if (this._firstNewElement != this._firstFreeElement) {
-                    this.addNewParticlesToVertexBuffer();
-                }
-                this.blend();
-                if (this._firstActiveElement != this._firstFreeElement) {
-                    var gl = Laya.WebGLContext.mainContext;
-                    this._mesh.useMesh(gl);
-                    this.sv.u_texture = this.texture._getSource();
-                    this.sv.upload();
-                    if (this._firstActiveElement < this._firstFreeElement) {
-                        gl.drawElements(gl.TRIANGLES, (this._firstFreeElement - this._firstActiveElement) * 6, gl.UNSIGNED_SHORT, this._firstActiveElement * 6 * 2);
-                    }
-                    else {
-                        Laya.WebGLContext.mainContext.drawElements(gl.TRIANGLES, (this.settings.maxPartices - this._firstActiveElement) * 6, gl.UNSIGNED_SHORT, this._firstActiveElement * 6 * 2);
-                        if (this._firstFreeElement > 0)
-                            gl.drawElements(gl.TRIANGLES, this._firstFreeElement * 6, gl.UNSIGNED_SHORT, 0);
-                    }
-                    Laya.Stat.renderBatches++;
-                }
+            getMesh() {
+                return this._mesh;
+            }
+            getConchMesh() {
+                return this._conchMesh;
+            }
+            getFirstNewElement() {
+                return this._firstNewElement;
+            }
+            getFirstFreeElement() {
+                return this._firstFreeElement;
+            }
+            getFirstActiveElement() {
+                return this._firstActiveElement;
+            }
+            getFirstRetiredElement() {
+                return this._firstRetiredElement;
+            }
+            setFirstFreeElement(_value) {
+                this._firstFreeElement = _value;
+            }
+            setFirstNewElement(_value) {
+                this._firstNewElement = _value;
+            }
+            addDrawCounter() {
                 this._drawCounter++;
             }
-            return 1;
-        }
-        updateParticleForNative() {
-            if (this.texture && this.texture.getIsReady()) {
-                this.update(Laya.ILaya.timer._delta);
-                this.sv.u_CurrentTime = this._currentTime;
-                if (this._firstNewElement != this._firstFreeElement) {
-                    this._firstNewElement = this._firstFreeElement;
+            blend() {
+                if (Laya.BlendMode.activeBlendFunction !== this._blendFn) {
+                    var gl = Laya.WebGLContext.mainContext;
+                    gl.enable(gl.BLEND);
+                    this._blendFn(gl);
+                    Laya.BlendMode.activeBlendFunction = this._blendFn;
                 }
             }
-        }
-        getMesh() {
-            return this._mesh;
-        }
-        getConchMesh() {
-            return this._conchMesh;
-        }
-        getFirstNewElement() {
-            return this._firstNewElement;
-        }
-        getFirstFreeElement() {
-            return this._firstFreeElement;
-        }
-        getFirstActiveElement() {
-            return this._firstActiveElement;
-        }
-        getFirstRetiredElement() {
-            return this._firstRetiredElement;
-        }
-        setFirstFreeElement(_value) {
-            this._firstFreeElement = _value;
-        }
-        setFirstNewElement(_value) {
-            this._firstNewElement = _value;
-        }
-        addDrawCounter() {
-            this._drawCounter++;
-        }
-        blend() {
-            if (Laya.BlendMode.activeBlendFunction !== this._blendFn) {
-                var gl = Laya.WebGLContext.mainContext;
-                gl.enable(gl.BLEND);
-                this._blendFn(gl);
-                Laya.BlendMode.activeBlendFunction = this._blendFn;
+            dispose() {
+                this._mesh.releaseMesh();
             }
         }
-        dispose() {
-            this._mesh.releaseMesh();
-        }
-    }
-    ParticleTemplate2D.activeBlendType = -1;
+        ParticleTemplate2D.activeBlendType = -1;
+        return ParticleTemplate2D;
+    })();
 
     class EmitterBase {
         constructor() {

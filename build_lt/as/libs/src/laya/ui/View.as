@@ -132,7 +132,7 @@ package laya.ui {
 		protected function loadUI(path:String):void{}
 
 		/**
-		 * @implements laya.ui.UIComponent#dataSource
+		 * @implements #dataSource
 		 */
 		public function get dataSource():*{return null;}
 		public function set dataSource(value:*):void{}

@@ -60,7 +60,8 @@
 	 * <code>Config3D</code> 类用于创建3D初始化配置。
 	 */
 	declare class Config3D implements laya.d3.core.IClone  {
-		static useCannonPhysics(IsUseCannonPhysics:boolean):void;
+		static get useCannonPhysics():boolean;
+		static set useCannonPhysics(value:boolean);
 
 		/**
 		 * 是否开启抗锯齿。
@@ -2126,22 +2127,22 @@ declare module laya.d3.component {
 		constructor(name:string);
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_getReferenceCount():number;
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_addReference(count?:number):void;
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_removeReference(count?:number):void;
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_clearReference():void;
 
@@ -2262,22 +2263,22 @@ declare module laya.d3.component {
 		constructor();
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_getReferenceCount():number;
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_addReference(count?:number):void;
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_removeReference(count?:number):void;
 
 		/**
-		 * @implements IReferenceCounter
+		 * @implements 
 		 */
 		_clearReference():void;
 
@@ -38770,7 +38771,7 @@ declare module laya.ui {
 		protected measureHeight():number;
 
 		/**
-		 * @implements <p>数据赋值，通过对UI赋值来控制UI显示逻辑。</p><p>简单赋值会更改组件的默认属性，使用大括号可以指定组件的任意属性进行赋值。</p>
+		 * @implements 数据赋值，通过对UI赋值来控制UI显示逻辑。</p><p>简单赋值会更改组件的默认属性，使用大括号可以指定组件的任意属性进行赋值。</p>
 		 * @example //默认属性赋值dataSource = {label1: "改变了label", checkbox1: true};//(更改了label1的text属性值，更改checkbox1的selected属性)。//任意属性赋值dataSource = {label2: {text:"改变了label",size:14}, checkbox2: {selected:true,x:10}};
 		 */
 		get dataSource():any;
@@ -39532,7 +39533,7 @@ declare module laya.ui {
 		protected loadUI(path:string):void;
 
 		/**
-		 * @implements laya.ui.UIComponent#dataSource
+		 * @implements #dataSource
 		 */
 		get dataSource():any;
 		set dataSource(value:any);
