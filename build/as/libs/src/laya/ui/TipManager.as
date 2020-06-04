@@ -65,7 +65,8 @@ package laya.ui {
 		/**
 		 * 默认鼠标提示函数
 		 */
-		public var defaultTipHandler:Function;
+		public function get defaultTipHandler():Function{return null;}
+		public function set defaultTipHandler(value:Function):void{}
 	}
 
 }

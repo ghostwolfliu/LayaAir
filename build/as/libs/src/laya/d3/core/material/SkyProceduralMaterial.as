@@ -30,37 +30,44 @@ package laya.d3.core.material {
 		/**
 		 * 太阳状态。
 		 */
-		public var sunDisk:Number;
+		public function get sunDisk():Number{return null;}
+		public function set sunDisk(value:Number):void{}
 
 		/**
 		 * 太阳尺寸,范围是0到1。
 		 */
-		public var sunSize:Number;
+		public function get sunSize():Number{return null;}
+		public function set sunSize(value:Number):void{}
 
 		/**
 		 * 太阳尺寸收缩,范围是0到20。
 		 */
-		public var sunSizeConvergence:Number;
+		public function get sunSizeConvergence():Number{return null;}
+		public function set sunSizeConvergence(value:Number):void{}
 
 		/**
 		 * 大气厚度,范围是0到5。
 		 */
-		public var atmosphereThickness:Number;
+		public function get atmosphereThickness():Number{return null;}
+		public function set atmosphereThickness(value:Number):void{}
 
 		/**
 		 * 天空颜色。
 		 */
-		public var skyTint:Vector4;
+		public function get skyTint():Vector4{return null;}
+		public function set skyTint(value:Vector4):void{}
 
 		/**
 		 * 地面颜色。
 		 */
-		public var groundTint:Vector4;
+		public function get groundTint():Vector4{return null;}
+		public function set groundTint(value:Vector4):void{}
 
 		/**
 		 * 曝光强度,范围是0到8。
 		 */
-		public var exposure:Number;
+		public function get exposure():Number{return null;}
+		public function set exposure(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>SkyProceduralMaterial</code> 实例。

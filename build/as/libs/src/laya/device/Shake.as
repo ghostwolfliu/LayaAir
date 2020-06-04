@@ -15,9 +15,7 @@ package laya.device {
 
 		public function Shake(){}
 		private static var _instance:*;
-		public static function get instance():Shake{
-				return null;
-		}
+		public static function get instance():Shake{return null;}
 
 		/**
 		 * 开始响应设备摇晃。

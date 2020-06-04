@@ -27,6 +27,17 @@ package laya.html.dom {
 		override public function reset():HTMLElement{
 			return null;
 		}
+
+		/**
+		 * 解析样式
+		 * @override 
+		 */
+		override public function set innerTEXT(value:String):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get innerTEXT():String{return null;}
 	}
 
 }

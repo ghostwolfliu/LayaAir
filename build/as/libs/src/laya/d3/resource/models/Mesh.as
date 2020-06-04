@@ -32,42 +32,33 @@ package laya.d3.resource.models {
 		/**
 		 * 网格的全局默认绑定动作逆矩阵。
 		 */
-		public function get inverseAbsoluteBindPoses():Array{
-				return null;
-		}
+		public function get inverseAbsoluteBindPoses():Array{return null;}
 
 		/**
 		 * 获取顶点个数。
 		 */
-		public function get vertexCount():Number{
-				return null;
-		}
+		public function get vertexCount():Number{return null;}
 
 		/**
 		 * 获取索引个数。
 		 */
-		public function get indexCount():Number{
-				return null;
-		}
+		public function get indexCount():Number{return null;}
 
 		/**
 		 * SubMesh的个数。
 		 */
-		public function get subMeshCount():Number{
-				return null;
-		}
+		public function get subMeshCount():Number{return null;}
 
 		/**
 		 * 边界。
 		 */
-		public var bounds:Bounds;
+		public function get bounds():Bounds{return null;}
+		public function set bounds(value:Bounds):void{}
 
 		/**
 		 * 索引格式。
 		 */
-		public function get indexFormat():IndexFormat{
-				return null;
-		}
+		public function get indexFormat():IndexFormat{return null;}
 
 		/**
 		 * 创建一个 <code>Mesh</code> 实例,禁止使用。

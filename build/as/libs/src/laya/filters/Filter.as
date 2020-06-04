@@ -32,9 +32,7 @@ package laya.filters {
 		/**
 		 * @private 滤镜类型。
 		 */
-		public function get type():Number{
-				return null;
-		}
+		public function get type():Number{return null;}
 		public static var _filter:Function;
 	}
 

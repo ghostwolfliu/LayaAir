@@ -68,93 +68,67 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 生命周期速度类型，0常量模式，1曲线模式，2随机双常量模式，3随机双曲线模式。
 		 */
-		public function get type():Number{
-				return null;
-		}
+		public function get type():Number{return null;}
 
 		/**
 		 * 固定速度。
 		 */
-		public function get constant():Vector3{
-				return null;
-		}
+		public function get constant():Vector3{return null;}
 
 		/**
 		 * 渐变速度X。
 		 */
-		public function get gradientX():GradientDataNumber{
-				return null;
-		}
+		public function get gradientX():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变速度Y。
 		 */
-		public function get gradientY():GradientDataNumber{
-				return null;
-		}
+		public function get gradientY():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变速度Z。
 		 */
-		public function get gradientZ():GradientDataNumber{
-				return null;
-		}
+		public function get gradientZ():GradientDataNumber{return null;}
 
 		/**
 		 * 最小固定速度。
 		 */
-		public function get constantMin():Vector3{
-				return null;
-		}
+		public function get constantMin():Vector3{return null;}
 
 		/**
 		 * 最大固定速度。
 		 */
-		public function get constantMax():Vector3{
-				return null;
-		}
+		public function get constantMax():Vector3{return null;}
 
 		/**
 		 * 渐变最小速度X。
 		 */
-		public function get gradientXMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientXMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大速度X。
 		 */
-		public function get gradientXMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientXMax():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最小速度Y。
 		 */
-		public function get gradientYMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientYMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大速度Y。
 		 */
-		public function get gradientYMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientYMax():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最小速度Z。
 		 */
-		public function get gradientZMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientZMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大速度Z。
 		 */
-		public function get gradientZMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientZMax():GradientDataNumber{return null;}
 
 		/**
 		 * 创建一个 <code>GradientVelocity,不允许new，请使用静态创建函数。</code> 实例。

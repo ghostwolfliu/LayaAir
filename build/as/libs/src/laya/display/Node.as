@@ -229,16 +229,12 @@ package laya.display {
 		/**
 		 * 子对象数量。
 		 */
-		public function get numChildren():Number{
-				return null;
-		}
+		public function get numChildren():Number{return null;}
 
 		/**
 		 * 父节点。
 		 */
-		public function get parent():Node{
-				return null;
-		}
+		public function get parent():Node{return null;}
 
 		/**
 		 * @private 
@@ -248,9 +244,7 @@ package laya.display {
 		/**
 		 * 表示是否在显示列表中显示。
 		 */
-		public function get displayedInStage():Boolean{
-				return null;
-		}
+		public function get displayedInStage():Boolean{return null;}
 
 		/**
 		 * @private 
@@ -352,28 +346,25 @@ package laya.display {
 		 * 获得所属场景。
 		 * @return 场景。
 		 */
-		public function get scene():*{
-				return null;
-		}
+		public function get scene():*{return null;}
 
 		/**
 		 * 获取自身是否激活。
 		 * @return 自身是否激活。
 		 */
+		public function get active():Boolean{return null;}
 
 		/**
 		 * 设置是否激活。
 		 * @param value 是否激活。
 		 */
-		public var active:Boolean;
+		public function set active(value:Boolean):void{}
 
 		/**
 		 * 获取在场景中是否激活。
 		 * @return 在场景中是否激活。
 		 */
-		public function get activeInHierarchy():Boolean{
-				return null;
-		}
+		public function get activeInHierarchy():Boolean{return null;}
 
 		/**
 		 * @private 
@@ -471,9 +462,7 @@ package laya.display {
 		/**
 		 * @private 获取timer
 		 */
-		public function get timer():Timer{
-				return null;
-		}
+		public function get timer():Timer{return null;}
 	}
 
 }

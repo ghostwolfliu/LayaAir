@@ -200,14 +200,13 @@ package laya.display {
 		/**
 		 * 表示是否是多行输入框。
 		 */
-		public var multiline:Boolean;
+		public function get multiline():Boolean{return null;}
+		public function set multiline(value:Boolean):void{}
 
 		/**
 		 * 获取对输入框的引用实例。
 		 */
-		public function get nativeInput():*{
-				return null;
-		}
+		public function get nativeInput():*{return null;}
 		private var _onUnDisplay:*;
 		private var _onMouseDown:*;
 		private static var stageMatrix:*;
@@ -225,7 +224,8 @@ package laya.display {
 		/**
 		 * 表示焦点是否在此实例上。
 		 */
-		public var focus:Boolean;
+		public function get focus():Boolean{return null;}
+		public function set focus(value:Boolean):void{}
 		private var _setInputMethod:*;
 		private var _focusIn:*;
 		private var _setPromptColor:*;
@@ -241,36 +241,76 @@ package laya.display {
 		private var _onKeyDown:*;
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set text(value:String):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get text():String{return null;}
+
+		/**
 		 * @param text 
 		 * @override 
 		 */
 		override public function changeText(text:String):void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set color(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get color():String{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set bgColor(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get bgColor():String{return null;}
+
+		/**
 		 * 限制输入的字符。
 		 */
-		public var restrict:String;
+		public function get restrict():String{return null;}
+		public function set restrict(pattern:String):void{}
 
 		/**
 		 * 是否可编辑。
 		 */
-		public var editable:Boolean;
+		public function set editable(value:Boolean):void{}
+		public function get editable():Boolean{return null;}
 
 		/**
 		 * <p>字符数量限制，默认为10000。</p>
 		 * <p>设置字符数量限制时，小于等于0的值将会限制字符数量为10000。</p>
 		 */
-		public var maxChars:Number;
+		public function get maxChars():Number{return null;}
+		public function set maxChars(value:Number):void{}
 
 		/**
 		 * 设置输入提示符。
 		 */
-		public var prompt:String;
+		public function get prompt():String{return null;}
+		public function set prompt(value:String):void{}
 
 		/**
 		 * 设置输入提示符颜色。
 		 */
-		public var promptColor:String;
+		public function get promptColor():String{return null;}
+		public function set promptColor(value:String):void{}
 
 		/**
 		 * <p>输入框类型为Input静态常量之一。</p>
@@ -290,7 +330,8 @@ package laya.display {
 		 * </ul>
 		 * <p>平台兼容性参见http://www.w3school.com.cn/html5/html_5_form_input_types.asp。</p>
 		 */
-		public var type:String;
+		public function get type():String{return null;}
+		public function set type(value:String):void{}
 	}
 
 }

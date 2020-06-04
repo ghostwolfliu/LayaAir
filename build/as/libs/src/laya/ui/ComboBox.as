@@ -131,7 +131,8 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Button#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 
 		/**
 		 * @inheritDoc 
@@ -170,9 +171,34 @@ package laya.ui {
 		protected function changeOpen():void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
 		 * 标签集合字符串。
 		 */
-		public var labels:String;
+		public function get labels():String{return null;}
+		public function set labels(value:String):void{}
 
 		/**
 		 * 更改下拉列表。
@@ -182,39 +208,46 @@ package laya.ui {
 		/**
 		 * 表示选择的下拉列表项的索引。
 		 */
-		public var selectedIndex:Number;
+		public function get selectedIndex():Number{return null;}
+		public function set selectedIndex(value:Number):void{}
 		private var changeSelected:*;
 
 		/**
 		 * 改变下拉列表的选择项时执行的处理器(默认返回参数index:int)。
 		 */
-		public var selectHandler:Handler;
+		public function get selectHandler():Handler{return null;}
+		public function set selectHandler(value:Handler):void{}
 
 		/**
 		 * 表示选择的下拉列表项的的标签。
 		 */
-		public var selectedLabel:String;
+		public function get selectedLabel():String{return null;}
+		public function set selectedLabel(value:String):void{}
 
 		/**
 		 * 获取或设置没有滚动条的下拉列表中可显示的最大行数。
 		 */
-		public var visibleNum:Number;
+		public function get visibleNum():Number{return null;}
+		public function set visibleNum(value:Number):void{}
 
 		/**
 		 * 下拉列表项颜色。
 		 * <p><b>格式：</b>"悬停或被选中时背景颜色,悬停或被选中时标签颜色,标签颜色,边框颜色,背景颜色"</p>
 		 */
-		public var itemColors:String;
+		public function get itemColors():String{return null;}
+		public function set itemColors(value:String):void{}
 
 		/**
 		 * 下拉列表项标签的字体大小。
 		 */
-		public var itemSize:Number;
+		public function get itemSize():Number{return null;}
+		public function set itemSize(value:Number):void{}
 
 		/**
 		 * 表示下拉列表的打开状态。
 		 */
-		public var isOpen:Boolean;
+		public function get isOpen():Boolean{return null;}
+		public function set isOpen(value:Boolean):void{}
 		private var _onStageMouseWheel:*;
 
 		/**
@@ -225,7 +258,8 @@ package laya.ui {
 		/**
 		 * 滚动条皮肤。
 		 */
-		public var scrollBarSkin:String;
+		public function get scrollBarSkin():String{return null;}
+		public function set scrollBarSkin(value:String):void{}
 
 		/**
 		 * <p>当前实例的位图 <code>AutoImage</code> 实例的有效缩放网格数据。</p>
@@ -233,61 +267,77 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
 
 		/**
 		 * 获取对 <code>ComboBox</code> 组件所包含的 <code>VScrollBar</code> 滚动条组件的引用。
 		 */
-		public function get scrollBar():VScrollBar{
-				return null;
-		}
+		public function get scrollBar():VScrollBar{return null;}
 
 		/**
 		 * 获取对 <code>ComboBox</code> 组件所包含的 <code>Button</code> 组件的引用。
 		 */
-		public function get button():Button{
-				return null;
-		}
+		public function get button():Button{return null;}
 
 		/**
 		 * 获取对 <code>ComboBox</code> 组件所包含的 <code>List</code> 列表组件的引用。
 		 */
-		public var list:List;
+		public function get list():List{return null;}
+		public function set list(value:List):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 
 		/**
 		 * 获取或设置对 <code>ComboBox</code> 组件所包含的 <code>Button</code> 组件的文本标签颜色。
 		 * <p><b>格式：</b>upColor,overColor,downColor,disableColor</p>
 		 */
-		public var labelColors:String;
+		public function get labelColors():String{return null;}
+		public function set labelColors(value:String):void{}
 
 		/**
 		 * 获取或设置对 <code>ComboBox</code> 组件所包含的 <code>Button</code> 组件的文本边距。
 		 * <p><b>格式：</b>上边距,右边距,下边距,左边距</p>
 		 */
-		public var labelPadding:String;
+		public function get labelPadding():String{return null;}
+		public function set labelPadding(value:String):void{}
 
 		/**
 		 * 获取或设置对 <code>ComboBox</code> 组件所包含的 <code>Button</code> 组件的标签字体大小。
 		 */
-		public var labelSize:Number;
+		public function get labelSize():Number{return null;}
+		public function set labelSize(value:Number):void{}
 
 		/**
 		 * 表示按钮文本标签是否为粗体字。
 		 * @see laya.display.Text#bold
 		 */
-		public var labelBold:Boolean;
+		public function get labelBold():Boolean{return null;}
+		public function set labelBold(value:Boolean):void{}
 
 		/**
 		 * 表示按钮文本标签的字体名称，以字符串形式表示。
 		 * @see laya.display.Text#font
 		 */
-		public var labelFont:String;
+		public function get labelFont():String{return null;}
+		public function set labelFont(value:String):void{}
 
 		/**
 		 * 表示按钮的状态值。
 		 * @see laya.ui.Button#stateNum
 		 */
-		public var stateNum:Number;
+		public function get stateNum():Number{return null;}
+		public function set stateNum(value:Number):void{}
 	}
 
 }

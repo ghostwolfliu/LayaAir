@@ -15,12 +15,8 @@ package laya.net {
 
 		public function SceneLoader(){}
 		public function reset():void{}
-		public function get leftCount():Number{
-				return null;
-		}
-		public function get loadedCount():Number{
-				return null;
-		}
+		public function get leftCount():Number{return null;}
+		public function get loadedCount():Number{return null;}
 		public function load(url:*,is3D:Boolean = null,ifCheck:Boolean = null):void{}
 		private var _addToLoadList:*;
 		private var _checkNext:*;

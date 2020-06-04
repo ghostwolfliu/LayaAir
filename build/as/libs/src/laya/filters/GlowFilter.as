@@ -27,22 +27,30 @@ package laya.filters {
 		public function GlowFilter(color:String = undefined,blur:Number = undefined,offX:Number = undefined,offY:Number = undefined){}
 
 		/**
-		 * @private 
+		 * @private 滤镜类型
+		 * @override 
 		 */
+		override public function get type():Number{return null;}
 
 		/**
 		 * @private 
 		 */
-		public var offY:Number;
+		public function get offY():Number{return null;}
 
 		/**
 		 * @private 
 		 */
+		public function set offY(value:Number):void{}
 
 		/**
 		 * @private 
 		 */
-		public var offX:Number;
+		public function get offX():Number{return null;}
+
+		/**
+		 * @private 
+		 */
+		public function set offX(value:Number):void{}
 
 		/**
 		 * @private 
@@ -54,11 +62,12 @@ package laya.filters {
 		/**
 		 * @private 
 		 */
+		public function get blur():Number{return null;}
 
 		/**
 		 * @private 
 		 */
-		public var blur:Number;
+		public function set blur(value:Number):void{}
 		public function getColorNative():Float32Array{
 			return null;
 		}

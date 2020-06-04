@@ -35,6 +35,18 @@ package laya.ui {
 		 * @override 
 		 */
 		override protected function initialize():void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 	}
 
 }

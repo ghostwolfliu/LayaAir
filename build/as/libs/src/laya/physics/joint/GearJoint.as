@@ -39,7 +39,8 @@ package laya.physics.joint {
 		/**
 		 * 两个齿轮角速度比例，默认1
 		 */
-		public var ratio:Number;
+		public function get ratio():Number{return null;}
+		public function set ratio(value:Number):void{}
 	}
 
 }

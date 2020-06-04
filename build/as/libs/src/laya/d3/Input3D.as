@@ -18,12 +18,13 @@ package laya.d3 {
 		 * 获取是否可以使用多点触摸。
 		 * @return 是否可以使用多点触摸。
 		 */
+		public function get multiTouchEnabled():Boolean{return null;}
 
 		/**
 		 * 设置是否可以使用多点触摸。
 		 * @param 是否可以使用多点触摸 。
 		 */
-		public var multiTouchEnabled:Boolean;
+		public function set multiTouchEnabled(value:Boolean):void{}
 
 		/**
 		 * 获取触摸点。

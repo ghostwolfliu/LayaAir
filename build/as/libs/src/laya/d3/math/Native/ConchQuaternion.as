@@ -107,38 +107,42 @@ package laya.d3.math.Native {
 		/**
 		 * 获取四元数的x值
 		 */
+		public function get x():Number{return null;}
 
 		/**
 		 * 设置四元数的x值
 		 */
-		public var x:Number;
+		public function set x(value:Number):void{}
 
 		/**
 		 * 获取四元数的y值
 		 */
+		public function get y():Number{return null;}
 
 		/**
 		 * 设置四元数的y值
 		 */
-		public var y:Number;
+		public function set y(value:Number):void{}
 
 		/**
 		 * 获取四元数的z值
 		 */
+		public function get z():Number{return null;}
 
 		/**
 		 * 设置四元数的z值
 		 */
-		public var z:Number;
+		public function set z(value:Number):void{}
 
 		/**
 		 * 获取四元数的w值
 		 */
+		public function get w():Number{return null;}
 
 		/**
 		 * 设置四元数的w值
 		 */
-		public var w:Number;
+		public function set w(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>Quaternion</code> 实例。

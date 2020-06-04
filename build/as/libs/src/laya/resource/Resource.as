@@ -36,16 +36,12 @@ package laya.resource {
 		/**
 		 * 当前内存，以字节为单位。
 		 */
-		public static function get cpuMemory():Number{
-				return null;
-		}
+		public static function get cpuMemory():Number{return null;}
 
 		/**
 		 * 当前显存，以字节为单位。
 		 */
-		public static function get gpuMemory():Number{
-				return null;
-		}
+		public static function get gpuMemory():Number{return null;}
 
 		/**
 		 * 通过资源ID返回已载入资源。
@@ -115,45 +111,33 @@ package laya.resource {
 		/**
 		 * 获取唯一标识ID,通常用于识别。
 		 */
-		public function get id():Number{
-				return null;
-		}
+		public function get id():Number{return null;}
 
 		/**
 		 * 获取资源的URL地址。
 		 * @return URL地址。
 		 */
-		public function get url():String{
-				return null;
-		}
+		public function get url():String{return null;}
 
 		/**
 		 * 内存大小。
 		 */
-		public function get cpuMemory():Number{
-				return null;
-		}
+		public function get cpuMemory():Number{return null;}
 
 		/**
 		 * 显存大小。
 		 */
-		public function get gpuMemory():Number{
-				return null;
-		}
+		public function get gpuMemory():Number{return null;}
 
 		/**
 		 * 是否已处理。
 		 */
-		public function get destroyed():Boolean{
-				return null;
-		}
+		public function get destroyed():Boolean{return null;}
 
 		/**
 		 * 获取资源的引用计数。
 		 */
-		public function get referenceCount():Number{
-				return null;
-		}
+		public function get referenceCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>Resource</code> 实例。

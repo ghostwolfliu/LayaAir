@@ -9,12 +9,14 @@ package laya.d3.core.light {
 		/**
 		 * 聚光灯的锥形角度。
 		 */
-		public var spotAngle:Number;
+		public function get spotAngle():Number{return null;}
+		public function set spotAngle(value:Number):void{}
 
 		/**
 		 * 聚光的范围。
 		 */
-		public var range:Number;
+		public function get range():Number{return null;}
+		public function set range(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>SpotLight</code> 实例。

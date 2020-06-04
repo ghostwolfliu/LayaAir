@@ -30,59 +30,60 @@ package laya.d3.core {
 		/**
 		 * 横纵比。
 		 */
-		public var aspectRatio:Number;
+		public function get aspectRatio():Number{return null;}
+		public function set aspectRatio(value:Number):void{}
 
 		/**
 		 * 获取屏幕像素坐标的视口。
 		 */
-		public var viewport:Viewport;
+		public function get viewport():Viewport{return null;}
+		public function set viewport(value:Viewport):void{}
 
 		/**
 		 * 裁剪空间的视口。
 		 */
-		public var normalizedViewport:Viewport;
+		public function get normalizedViewport():Viewport{return null;}
+		public function set normalizedViewport(value:Viewport):void{}
 
 		/**
 		 * 获取视图矩阵。
 		 */
-		public function get viewMatrix():Matrix4x4{
-				return null;
-		}
+		public function get viewMatrix():Matrix4x4{return null;}
 
 		/**
 		 * 投影矩阵。
 		 */
-		public var projectionMatrix:Matrix4x4;
+		public function get projectionMatrix():Matrix4x4{return null;}
+		public function set projectionMatrix(value:Matrix4x4):void{}
 
 		/**
 		 * 获取视图投影矩阵。
 		 */
-		public function get projectionViewMatrix():Matrix4x4{
-				return null;
-		}
+		public function get projectionViewMatrix():Matrix4x4{return null;}
 
 		/**
 		 * 获取摄像机视锥。
 		 */
-		public function get boundFrustum():BoundFrustum{
-				return null;
-		}
+		public function get boundFrustum():BoundFrustum{return null;}
 
 		/**
 		 * 自定义渲染场景的渲染目标。
 		 */
-		public var renderTarget:RenderTexture;
+		public function get renderTarget():RenderTexture{return null;}
+		public function set renderTarget(value:RenderTexture):void{}
 
 		/**
 		 * 后期处理。
 		 */
-		public var postProcess:PostProcess;
+		public function get postProcess():PostProcess{return null;}
+		public function set postProcess(value:PostProcess):void{}
 
 		/**
 		 * 是否开启HDR。
 		 * 开启后对性能有一定影响。
 		 */
-		public var enableHDR:Boolean;
+		public function get enableHDR():Boolean{return null;}
+		public function set enableHDR(value:Boolean):void{}
 
 		/**
 		 * 创建一个 <code>Camera</code> 实例。

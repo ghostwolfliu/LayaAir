@@ -93,128 +93,92 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 生命周期尺寸类型，0曲线模式，1随机双常量模式，2随机双曲线模式。
 		 */
-		public function get type():Number{
-				return null;
-		}
+		public function get type():Number{return null;}
 
 		/**
 		 * 是否分轴。
 		 */
-		public function get separateAxes():Boolean{
-				return null;
-		}
+		public function get separateAxes():Boolean{return null;}
 
 		/**
 		 * 渐变尺寸。
 		 */
-		public function get gradient():GradientDataNumber{
-				return null;
-		}
+		public function get gradient():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变尺寸X。
 		 */
-		public function get gradientX():GradientDataNumber{
-				return null;
-		}
+		public function get gradientX():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变尺寸Y。
 		 */
-		public function get gradientY():GradientDataNumber{
-				return null;
-		}
+		public function get gradientY():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变尺寸Z。
 		 */
-		public function get gradientZ():GradientDataNumber{
-				return null;
-		}
+		public function get gradientZ():GradientDataNumber{return null;}
 
 		/**
 		 * 最小随机双固定尺寸。
 		 */
-		public function get constantMin():Number{
-				return null;
-		}
+		public function get constantMin():Number{return null;}
 
 		/**
 		 * 最大随机双固定尺寸。
 		 */
-		public function get constantMax():Number{
-				return null;
-		}
+		public function get constantMax():Number{return null;}
 
 		/**
 		 * 最小分轴随机双固定尺寸。
 		 */
-		public function get constantMinSeparate():Vector3{
-				return null;
-		}
+		public function get constantMinSeparate():Vector3{return null;}
 
 		/**
 		 * 最小分轴随机双固定尺寸。
 		 */
-		public function get constantMaxSeparate():Vector3{
-				return null;
-		}
+		public function get constantMaxSeparate():Vector3{return null;}
 
 		/**
 		 * 渐变最小尺寸。
 		 */
-		public function get gradientMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大尺寸。
 		 */
-		public function get gradientMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientMax():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最小尺寸X。
 		 */
-		public function get gradientXMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientXMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大尺寸X。
 		 */
-		public function get gradientXMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientXMax():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最小尺寸Y。
 		 */
-		public function get gradientYMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientYMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大尺寸Y。
 		 */
-		public function get gradientYMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientYMax():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最小尺寸Z。
 		 */
-		public function get gradientZMin():GradientDataNumber{
-				return null;
-		}
+		public function get gradientZMin():GradientDataNumber{return null;}
 
 		/**
 		 * 渐变最大尺寸Z。
 		 */
-		public function get gradientZMax():GradientDataNumber{
-				return null;
-		}
+		public function get gradientZMax():GradientDataNumber{return null;}
 
 		/**
 		 * 创建一个 <code>GradientSize,不允许new，请使用静态创建函数。</code> 实例。

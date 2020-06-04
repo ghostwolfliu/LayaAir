@@ -15,17 +15,20 @@ package laya.d3.core.material {
 		/**
 		 * 金属光滑度贴图。
 		 */
-		public var metallicGlossTexture:BaseTexture;
+		public function get metallicGlossTexture():BaseTexture{return null;}
+		public function set metallicGlossTexture(value:BaseTexture):void{}
 
 		/**
 		 * 获取金属度,范围为0到1。
 		 */
-		public var metallic:Number;
+		public function get metallic():Number{return null;}
+		public function set metallic(value:Number):void{}
 
 		/**
 		 * 光滑度数据源,0或1。
 		 */
-		public var smoothnessSource:*;
+		public function get smoothnessSource():*{return null;}
+		public function set smoothnessSource(value:*):void{}
 
 		/**
 		 * 创建一个 <code>PBRStandardMaterial</code> 实例。

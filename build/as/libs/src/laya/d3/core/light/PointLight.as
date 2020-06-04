@@ -10,7 +10,8 @@ package laya.d3.core.light {
 		 * 点光的范围。
 		 * @return 点光的范围。
 		 */
-		public var range:Number;
+		public function get range():Number{return null;}
+		public function set range(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>PointLight</code> 实例。

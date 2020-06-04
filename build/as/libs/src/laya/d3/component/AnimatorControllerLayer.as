@@ -42,7 +42,8 @@ package laya.d3.component {
 		/**
 		 * 默认动画状态机。
 		 */
-		public var defaultState:AnimatorState;
+		public function get defaultState():AnimatorState{return null;}
+		public function set defaultState(value:AnimatorState):void{}
 
 		/**
 		 * 创建一个 <code>AnimatorControllerLayer</code> 实例。

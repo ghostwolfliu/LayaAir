@@ -9,30 +9,22 @@ package laya.d3.shader {
 		/**
 		 * 着色器。
 		 */
-		public function get shader():Shader3D{
-				return null;
-		}
+		public function get shader():Shader3D{return null;}
 
 		/**
 		 * 子着色器索引。
 		 */
-		public function get subShaderIndex():Number{
-				return null;
-		}
+		public function get subShaderIndex():Number{return null;}
 
 		/**
 		 * 通道索引。
 		 */
-		public function get passIndex():Number{
-				return null;
-		}
+		public function get passIndex():Number{return null;}
 
 		/**
 		 * 宏定义集合。
 		 */
-		public function get defineNames():Array{
-				return null;
-		}
+		public function get defineNames():Array{return null;}
 
 		/**
 		 * 创建着色器变种。

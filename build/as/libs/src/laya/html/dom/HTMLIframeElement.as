@@ -12,7 +12,7 @@ package laya.html.dom {
 		 * 加载html文件，并解析数据
 		 * @param url 
 		 */
-		public var href:String;
+		public function set href(url:String):void{}
 	}
 
 }

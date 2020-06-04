@@ -31,17 +31,20 @@ package laya.physics {
 		/**
 		 * 相对节点的x轴偏移
 		 */
-		public var x:Number;
+		public function get x():Number{return null;}
+		public function set x(value:Number):void{}
 
 		/**
 		 * 相对节点的y轴偏移
 		 */
-		public var y:Number;
+		public function get y():Number{return null;}
+		public function set y(value:Number):void{}
 
 		/**
 		 * 用逗号隔开的点的集合，格式：x,y,x,y ...
 		 */
-		public var points:String;
+		public function get points():String{return null;}
+		public function set points(value:String):void{}
 	}
 
 }

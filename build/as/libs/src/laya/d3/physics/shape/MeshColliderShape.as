@@ -10,12 +10,14 @@ package laya.d3.physics.shape {
 		/**
 		 * 网格。
 		 */
-		public var mesh:Mesh;
+		public function get mesh():Mesh{return null;}
+		public function set mesh(value:Mesh):void{}
 
 		/**
 		 * 是否使用凸多边形。
 		 */
-		public var convex:Boolean;
+		public function get convex():Boolean{return null;}
+		public function set convex(value:Boolean):void{}
 
 		/**
 		 * 创建一个新的 <code>MeshColliderShape</code> 实例。

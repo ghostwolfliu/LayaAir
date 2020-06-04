@@ -19,13 +19,15 @@ package laya.resource {
 		/**
 		 * 获取宽度。
 		 */
-		public var width:Number;
+		public function get width():Number{return null;}
+		public function set width(width:Number):void{}
 
 		/**
 		 * *
 		 * 获取高度。
 		 */
-		public var height:Number;
+		public function get height():Number{return null;}
+		public function set height(height:Number):void{}
 
 		/**
 		 * 创建一个 <code>Bitmap</code> 实例。

@@ -15,9 +15,7 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 获取颜色。
 		 */
-		public function get color():GradientColor{
-				return null;
-		}
+		public function get color():GradientColor{return null;}
 
 		/**
 		 * 创建一个 <code>ColorOverLifetime</code> 实例。

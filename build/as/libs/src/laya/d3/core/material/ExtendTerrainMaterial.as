@@ -53,92 +53,104 @@ package laya.d3.core.material {
 		/**
 		 * splatAlpha贴图。
 		 */
-		public var splatAlphaTexture:BaseTexture;
+		public function get splatAlphaTexture():BaseTexture{return null;}
+		public function set splatAlphaTexture(value:BaseTexture):void{}
 
 		/**
 		 * 第一层贴图。
 		 */
-		public var diffuseTexture1:BaseTexture;
+		public function get diffuseTexture1():BaseTexture{return null;}
+		public function set diffuseTexture1(value:BaseTexture):void{}
 
 		/**
 		 * 第二层贴图。
 		 */
-		public var diffuseTexture2:BaseTexture;
+		public function get diffuseTexture2():BaseTexture{return null;}
+		public function set diffuseTexture2(value:BaseTexture):void{}
 
 		/**
 		 * 第三层贴图。
 		 */
-		public var diffuseTexture3:BaseTexture;
+		public function get diffuseTexture3():BaseTexture{return null;}
+		public function set diffuseTexture3(value:BaseTexture):void{}
 
 		/**
 		 * 第四层贴图。
 		 */
-		public var diffuseTexture4:BaseTexture;
+		public function get diffuseTexture4():BaseTexture{return null;}
+		public function set diffuseTexture4(value:BaseTexture):void{}
 
 		/**
 		 * 第五层贴图。
 		 */
-		public var diffuseTexture5:BaseTexture;
+		public function get diffuseTexture5():BaseTexture{return null;}
+		public function set diffuseTexture5(value:BaseTexture):void{}
 
 		/**
 		 * 第一层贴图缩放偏移。
 		 */
-		public var diffuseScaleOffset1:Vector4;
+		public function set diffuseScaleOffset1(scaleOffset1:Vector4):void{}
 
 		/**
 		 * 第二层贴图缩放偏移。
 		 */
-		public var diffuseScaleOffset2:Vector4;
+		public function set diffuseScaleOffset2(scaleOffset2:Vector4):void{}
 
 		/**
 		 * 第三层贴图缩放偏移。
 		 */
-		public var diffuseScaleOffset3:Vector4;
+		public function set diffuseScaleOffset3(scaleOffset3:Vector4):void{}
 
 		/**
 		 * 第四层贴图缩放偏移。
 		 */
-		public var diffuseScaleOffset4:Vector4;
+		public function set diffuseScaleOffset4(scaleOffset4:Vector4):void{}
 
 		/**
 		 * 第五层贴图缩放偏移。
 		 */
-		public var diffuseScaleOffset5:Vector4;
+		public function set diffuseScaleOffset5(scaleOffset5:Vector4):void{}
 
 		/**
 		 * 设置渲染模式。
 		 */
-		public var renderMode:Number;
+		public function set renderMode(value:Number):void{}
 
 		/**
 		 * 是否写入深度。
 		 */
-		public var depthWrite:Boolean;
+		public function get depthWrite():Boolean{return null;}
+		public function set depthWrite(value:Boolean):void{}
 
 		/**
 		 * 剔除方式。
 		 */
-		public var cull:Number;
+		public function get cull():Number{return null;}
+		public function set cull(value:Number):void{}
 
 		/**
 		 * 混合方式。
 		 */
-		public var blend:Number;
+		public function get blend():Number{return null;}
+		public function set blend(value:Number):void{}
 
 		/**
 		 * 混合源。
 		 */
-		public var blendSrc:Number;
+		public function get blendSrc():Number{return null;}
+		public function set blendSrc(value:Number):void{}
 
 		/**
 		 * 混合目标。
 		 */
-		public var blendDst:Number;
+		public function get blendDst():Number{return null;}
+		public function set blendDst(value:Number):void{}
 
 		/**
 		 * 深度测试方式。
 		 */
-		public var depthTest:Number;
+		public function get depthTest():Number{return null;}
+		public function set depthTest(value:Number):void{}
 
 		public function ExtendTerrainMaterial(){}
 

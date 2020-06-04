@@ -60,9 +60,7 @@ package laya.physics {
 		/**
 		 * 全局物理单例
 		 */
-		public static function get I():Physics{
-				return null;
-		}
+		public static function get I():Physics{return null;}
 
 		public function Physics(){}
 
@@ -114,13 +112,15 @@ package laya.physics {
 		/**
 		 * 设置是否允许休眠，休眠可以提高稳定性和性能，但通常会牺牲准确性
 		 */
-		public var allowSleeping:Boolean;
+		public function get allowSleeping():Boolean{return null;}
+		public function set allowSleeping(value:Boolean):void{}
 
 		/**
 		 * 物理世界重力环境，默认值为{x:0,y:1}
 		 * 如果修改y方向重力方向向上，可以直接设置gravity.y=-1;
 		 */
-		public var gravity:*;
+		public function get gravity():*{return null;}
+		public function set gravity(value:*):void{}
 
 		/**
 		 * 获得刚体总数量
@@ -147,7 +147,8 @@ package laya.physics {
 		 * 物理世界根容器，将根据此容器作为物理世界坐标世界，进行坐标变换，默认值为stage
 		 * 设置特定容器后，就可整体位移物理对象，保持物理世界不变
 		 */
-		public var worldRoot:Sprite;
+		public function get worldRoot():Sprite{return null;}
+		public function set worldRoot(value:Sprite):void{}
 	}
 
 }

@@ -10,30 +10,22 @@ package laya.d3.graphics {
 		/**
 		 * 索引类型。
 		 */
-		public function get indexType():IndexFormat{
-				return null;
-		}
+		public function get indexType():IndexFormat{return null;}
 
 		/**
 		 * 索引类型字节数量。
 		 */
-		public function get indexTypeByteCount():Number{
-				return null;
-		}
+		public function get indexTypeByteCount():Number{return null;}
 
 		/**
 		 * 索引个数。
 		 */
-		public function get indexCount():Number{
-				return null;
-		}
+		public function get indexCount():Number{return null;}
 
 		/**
 		 * 是否可读。
 		 */
-		public function get canRead():Boolean{
-				return null;
-		}
+		public function get canRead():Boolean{return null;}
 
 		/**
 		 * 创建一个 <code>IndexBuffer3D,不建议开发者使用并用IndexBuffer3D.create()代替</code> 实例。

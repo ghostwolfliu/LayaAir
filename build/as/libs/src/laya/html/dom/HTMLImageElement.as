@@ -17,7 +17,7 @@ package laya.html.dom {
 		override public function reset():HTMLElement{
 			return null;
 		}
-		public var src:String;
+		public function set src(url:String):void{}
 		private var onloaded:*;
 
 		/**

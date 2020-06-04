@@ -51,32 +51,38 @@ package laya.ui {
 		/**
 		 * 表示距顶边的距离（以像素为单位）。
 		 */
-		public var top:Number;
+		public function get top():Number{return null;}
+		public function set top(value:Number):void{}
 
 		/**
 		 * 表示距底边的距离（以像素为单位）。
 		 */
-		public var bottom:Number;
+		public function get bottom():Number{return null;}
+		public function set bottom(value:Number):void{}
 
 		/**
 		 * 表示距左边的距离（以像素为单位）。
 		 */
-		public var left:Number;
+		public function get left():Number{return null;}
+		public function set left(value:Number):void{}
 
 		/**
 		 * 表示距右边的距离（以像素为单位）。
 		 */
-		public var right:Number;
+		public function get right():Number{return null;}
+		public function set right(value:Number):void{}
 
 		/**
 		 * 表示距水平方向中心轴的距离（以像素为单位）。
 		 */
-		public var centerX:Number;
+		public function get centerX():Number{return null;}
+		public function set centerX(value:Number):void{}
 
 		/**
 		 * 表示距垂直方向中心轴的距离（以像素为单位）。
 		 */
-		public var centerY:Number;
+		public function get centerY():Number{return null;}
+		public function set centerY(value:Number):void{}
 	}
 
 }

@@ -47,16 +47,12 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 获取时间帧率。
 		 */
-		public function get frame():FrameOverTime{
-				return null;
-		}
+		public function get frame():FrameOverTime{return null;}
 
 		/**
 		 * 获取开始帧率。
 		 */
-		public function get startFrame():StartFrame{
-				return null;
-		}
+		public function get startFrame():StartFrame{return null;}
 
 		/**
 		 * 创建一个 <code>TextureSheetAnimation</code> 实例。

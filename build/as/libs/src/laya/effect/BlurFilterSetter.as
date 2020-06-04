@@ -14,7 +14,8 @@ package laya.effect {
 		 * @override 
 		 */
 		override protected function buildFilter():void{}
-		public var strength:Number;
+		public function get strength():Number{return null;}
+		public function set strength(value:Number):void{}
 	}
 
 }

@@ -64,9 +64,7 @@ package laya.utils {
 		/**
 		 * 两帧之间的时间间隔,单位毫秒。
 		 */
-		public function get delta():Number{
-				return null;
-		}
+		public function get delta():Number{return null;}
 
 		/**
 		 * @private 

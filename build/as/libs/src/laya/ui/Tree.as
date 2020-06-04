@@ -84,26 +84,24 @@ package laya.ui {
 		 * <li>false：不保持之前打开状态。</li>
 		 * </p>
 		 */
-		public var keepStatus:Boolean;
+		public function get keepStatus():Boolean{return null;}
+		public function set keepStatus(value:Boolean):void{}
 
 		/**
 		 * 列表数据源，只包含当前可视节点数据。
 		 */
-		public var array:Array;
+		public function get array():Array{return null;}
+		public function set array(value:Array):void{}
 
 		/**
 		 * 数据源，全部节点数据。
 		 */
-		public function get source():Array{
-				return null;
-		}
+		public function get source():Array{return null;}
 
 		/**
 		 * 此对象包含的<code>List</code>实例对象。
 		 */
-		public function get list():List{
-				return null;
-		}
+		public function get list():List{return null;}
 
 		/**
 		 * 此对象包含的<code>List</code>实例的单元格渲染器。
@@ -114,53 +112,80 @@ package laya.ui {
 		 * </ol></p>
 		 * @implements 
 		 */
-		public function get itemRender():*{
-				return null;
-		}
-		public  function set itemRender(value:*):void{}
+		public function get itemRender():*{return null;}
+		public function set itemRender(value:*):void{}
 
 		/**
 		 * 滚动条皮肤。
 		 */
-		public var scrollBarSkin:String;
+		public function get scrollBarSkin():String{return null;}
+		public function set scrollBarSkin(value:String):void{}
 
 		/**
 		 * 滚动条
 		 */
-		public function get scrollBar():ScrollBar{
-				return null;
-		}
+		public function get scrollBar():ScrollBar{return null;}
 
 		/**
 		 * 单元格鼠标事件处理器。
 		 * <p>默认返回参数（e:Event,index:int）。</p>
 		 */
-		public var mouseHandler:Handler;
+		public function get mouseHandler():Handler{return null;}
+		public function set mouseHandler(value:Handler):void{}
 
 		/**
 		 * <code>Tree</code> 实例的渲染处理器。
 		 */
-		public var renderHandler:Handler;
+		public function get renderHandler():Handler{return null;}
+		public function set renderHandler(value:Handler):void{}
 
 		/**
 		 * 左侧缩进距离（以像素为单位）。
 		 */
-		public var spaceLeft:Number;
+		public function get spaceLeft():Number{return null;}
+		public function set spaceLeft(value:Number):void{}
 
 		/**
 		 * 每一项之间的间隔距离（以像素为单位）。
 		 */
-		public var spaceBottom:Number;
+		public function get spaceBottom():Number{return null;}
+		public function set spaceBottom(value:Number):void{}
 
 		/**
 		 * 表示当前选择的项索引。
 		 */
-		public var selectedIndex:Number;
+		public function get selectedIndex():Number{return null;}
+		public function set selectedIndex(value:Number):void{}
 
 		/**
 		 * 当前选中的项对象的数据源。
 		 */
-		public var selectedItem:*;
+		public function get selectedItem():*{return null;}
+		public function set selectedItem(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
 
 		/**
 		 * @private 获取数据源集合。
@@ -208,9 +233,21 @@ package laya.ui {
 		public function fresh():void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
+
+		/**
 		 * xml结构的数据源。
 		 */
-		public var xml:XmlDom;
+		public function set xml(value:XmlDom):void{}
 
 		/**
 		 * @private 解析并处理XML类型的数据源。
@@ -235,9 +272,7 @@ package laya.ui {
 		/**
 		 * 表示选择的树节点项的<code>path</code>属性值。
 		 */
-		public function get selectedPath():String{
-				return null;
-		}
+		public function get selectedPath():String{return null;}
 
 		/**
 		 * 更新项列表，显示指定键名的数据项。

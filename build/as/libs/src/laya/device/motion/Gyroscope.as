@@ -24,9 +24,7 @@ package laya.device.motion {
 		 * Gyroscope的唯一引用。
 		 */
 		private static var _instance:*;
-		public static function get instance():Gyroscope{
-				return null;
-		}
+		public static function get instance():Gyroscope{return null;}
 
 		public function Gyroscope(singleton:Number = undefined){}
 

@@ -76,9 +76,7 @@ package laya.utils {
 		/**
 		 * 获取此对象的 ArrayBuffer 数据，数据只包含有效数据部分。
 		 */
-		public function get buffer():ArrayBuffer{
-				return null;
-		}
+		public function get buffer():ArrayBuffer{return null;}
 
 		/**
 		 * <p> <code>Byte</code> 实例的字节序。取值为：<code>BIG_ENDIAN</code> 或 <code>BIG_ENDIAN</code> 。</p>
@@ -86,14 +84,16 @@ package laya.utils {
 		 * <p> <code>BIG_ENDIAN</code> ：大端字节序，地址低位存储值的高位，地址高位存储值的低位。有时也称之为网络字节序。<br/>
 		 *   <code>LITTLE_ENDIAN</code> ：小端字节序，地址低位存储值的低位，地址高位存储值的高位。</p>
 		 */
-		public var endian:String;
+		public function get endian():String{return null;}
+		public function set endian(value:String):void{}
 
 		/**
 		 * <p> <code>Byte</code> 对象的长度（以字节为单位）。</p>
 		 * <p>如果将长度设置为大于当前长度的值，则用零填充字节数组的右侧；如果将长度设置为小于当前长度的值，将会截断该字节数组。</p>
 		 * <p>如果要设置的长度大于当前已分配的内存空间的字节长度，则重新分配内存空间，大小为以下两者较大者：要设置的长度、当前已分配的长度的2倍，并将原有数据拷贝到新的内存空间中；如果要设置的长度小于当前已分配的内存空间的字节长度，也会重新分配内存空间，大小为要设置的长度，并将原有数据从头截断为要设置的长度存入新的内存空间中。</p>
 		 */
-		public var length:Number;
+		public function set length(value:Number):void{}
+		public function get length():Number{return null;}
 
 		/**
 		 * @private 
@@ -351,14 +351,13 @@ package laya.utils {
 		/**
 		 * 移动或返回 Byte 对象的读写指针的当前位置（以字节为单位）。下一次调用读取方法时将在此位置开始读取，或者下一次调用写入方法时将在此位置开始写入。
 		 */
-		public var pos:Number;
+		public function get pos():Number{return null;}
+		public function set pos(value:Number):void{}
 
 		/**
 		 * 可从字节流的当前位置到末尾读取的数据的字节数。
 		 */
-		public function get bytesAvailable():Number{
-				return null;
-		}
+		public function get bytesAvailable():Number{return null;}
 
 		/**
 		 * 清除字节数组的内容，并将 length 和 pos 属性重置为 0。调用此方法将释放 Byte 实例占用的内存。

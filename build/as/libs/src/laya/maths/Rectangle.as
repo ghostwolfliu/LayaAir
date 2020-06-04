@@ -59,16 +59,12 @@ package laya.maths {
 		/**
 		 * 此矩形右侧的 X 轴坐标。 x 和 width 属性的和。
 		 */
-		public function get right():Number{
-				return null;
-		}
+		public function get right():Number{return null;}
 
 		/**
 		 * 此矩形底端的 Y 轴坐标。y 和 height 属性的和。
 		 */
-		public function get bottom():Number{
-				return null;
-		}
+		public function get bottom():Number{return null;}
 
 		/**
 		 * 将 Rectangle 的属性设置为指定值。

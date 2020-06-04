@@ -8,16 +8,12 @@ package laya.d3.shader {
 		/**
 		 * 是否已经全部编译。
 		 */
-		public function get allCompiled():Boolean{
-				return null;
-		}
+		public function get allCompiled():Boolean{return null;}
 
 		/**
 		 * 包含的变种数量。
 		 */
-		public function get variantCount():Number{
-				return null;
-		}
+		public function get variantCount():Number{return null;}
 
 		/**
 		 * 添加着色器变种。

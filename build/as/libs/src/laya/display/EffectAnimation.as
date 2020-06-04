@@ -16,7 +16,8 @@ package laya.display {
 		 * 本实例的目标对象。通过本实例控制目标对象的属性变化。
 		 * @param v 指定的目标对象。
 		 */
-		public var target:*;
+		public function set target(v:*):void{}
+		public function get target():*{return null;}
 
 		/**
 		 * @private 
@@ -27,7 +28,7 @@ package laya.display {
 		 * 设置开始播放的事件。本实例会侦听目标对象的指定事件，触发后播放相应动画效果。
 		 * @param event 
 		 */
-		public var playEvent:String;
+		public function set playEvent(event:String):void{}
 
 		/**
 		 * @param start 
@@ -46,13 +47,13 @@ package laya.display {
 		 * 设置提供数据的类。
 		 * @param classStr 类路径
 		 */
-		public var effectClass:String;
+		public function set effectClass(classStr:String):void{}
 
 		/**
 		 * 设置动画数据。
 		 * @param uiData 
 		 */
-		public var effectData:*;
+		public function set effectData(uiData:*):void{}
 
 		/**
 		 * @override 

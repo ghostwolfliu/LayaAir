@@ -13,39 +13,43 @@ package laya.d3.physics {
 		/**
 		 * 角色降落速度。
 		 */
-		public var fallSpeed:Number;
+		public function get fallSpeed():Number{return null;}
+		public function set fallSpeed(value:Number):void{}
 
 		/**
 		 * 角色跳跃速度。
 		 */
-		public var jumpSpeed:Number;
+		public function get jumpSpeed():Number{return null;}
+		public function set jumpSpeed(value:Number):void{}
 
 		/**
 		 * 重力。
 		 */
-		public var gravity:Vector3;
+		public function get gravity():Vector3{return null;}
+		public function set gravity(value:Vector3):void{}
 
 		/**
 		 * 最大坡度。
 		 */
-		public var maxSlope:Number;
+		public function get maxSlope():Number{return null;}
+		public function set maxSlope(value:Number):void{}
 
 		/**
 		 * 角色是否在地表。
 		 */
-		public function get isGrounded():Boolean{
-				return null;
-		}
+		public function get isGrounded():Boolean{return null;}
 
 		/**
 		 * 角色行走的脚步高度，表示可跨越的最大高度。
 		 */
-		public var stepHeight:Number;
+		public function get stepHeight():Number{return null;}
+		public function set stepHeight(value:Number):void{}
 
 		/**
 		 * 角色的Up轴。
 		 */
-		public var upAxis:Vector3;
+		public function get upAxis():Vector3{return null;}
+		public function set upAxis(value:Vector3):void{}
 
 		/**
 		 * 创建一个 <code>CharacterController</code> 实例。

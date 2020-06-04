@@ -32,30 +32,22 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 开始帧类型,0常量模式，1随机双常量模式。
 		 */
-		public function get type():Number{
-				return null;
-		}
+		public function get type():Number{return null;}
 
 		/**
 		 * 固定帧。
 		 */
-		public function get constant():Number{
-				return null;
-		}
+		public function get constant():Number{return null;}
 
 		/**
 		 * 最小固定帧。
 		 */
-		public function get constantMin():Number{
-				return null;
-		}
+		public function get constantMin():Number{return null;}
 
 		/**
 		 * 最大固定帧。
 		 */
-		public function get constantMax():Number{
-				return null;
-		}
+		public function get constantMax():Number{return null;}
 
 		/**
 		 * 创建一个 <code>StartFrame,不允许new，请使用静态创建函数。</code> 实例。

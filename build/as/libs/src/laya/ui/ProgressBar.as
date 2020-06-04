@@ -64,7 +64,8 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Image#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
@@ -87,7 +88,8 @@ package laya.ui {
 		 * 当前的进度量。
 		 * <p><b>取值：</b>介于0和1之间。</p>
 		 */
-		public var value:Number;
+		public function get value():Number{return null;}
+		public function set value(num:Number):void{}
 
 		/**
 		 * @private 更改进度值的显示。
@@ -97,16 +99,12 @@ package laya.ui {
 		/**
 		 * 获取进度条对象。
 		 */
-		public function get bar():Image{
-				return null;
-		}
+		public function get bar():Image{return null;}
 
 		/**
 		 * 获取背景条对象。
 		 */
-		public function get bg():Image{
-				return null;
-		}
+		public function get bg():Image{return null;}
 
 		/**
 		 * <p>当前 <code>ProgressBar</code> 实例的进度条背景位图（ <code>Image</code> 实例）的有效缩放网格数据。</p>
@@ -114,7 +112,44 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 	}
 
 }

@@ -246,34 +246,37 @@ package laya.d3.math.Native {
 		 * 获取X轴坐标。
 		 * @return X轴坐标。
 		 */
+		public function get x():Number{return null;}
 
 		/**
 		 * 设置X轴坐标。
 		 * @param value X轴坐标。
 		 */
-		public var x:Number;
+		public function set x(value:Number):void{}
 
 		/**
 		 * 获取Y轴坐标。
 		 * @return Y轴坐标。
 		 */
+		public function get y():Number{return null;}
 
 		/**
 		 * 设置Y轴坐标。
 		 * @param value Y轴坐标。
 		 */
-		public var y:Number;
+		public function set y(value:Number):void{}
 
 		/**
 		 * 获取Z轴坐标。
 		 * @return Z轴坐标。
 		 */
+		public function get z():Number{return null;}
 
 		/**
 		 * 设置Z轴坐标。
 		 * @param value Z轴坐标。
 		 */
-		public var z:Number;
+		public function set z(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>Vector3</code> 实例。

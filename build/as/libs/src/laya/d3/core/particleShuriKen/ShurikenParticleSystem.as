@@ -221,121 +221,121 @@ package laya.d3.core.particleShuriKen {
 		/**
 		 * 最大粒子数。
 		 */
-		public var maxParticles:Number;
+		public function get maxParticles():Number{return null;}
+		public function set maxParticles(value:Number):void{}
 
 		/**
 		 * 获取发射器。
 		 */
-		public function get emission():Emission{
-				return null;
-		}
+		public function get emission():Emission{return null;}
 
 		/**
 		 * 粒子存活个数。
 		 */
-		public function get aliveParticleCount():Number{
-				return null;
-		}
+		public function get aliveParticleCount():Number{return null;}
 
 		/**
 		 * 一次循环内的累计时间。
 		 */
-		public function get emissionTime():Number{
-				return null;
-		}
+		public function get emissionTime():Number{return null;}
 
 		/**
 		 * 形状。
 		 */
-		public var shape:BaseShape;
+		public function get shape():BaseShape{return null;}
+		public function set shape(value:BaseShape):void{}
 
 		/**
 		 * 是否存活。
 		 */
-		public function get isAlive():Boolean{
-				return null;
-		}
+		public function get isAlive():Boolean{return null;}
 
 		/**
 		 * 是否正在发射。
 		 */
-		public function get isEmitting():Boolean{
-				return null;
-		}
+		public function get isEmitting():Boolean{return null;}
 
 		/**
 		 * 是否正在播放。
 		 */
-		public function get isPlaying():Boolean{
-				return null;
-		}
+		public function get isPlaying():Boolean{return null;}
 
 		/**
 		 * 是否已暂停。
 		 */
-		public function get isPaused():Boolean{
-				return null;
-		}
+		public function get isPaused():Boolean{return null;}
 
 		/**
 		 * 开始生命周期模式,0为固定时间，1为渐变时间，2为两个固定之间的随机插值,3为两个渐变时间的随机插值。
 		 */
-		public var startLifetimeType:Number;
+		public function get startLifetimeType():Number{return null;}
+		public function set startLifetimeType(value:Number):void{}
 
 		/**
 		 * 开始生命周期，0模式,单位为秒。
 		 */
-		public var startLifetimeConstant:Number;
+		public function get startLifetimeConstant():Number{return null;}
+		public function set startLifetimeConstant(value:Number):void{}
 
 		/**
 		 * 开始渐变生命周期，1模式,单位为秒。
 		 */
-		public var startLifeTimeGradient:GradientDataNumber;
+		public function get startLifeTimeGradient():GradientDataNumber{return null;}
+		public function set startLifeTimeGradient(value:GradientDataNumber):void{}
 
 		/**
 		 * 最小开始生命周期，2模式,单位为秒。
 		 */
-		public var startLifetimeConstantMin:Number;
+		public function get startLifetimeConstantMin():Number{return null;}
+		public function set startLifetimeConstantMin(value:Number):void{}
 
 		/**
 		 * 最大开始生命周期，2模式,单位为秒。
 		 */
-		public var startLifetimeConstantMax:Number;
+		public function get startLifetimeConstantMax():Number{return null;}
+		public function set startLifetimeConstantMax(value:Number):void{}
 
 		/**
 		 * 开始渐变最小生命周期，3模式,单位为秒。
 		 */
-		public var startLifeTimeGradientMin:GradientDataNumber;
+		public function get startLifeTimeGradientMin():GradientDataNumber{return null;}
+		public function set startLifeTimeGradientMin(value:GradientDataNumber):void{}
 
 		/**
 		 * 开始渐变最大生命周期，3模式,单位为秒。
 		 */
-		public var startLifeTimeGradientMax:GradientDataNumber;
+		public function get startLifeTimeGradientMax():GradientDataNumber{return null;}
+		public function set startLifeTimeGradientMax(value:GradientDataNumber):void{}
 
 		/**
 		 * 生命周期速度,注意:如修改该值的某些属性,需重新赋值此属性才可生效。
 		 */
-		public var velocityOverLifetime:VelocityOverLifetime;
+		public function get velocityOverLifetime():VelocityOverLifetime{return null;}
+		public function set velocityOverLifetime(value:VelocityOverLifetime):void{}
 
 		/**
 		 * 生命周期颜色,注意:如修改该值的某些属性,需重新赋值此属性才可生效。
 		 */
-		public var colorOverLifetime:ColorOverLifetime;
+		public function get colorOverLifetime():ColorOverLifetime{return null;}
+		public function set colorOverLifetime(value:ColorOverLifetime):void{}
 
 		/**
 		 * 生命周期尺寸,注意:如修改该值的某些属性,需重新赋值此属性才可生效。
 		 */
-		public var sizeOverLifetime:SizeOverLifetime;
+		public function get sizeOverLifetime():SizeOverLifetime{return null;}
+		public function set sizeOverLifetime(value:SizeOverLifetime):void{}
 
 		/**
 		 * 生命周期旋转,注意:如修改该值的某些属性,需重新赋值此属性才可生效。
 		 */
-		public var rotationOverLifetime:RotationOverLifetime;
+		public function get rotationOverLifetime():RotationOverLifetime{return null;}
+		public function set rotationOverLifetime(value:RotationOverLifetime):void{}
 
 		/**
 		 * 生命周期纹理动画,注意:如修改该值的某些属性,需重新赋值此属性才可生效。
 		 */
-		public var textureSheetAnimation:TextureSheetAnimation;
+		public function get textureSheetAnimation():TextureSheetAnimation{return null;}
+		public function set textureSheetAnimation(value:TextureSheetAnimation):void{}
 
 		public function ShurikenParticleSystem(owner:ShuriKenParticle3D = undefined){}
 

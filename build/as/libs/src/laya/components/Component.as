@@ -23,28 +23,23 @@ package laya.components {
 		/**
 		 * 唯一标识ID。
 		 */
-		public function get id():Number{
-				return null;
-		}
+		public function get id():Number{return null;}
 
 		/**
 		 * 是否启用组件。
 		 */
-		public var enabled:Boolean;
+		public function get enabled():Boolean{return null;}
+		public function set enabled(value:Boolean):void{}
 
 		/**
 		 * 是否为单实例组件。
 		 */
-		public function get isSingleton():Boolean{
-				return null;
-		}
+		public function get isSingleton():Boolean{return null;}
 
 		/**
 		 * 是否已经销毁 。
 		 */
-		public function get destroyed():Boolean{
-				return null;
-		}
+		public function get destroyed():Boolean{return null;}
 
 		/**
 		 * [实现IListPool接口]

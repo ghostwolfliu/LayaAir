@@ -30,18 +30,19 @@ package laya.particle.emitter {
 		 * 设置粒子粒子模板
 		 * @param particleTemplate 粒子模板
 		 */
-		public var particleTemplate:ParticleTemplateBase;
+		public function set particleTemplate(particleTemplate:ParticleTemplateBase):void{}
 
 		/**
 		 * 设置粒子发射速率
 		 * @param emissionRate 粒子发射速率 (个/秒)
 		 */
+		public function set emissionRate(_emissionRate:Number):void{}
 
 		/**
 		 * 获取粒子发射速率
 		 * @return 发射速率  粒子发射速率 (个/秒)
 		 */
-		public var emissionRate:Number;
+		public function get emissionRate():Number{return null;}
 
 		/**
 		 * 开始发射粒子

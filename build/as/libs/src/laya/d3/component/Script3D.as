@@ -9,6 +9,12 @@ package laya.d3.component {
 	public class Script3D extends Component {
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get isSingleton():Boolean{return null;}
+
+		/**
 		 * 创建后只执行一次
 		 * 此方法为虚方法，使用时重写覆盖即可
 		 */
@@ -61,6 +67,12 @@ package laya.d3.component {
 		 * 此方法为虚方法，使用时重写覆盖即可
 		 */
 		public function onCollisionExit(collision:Collision):void{}
+
+		/**
+		 * 关节破坏时执行此方法
+		 * 此方法为虚方法，使用时重写覆盖即可
+		 */
+		public function onJointBreak():void{}
 
 		/**
 		 * 鼠标按下时执行

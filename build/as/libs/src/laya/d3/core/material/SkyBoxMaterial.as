@@ -20,22 +20,26 @@ package laya.d3.core.material {
 		/**
 		 * 颜色。
 		 */
-		public var tintColor:Vector4;
+		public function get tintColor():Vector4{return null;}
+		public function set tintColor(value:Vector4):void{}
 
 		/**
 		 * 曝光强度。
 		 */
-		public var exposure:Number;
+		public function get exposure():Number{return null;}
+		public function set exposure(value:Number):void{}
 
 		/**
 		 * 旋转角度。
 		 */
-		public var rotation:Number;
+		public function get rotation():Number{return null;}
+		public function set rotation(value:Number):void{}
 
 		/**
 		 * 天空盒纹理。
 		 */
-		public var textureCube:TextureCube;
+		public function get textureCube():TextureCube{return null;}
+		public function set textureCube(value:TextureCube):void{}
 
 		/**
 		 * 克隆。

@@ -133,13 +133,12 @@ package laya.physics {
 		 * 获得原始body对象
 		 */
 		public function getBody():*{}
+		public function _getOriBody():*{}
 
 		/**
 		 * [只读]获得原始body对象
 		 */
-		public function get body():*{
-				return null;
-		}
+		public function get body():*{return null;}
 
 		/**
 		 * 对刚体施加力
@@ -208,47 +207,56 @@ package laya.physics {
 		 * dynamic为动态类型，接受重力影响
 		 * kinematic为运动类型，不受重力影响，可以通过施加速度或者力的方式使其运动
 		 */
-		public var type:String;
+		public function get type():String{return null;}
+		public function set type(value:String):void{}
 
 		/**
 		 * 重力缩放系数，设置为0为没有重力
 		 */
-		public var gravityScale:Number;
+		public function get gravityScale():Number{return null;}
+		public function set gravityScale(value:Number):void{}
 
 		/**
 		 * 是否允许旋转，如果不希望刚体旋转，这设置为false
 		 */
-		public var allowRotation:Boolean;
+		public function get allowRotation():Boolean{return null;}
+		public function set allowRotation(value:Boolean):void{}
 
 		/**
 		 * 是否允许休眠，允许休眠能提高性能
 		 */
-		public var allowSleep:Boolean;
+		public function get allowSleep():Boolean{return null;}
+		public function set allowSleep(value:Boolean):void{}
 
 		/**
 		 * 旋转速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间
 		 */
-		public var angularDamping:Number;
+		public function get angularDamping():Number{return null;}
+		public function set angularDamping(value:Number):void{}
 
 		/**
 		 * 角速度，设置会导致旋转
 		 */
-		public var angularVelocity:Number;
+		public function get angularVelocity():Number{return null;}
+		public function set angularVelocity(value:Number):void{}
 
 		/**
 		 * 线性速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间
 		 */
-		public var linearDamping:Number;
+		public function get linearDamping():Number{return null;}
+		public function set linearDamping(value:Number):void{}
 
 		/**
 		 * 线性运动速度，比如{x:5,y:5}
 		 */
-		public var linearVelocity:*;
+		public function get linearVelocity():*{return null;}
+		public function set linearVelocity(value:*):void{}
 
 		/**
 		 * 是否高速移动的物体，设置为true，可以防止高速穿透
 		 */
-		public var bullet:Boolean;
+		public function get bullet():Boolean{return null;}
+		public function set bullet(value:Boolean):void{}
 	}
 
 }

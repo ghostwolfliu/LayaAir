@@ -20,9 +20,7 @@ package laya.utils {
 		public function toString():String{
 			return null;
 		}
-		public function get length():Number{
-				return null;
-		}
+		public function get length():Number{return null;}
 		public function charCodeAt(i:Number):Number{
 			return null;
 		}

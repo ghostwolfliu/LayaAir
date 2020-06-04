@@ -17,20 +17,19 @@ package laya.d3.core.particleShuriKen.module {
 		 * 设置粒子发射速率。
 		 * @param emissionRate 粒子发射速率 (个/秒)。
 		 */
+		public function set emissionRate(value:Number):void{}
 
 		/**
 		 * 获取粒子发射速率。
 		 * @return 粒子发射速率 (个/秒)。
 		 */
-		public var emissionRate:Number;
+		public function get emissionRate():Number{return null;}
 
 		/**
 		 * 获取是否已销毁。
 		 * @return 是否已销毁。
 		 */
-		public function get destroyed():Boolean{
-				return null;
-		}
+		public function get destroyed():Boolean{return null;}
 
 		/**
 		 * 创建一个 <code>Emission</code> 实例。

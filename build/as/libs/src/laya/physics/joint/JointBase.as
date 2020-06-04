@@ -14,9 +14,7 @@ package laya.physics.joint {
 		/**
 		 * [只读]原生关节对象
 		 */
-		public function get joint():*{
-				return null;
-		}
+		public function get joint():*{return null;}
 		protected function _createJoint():void{}
 	}
 

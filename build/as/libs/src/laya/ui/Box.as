@@ -9,9 +9,22 @@ package laya.ui {
 		private var _bgColor:*;
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
+
+		/**
 		 * 背景颜色
 		 */
-		public var bgColor:String;
+		public function get bgColor():String{return null;}
+		public function set bgColor(value:String):void{}
 		private var _onResize:*;
 	}
 

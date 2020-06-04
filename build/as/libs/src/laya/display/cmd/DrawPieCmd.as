@@ -64,19 +64,19 @@ package laya.display.cmd {
 		/**
 		 * @private 
 		 */
-		public function get cmdID():String{
-				return null;
-		}
+		public function get cmdID():String{return null;}
 
 		/**
 		 * 开始角度。
 		 */
-		public var startAngle:Number;
+		public function get startAngle():Number{return null;}
+		public function set startAngle(value:Number):void{}
 
 		/**
 		 * 结束角度。
 		 */
-		public var endAngle:Number;
+		public function get endAngle():Number{return null;}
+		public function set endAngle(value:Number):void{}
 	}
 
 }

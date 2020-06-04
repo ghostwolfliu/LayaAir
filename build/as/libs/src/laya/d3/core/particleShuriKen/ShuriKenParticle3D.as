@@ -11,16 +11,12 @@ package laya.d3.core.particleShuriKen {
 		/**
 		 * 粒子系统。
 		 */
-		public function get particleSystem():ShurikenParticleSystem{
-				return null;
-		}
+		public function get particleSystem():ShurikenParticleSystem{return null;}
 
 		/**
 		 * 粒子渲染器。
 		 */
-		public function get particleRenderer():ShurikenParticleRenderer{
-				return null;
-		}
+		public function get particleRenderer():ShurikenParticleRenderer{return null;}
 
 		/**
 		 * 创建一个 <code>Particle3D</code> 实例。

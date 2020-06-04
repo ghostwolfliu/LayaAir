@@ -13,88 +13,96 @@ package laya.d3.physics {
 		/**
 		 * 质量。
 		 */
-		public var mass:Number;
+		public function get mass():Number{return null;}
+		public function set mass(value:Number):void{}
 
 		/**
 		 * 是否为运动物体，如果为true仅可通过transform属性移动物体,而非其他力相关属性。
 		 */
-		public var isKinematic:Boolean;
+		public function get isKinematic():Boolean{return null;}
+		public function set isKinematic(value:Boolean):void{}
 
 		/**
 		 * 刚体的线阻力。
 		 */
-		public var linearDamping:Number;
+		public function get linearDamping():Number{return null;}
+		public function set linearDamping(value:Number):void{}
 
 		/**
 		 * 刚体的角阻力。
 		 */
-		public var angularDamping:Number;
+		public function get angularDamping():Number{return null;}
+		public function set angularDamping(value:Number):void{}
 
 		/**
 		 * 是否重载重力。
 		 */
-		public var overrideGravity:Boolean;
+		public function get overrideGravity():Boolean{return null;}
+		public function set overrideGravity(value:Boolean):void{}
 
 		/**
 		 * 重力。
 		 */
-		public var gravity:Vector3;
+		public function get gravity():Vector3{return null;}
+		public function set gravity(value:Vector3):void{}
 
 		/**
 		 * 总力。
 		 */
-		public function get totalForce():Vector3{
-				return null;
-		}
+		public function get totalForce():Vector3{return null;}
 
 		/**
 		 * 每个轴的线性运动缩放因子,如果某一轴的值为0表示冻结在该轴的线性运动。
 		 */
-		public var linearFactor:Vector3;
+		public function get linearFactor():Vector3{return null;}
+		public function set linearFactor(value:Vector3):void{}
 
 		/**
 		 * 线速度
 		 */
-		public var linearVelocity:Vector3;
+		public function get linearVelocity():Vector3{return null;}
+		public function set linearVelocity(value:Vector3):void{}
 
 		/**
 		 * 每个轴的角度运动缩放因子,如果某一轴的值为0表示冻结在该轴的角度运动。
 		 */
-		public var angularFactor:Vector3;
+		public function get angularFactor():Vector3{return null;}
+		public function set angularFactor(value:Vector3):void{}
 
 		/**
 		 * 角速度。
 		 */
-		public var angularVelocity:Vector3;
+		public function get angularVelocity():Vector3{return null;}
+		public function set angularVelocity(value:Vector3):void{}
 
 		/**
 		 * 刚体所有扭力。
 		 */
-		public function get totalTorque():Vector3{
-				return null;
-		}
+		public function get totalTorque():Vector3{return null;}
 
 		/**
 		 * 是否进行碰撞检测。
 		 */
-		public var detectCollisions:Boolean;
+		public function get detectCollisions():Boolean{return null;}
+		public function set detectCollisions(value:Boolean):void{}
 
 		/**
 		 * 是否处于睡眠状态。
 		 */
-		public function get isSleeping():Boolean{
-				return null;
-		}
+		public function get isSleeping():Boolean{return null;}
 
 		/**
 		 * 刚体睡眠的线速度阈值。
 		 */
-		public var sleepLinearVelocity:Number;
+		public function get sleepLinearVelocity():Number{return null;}
+		public function set sleepLinearVelocity(value:Number):void{}
 
 		/**
 		 * 刚体睡眠的角速度阈值。
 		 */
-		public var sleepAngularVelocity:Number;
+		public function get sleepAngularVelocity():Number{return null;}
+		public function set sleepAngularVelocity(value:Number):void{}
+		public function get btColliderObject():Number{return null;}
 
 		/**
 		 * 创建一个 <code>RigidBody3D</code> 实例。

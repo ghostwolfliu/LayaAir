@@ -126,9 +126,7 @@ package laya.media.webaudio {
 		public function play(startTime:Number = null,loops:Number = null,channel:SoundChannel = null):SoundChannel{
 			return null;
 		}
-		public function get duration():Number{
-				return null;
-		}
+		public function get duration():Number{return null;}
 		public function dispose():void{}
 	}
 

@@ -47,139 +47,121 @@ package laya.ani {
 		 * 获取动画数据模板
 		 * @param value 动画数据模板
 		 */
+		public function get templet():AnimationTemplet{return null;}
 
 		/**
 		 * 设置动画数据模板,注意：修改此值会有计算开销。
 		 * @param value 动画数据模板
 		 */
-		public var templet:AnimationTemplet;
+		public function set templet(value:AnimationTemplet):void{}
 
 		/**
 		 * 动画播放的起始时间位置。
 		 * @return 起始时间位置。
 		 */
-		public function get playStart():Number{
-				return null;
-		}
+		public function get playStart():Number{return null;}
 
 		/**
 		 * 动画播放的结束时间位置。
 		 * @return 结束时间位置。
 		 */
-		public function get playEnd():Number{
-				return null;
-		}
+		public function get playEnd():Number{return null;}
 
 		/**
 		 * 获取动画播放一次的总时间
 		 * @return 动画播放一次的总时间
 		 */
-		public function get playDuration():Number{
-				return null;
-		}
+		public function get playDuration():Number{return null;}
 
 		/**
 		 * 获取动画播放的总总时间
 		 * @return 动画播放的总时间
 		 */
-		public function get overallDuration():Number{
-				return null;
-		}
+		public function get overallDuration():Number{return null;}
 
 		/**
 		 * 获取当前动画索引
 		 * @return value 当前动画索引
 		 */
-		public function get currentAnimationClipIndex():Number{
-				return null;
-		}
+		public function get currentAnimationClipIndex():Number{return null;}
 
 		/**
 		 * 获取当前帧数
 		 * @return 当前帧数
 		 */
-		public function get currentKeyframeIndex():Number{
-				return null;
-		}
+		public function get currentKeyframeIndex():Number{return null;}
 
 		/**
 		 * 获取当前精确时间，不包括重播时间
 		 * @return value 当前时间
 		 */
-		public function get currentPlayTime():Number{
-				return null;
-		}
+		public function get currentPlayTime():Number{return null;}
 
 		/**
 		 * 获取当前帧时间，不包括重播时间
 		 * @return value 当前时间
 		 */
-		public function get currentFrameTime():Number{
-				return null;
-		}
+		public function get currentFrameTime():Number{return null;}
 
 		/**
 		 * 获取缓存播放速率。*
 		 * @return 缓存播放速率。
 		 */
+		public function get cachePlayRate():Number{return null;}
 
 		/**
 		 * 设置缓存播放速率,默认值为1.0,注意：修改此值会有计算开销。*
 		 * @return value 缓存播放速率。
 		 */
-		public var cachePlayRate:Number;
+		public function set cachePlayRate(value:Number):void{}
 
 		/**
 		 * 获取默认帧率*
 		 * @return value 默认帧率
 		 */
+		public function get cacheFrameRate():Number{return null;}
 
 		/**
 		 * 设置默认帧率,每秒60帧,注意：修改此值会有计算开销。*
 		 * @return value 缓存帧率
 		 */
-		public var cacheFrameRate:Number;
+		public function set cacheFrameRate(value:Number):void{}
 
 		/**
 		 * 设置当前播放位置
 		 * @param value 当前时间
 		 */
-		public var currentTime:Number;
+		public function set currentTime(value:Number):void{}
 
 		/**
 		 * 获取当前是否暂停
 		 * @return 是否暂停
 		 */
+		public function get paused():Boolean{return null;}
 
 		/**
 		 * 设置是否暂停
 		 * @param value 是否暂停
 		 */
-		public var paused:Boolean;
+		public function set paused(value:Boolean):void{}
 
 		/**
 		 * 获取缓存帧率间隔时间
 		 * @return 缓存帧率间隔时间
 		 */
-		public function get cacheFrameRateInterval():Number{
-				return null;
-		}
+		public function get cacheFrameRateInterval():Number{return null;}
 
 		/**
 		 * 获取当前播放状态
 		 * @return 当前播放状态
 		 */
-		public function get state():Number{
-				return null;
-		}
+		public function get state():Number{return null;}
 
 		/**
 		 * 获取是否已销毁。
 		 * @return 是否已销毁。
 		 */
-		public function get destroyed():Boolean{
-				return null;
-		}
+		public function get destroyed():Boolean{return null;}
 
 		/**
 		 * 创建一个 <code>AnimationPlayer</code> 实例。

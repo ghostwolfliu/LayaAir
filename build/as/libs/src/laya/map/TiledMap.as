@@ -232,11 +232,12 @@ package laya.map {
 		 * 设置地图缩放
 		 * @param scale 
 		 */
+		public function set scale(scale:Number):void{}
 
 		/**
 		 * 得到当前地图的缩放
 		 */
-		public var scale:Number;
+		public function get scale():Number{return null;}
 
 		/**
 		 * 移动视口
@@ -315,128 +316,92 @@ package laya.map {
 		/**
 		 * 格子的宽度
 		 */
-		public function get tileWidth():Number{
-				return null;
-		}
+		public function get tileWidth():Number{return null;}
 
 		/**
 		 * 格子的高度
 		 */
-		public function get tileHeight():Number{
-				return null;
-		}
+		public function get tileHeight():Number{return null;}
 
 		/**
 		 * 地图的宽度
 		 */
-		public function get width():Number{
-				return null;
-		}
+		public function get width():Number{return null;}
 
 		/**
 		 * 地图的高度
 		 */
-		public function get height():Number{
-				return null;
-		}
+		public function get height():Number{return null;}
 
 		/**
 		 * 地图横向的格子数
 		 */
-		public function get numColumnsTile():Number{
-				return null;
-		}
+		public function get numColumnsTile():Number{return null;}
 
 		/**
 		 * 地图竖向的格子数
 		 */
-		public function get numRowsTile():Number{
-				return null;
-		}
+		public function get numRowsTile():Number{return null;}
 
 		/**
 		 * @private 视口x坐标
 		 */
-		public function get viewPortX():Number{
-				return null;
-		}
+		public function get viewPortX():Number{return null;}
 
 		/**
 		 * @private 视口的y坐标
 		 */
-		public function get viewPortY():Number{
-				return null;
-		}
+		public function get viewPortY():Number{return null;}
 
 		/**
 		 * @private 视口的宽度
 		 */
-		public function get viewPortWidth():Number{
-				return null;
-		}
+		public function get viewPortWidth():Number{return null;}
 
 		/**
 		 * @private 视口的高度
 		 */
-		public function get viewPortHeight():Number{
-				return null;
-		}
+		public function get viewPortHeight():Number{return null;}
 
 		/**
 		 * 地图的x坐标
 		 */
-		public function get x():Number{
-				return null;
-		}
+		public function get x():Number{return null;}
 
 		/**
 		 * 地图的y坐标
 		 */
-		public function get y():Number{
-				return null;
-		}
+		public function get y():Number{return null;}
 
 		/**
 		 * 块的宽度
 		 */
-		public function get gridWidth():Number{
-				return null;
-		}
+		public function get gridWidth():Number{return null;}
 
 		/**
 		 * 块的高度
 		 */
-		public function get gridHeight():Number{
-				return null;
-		}
+		public function get gridHeight():Number{return null;}
 
 		/**
 		 * 地图的横向块数
 		 */
-		public function get numColumnsGrid():Number{
-				return null;
-		}
+		public function get numColumnsGrid():Number{return null;}
 
 		/**
 		 * 地图的坚向块数
 		 */
-		public function get numRowsGrid():Number{
-				return null;
-		}
+		public function get numRowsGrid():Number{return null;}
 
 		/**
 		 * 当前地图类型
 		 */
-		public function get orientation():String{
-				return null;
-		}
+		public function get orientation():String{return null;}
 
 		/**
 		 * tile渲染顺序
 		 */
-		public function get renderOrder():String{
-				return null;
-		}
+		public function get renderOrder():String{return null;}
 
 		/**
 		 * ***************************************对外接口*********************************************

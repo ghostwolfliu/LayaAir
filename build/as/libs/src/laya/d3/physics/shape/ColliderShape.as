@@ -27,19 +27,19 @@ package laya.d3.physics.shape {
 		/**
 		 * 碰撞类型。
 		 */
-		public function get type():Number{
-				return null;
-		}
+		public function get type():Number{return null;}
 
 		/**
 		 * Shape的本地偏移。
 		 */
-		public var localOffset:Vector3;
+		public function get localOffset():Vector3{return null;}
+		public function set localOffset(value:Vector3):void{}
 
 		/**
 		 * Shape的本地旋转。
 		 */
-		public var localRotation:Quaternion;
+		public function get localRotation():Quaternion{return null;}
+		public function set localRotation(value:Quaternion):void{}
 
 		/**
 		 * 创建一个新的 <code>ColliderShape</code> 实例。

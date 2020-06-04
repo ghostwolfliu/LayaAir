@@ -5,11 +5,16 @@ package laya.d3.physics.constraints {
 	 * <code>Point2PointConstraint</code> 类用于创建物理组件的父类。
 	 */
 	public class Point2PointConstraint {
-		public var pivotInA:Vector3;
-		public var pivotInB:Vector3;
-		public var damping:Number;
-		public var impulseClamp:Number;
-		public var tau:Number;
+		public function get pivotInA():Vector3{return null;}
+		public function set pivotInA(value:Vector3):void{}
+		public function get pivotInB():Vector3{return null;}
+		public function set pivotInB(value:Vector3):void{}
+		public function get damping():Number{return null;}
+		public function set damping(value:Number):void{}
+		public function get impulseClamp():Number{return null;}
+		public function set impulseClamp(value:Number):void{}
+		public function get tau():Number{return null;}
+		public function set tau(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>Point2PointConstraint</code> 实例。

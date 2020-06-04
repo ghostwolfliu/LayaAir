@@ -31,47 +31,56 @@ package laya.d3.core.light {
 		/**
 		 * 灯光强度。
 		 */
-		public var intensity:Number;
+		public function get intensity():Number{return null;}
+		public function set intensity(value:Number):void{}
 
 		/**
 		 * 阴影模式。
 		 */
-		public var shadowMode:ShadowMode;
+		public function get shadowMode():ShadowMode{return null;}
+		public function set shadowMode(value:ShadowMode):void{}
 
 		/**
 		 * 最大阴影距离。
 		 */
-		public var shadowDistance:Number;
+		public function get shadowDistance():Number{return null;}
+		public function set shadowDistance(value:Number):void{}
 
 		/**
 		 * 阴影贴图分辨率。
 		 */
-		public var shadowResolution:Number;
+		public function get shadowResolution():Number{return null;}
+		public function set shadowResolution(value:Number):void{}
 
 		/**
 		 * 阴影深度偏差。
 		 */
-		public var shadowDepthBias:Number;
+		public function get shadowDepthBias():Number{return null;}
+		public function set shadowDepthBias(value:Number):void{}
 
 		/**
 		 * 阴影法线偏差。
 		 */
-		public var shadowNormalBias:Number;
+		public function get shadowNormalBias():Number{return null;}
+		public function set shadowNormalBias(value:Number):void{}
 
 		/**
 		 * 阴影强度。
 		 */
-		public var shadowStrength:Number;
+		public function get shadowStrength():Number{return null;}
+		public function set shadowStrength(value:Number):void{}
 
 		/**
 		 * 阴影视锥的近裁面。
 		 */
-		public var shadowNearPlane:Number;
+		public function get shadowNearPlane():Number{return null;}
+		public function set shadowNearPlane(value:Number):void{}
 
 		/**
 		 * 灯光烘培类型。
 		 */
-		public var lightmapBakedType:Number;
+		public function get lightmapBakedType():Number{return null;}
+		public function set lightmapBakedType(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>LightSprite</code> 实例。
@@ -94,7 +103,8 @@ package laya.d3.core.light {
 		/**
 		 * @deprecated please use color property instead.
 		 */
-		public var diffuseColor:Vector3;
+		public function get diffuseColor():Vector3{return null;}
+		public function set diffuseColor(value:Vector3):void{}
 	}
 
 }

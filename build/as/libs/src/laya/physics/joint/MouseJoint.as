@@ -48,17 +48,20 @@ package laya.physics.joint {
 		/**
 		 * 鼠标关节在拖曳刚体bodyB时施加的最大作用力
 		 */
-		public var maxForce:Number;
+		public function get maxForce():Number{return null;}
+		public function set maxForce(value:Number):void{}
 
 		/**
 		 * 弹簧系统的震动频率，可以视为弹簧的弹性系数
 		 */
-		public var frequency:Number;
+		public function get frequency():Number{return null;}
+		public function set frequency(value:Number):void{}
 
 		/**
 		 * 刚体在回归到节点过程中受到的阻尼，取值0~1
 		 */
-		public var damping:Number;
+		public function get damping():Number{return null;}
+		public function set damping(value:Number):void{}
 	}
 
 }

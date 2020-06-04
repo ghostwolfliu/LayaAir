@@ -20,9 +20,7 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 获取尺寸。
 		 */
-		public function get velocity():GradientVelocity{
-				return null;
-		}
+		public function get velocity():GradientVelocity{return null;}
 
 		/**
 		 * 创建一个 <code>VelocityOverLifetime</code> 实例。

@@ -79,7 +79,8 @@ package laya.display {
 		/**
 		 * @private 命令流。存储了所有绘制命令。
 		 */
-		public var cmds:Array;
+		public function get cmds():Array{return null;}
+		public function set cmds(value:Array):void{}
 
 		/**
 		 * 获取位置及宽高信息矩阵(比较耗CPU，频繁使用会造成卡顿，尽量少用)。

@@ -70,32 +70,38 @@ package laya.physics.joint {
 		/**
 		 * 是否开启马达，开启马达可使目标刚体运动
 		 */
-		public var enableMotor:Boolean;
+		public function get enableMotor():Boolean{return null;}
+		public function set enableMotor(value:Boolean):void{}
 
 		/**
 		 * 启用马达后，可以达到的最大旋转速度
 		 */
-		public var motorSpeed:Number;
+		public function get motorSpeed():Number{return null;}
+		public function set motorSpeed(value:Number):void{}
 
 		/**
 		 * 启用马达后，可以施加的最大扭距，如果最大扭矩太小，会导致不旋转
 		 */
-		public var maxMotorTorque:Number;
+		public function get maxMotorTorque():Number{return null;}
+		public function set maxMotorTorque(value:Number):void{}
 
 		/**
 		 * 是否对刚体的旋转范围加以约束
 		 */
-		public var enableLimit:Boolean;
+		public function get enableLimit():Boolean{return null;}
+		public function set enableLimit(value:Boolean):void{}
 
 		/**
 		 * 启用约束后，刚体旋转范围的下限弧度
 		 */
-		public var lowerAngle:Number;
+		public function get lowerAngle():Number{return null;}
+		public function set lowerAngle(value:Number):void{}
 
 		/**
 		 * 启用约束后，刚体旋转范围的上限弧度
 		 */
-		public var upperAngle:Number;
+		public function get upperAngle():Number{return null;}
+		public function set upperAngle(value:Number):void{}
 	}
 
 }

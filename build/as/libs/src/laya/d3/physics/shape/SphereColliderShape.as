@@ -9,9 +9,7 @@ package laya.d3.physics.shape {
 		/**
 		 * 半径。
 		 */
-		public function get radius():Number{
-				return null;
-		}
+		public function get radius():Number{return null;}
 
 		/**
 		 * 创建一个新的 <code>SphereColliderShape</code> 实例。

@@ -107,6 +107,54 @@ package laya.display {
 		override public function destroy(destroyChild:Boolean = null):void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set scaleX(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get scaleX():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set scaleY(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get scaleY():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
 		 * @private 
 		 */
 		protected function _sizeChanged():void{}
@@ -114,9 +162,14 @@ package laya.display {
 		/**
 		 * 获取场景根容器
 		 */
-		public static function get root():Sprite{
-				return null;
-		}
+		public static function get root():Sprite{return null;}
+
+		/**
+		 * 场景时钟
+		 * @override 
+		 */
+		override public function get timer():Timer{return null;}
+		public function set timer(value:Timer):void{}
 
 		/**
 		 * 加载场景及场景使用到的资源

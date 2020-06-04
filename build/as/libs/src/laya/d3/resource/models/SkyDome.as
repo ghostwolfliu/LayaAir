@@ -10,16 +10,12 @@ package laya.d3.resource.models {
 		/**
 		 * 获取堆数。
 		 */
-		public function get stacks():Number{
-				return null;
-		}
+		public function get stacks():Number{return null;}
 
 		/**
 		 * 获取层数。
 		 */
-		public function get slices():Number{
-				return null;
-		}
+		public function get slices():Number{return null;}
 
 		/**
 		 * 创建一个 <code>SkyDome</code> 实例。

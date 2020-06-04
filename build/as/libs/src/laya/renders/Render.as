@@ -49,16 +49,12 @@ package laya.renders {
 		/**
 		 * 目前使用的渲染器。
 		 */
-		public static function get context():Context{
-				return null;
-		}
+		public static function get context():Context{return null;}
 
 		/**
 		 * 渲染使用的原生画布引用。
 		 */
-		public static function get canvas():*{
-				return null;
-		}
+		public static function get canvas():*{return null;}
 	}
 
 }

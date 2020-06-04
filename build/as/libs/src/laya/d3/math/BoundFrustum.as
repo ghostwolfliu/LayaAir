@@ -32,49 +32,38 @@ package laya.d3.math {
 		/**
 		 * 描述矩阵。
 		 */
-		public var matrix:Matrix4x4;
+		public function get matrix():Matrix4x4{return null;}
+		public function set matrix(matrix:Matrix4x4):void{}
 
 		/**
 		 * 近平面。
 		 */
-		public function get near():Plane{
-				return null;
-		}
+		public function get near():Plane{return null;}
 
 		/**
 		 * 远平面。
 		 */
-		public function get far():Plane{
-				return null;
-		}
+		public function get far():Plane{return null;}
 
 		/**
 		 * 左平面。
 		 */
-		public function get left():Plane{
-				return null;
-		}
+		public function get left():Plane{return null;}
 
 		/**
 		 * 右平面。
 		 */
-		public function get right():Plane{
-				return null;
-		}
+		public function get right():Plane{return null;}
 
 		/**
 		 * 顶平面。
 		 */
-		public function get top():Plane{
-				return null;
-		}
+		public function get top():Plane{return null;}
 
 		/**
 		 * 底平面。
 		 */
-		public function get bottom():Plane{
-				return null;
-		}
+		public function get bottom():Plane{return null;}
 
 		/**
 		 * 判断是否与其他锥截体相等。

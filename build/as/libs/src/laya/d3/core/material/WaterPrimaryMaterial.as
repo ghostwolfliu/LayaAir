@@ -24,27 +24,32 @@ package laya.d3.core.material {
 		/**
 		 * 地平线颜色。
 		 */
-		public var horizonColor:Vector4;
+		public function get horizonColor():Vector4{return null;}
+		public function set horizonColor(value:Vector4):void{}
 
 		/**
 		 * 主贴图。
 		 */
-		public var mainTexture:BaseTexture;
+		public function get mainTexture():BaseTexture{return null;}
+		public function set mainTexture(value:BaseTexture):void{}
 
 		/**
 		 * 法线贴图。
 		 */
-		public var normalTexture:BaseTexture;
+		public function get normalTexture():BaseTexture{return null;}
+		public function set normalTexture(value:BaseTexture):void{}
 
 		/**
 		 * 波动缩放系数。
 		 */
-		public var waveScale:Number;
+		public function get waveScale():Number{return null;}
+		public function set waveScale(value:Number):void{}
 
 		/**
 		 * 波动速率。
 		 */
-		public var waveSpeed:Vector4;
+		public function get waveSpeed():Vector4{return null;}
+		public function set waveSpeed(value:Vector4):void{}
 
 		public function WaterPrimaryMaterial(){}
 

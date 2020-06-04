@@ -174,7 +174,8 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Image#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
@@ -210,7 +211,8 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
 
 		/**
 		 * 设置滑动条的信息。
@@ -223,7 +225,8 @@ package laya.ui {
 		/**
 		 * 滑动的刻度值，滑动数值为tick的整数倍。默认值为1。
 		 */
-		public var tick:Number;
+		public function get tick():Number{return null;}
+		public function set tick(value:Number):void{}
 
 		/**
 		 * @private 改变滑块的位置值。
@@ -233,22 +236,26 @@ package laya.ui {
 		/**
 		 * 获取或设置表示最高位置的数字。 默认值为100。
 		 */
-		public var max:Number;
+		public function get max():Number{return null;}
+		public function set max(value:Number):void{}
 
 		/**
 		 * 获取或设置表示最低位置的数字。 默认值为0。
 		 */
-		public var min:Number;
+		public function get min():Number{return null;}
+		public function set min(value:Number):void{}
 
 		/**
 		 * 获取或设置表示当前滑块位置的数字。
 		 */
-		public var value:Number;
+		public function get value():Number{return null;}
+		public function set value(num:Number):void{}
 
 		/**
 		 * 一个布尔值，指定是否允许通过点击滑动条改变 <code>Slider</code> 的 <code>value</code> 属性值。
 		 */
-		public var allowClickBack:Boolean;
+		public function get allowClickBack():Boolean{return null;}
+		public function set allowClickBack(value:Boolean):void{}
 
 		/**
 		 * @private 滑动条的 <code>Event.MOUSE_DOWN</code> 事件侦听处理函数。
@@ -256,11 +263,21 @@ package laya.ui {
 		protected function onBgMouseDown(e:Event):void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
+
+		/**
 		 * 表示滑块按钮的引用。
 		 */
-		public function get bar():Button{
-				return null;
-		}
+		public function get bar():Button{return null;}
 	}
 
 }

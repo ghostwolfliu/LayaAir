@@ -30,6 +30,16 @@ package laya.html.dom {
 		override public function reset():HTMLElement{
 			return null;
 		}
+
+		/**
+		 * @override 
+		 */
+		override public function set href(url:String):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get href():String{return null;}
 	}
 
 }

@@ -100,23 +100,17 @@ package laya.net {
 		/**
 		 * 请求的地址。
 		 */
-		public function get url():String{
-				return null;
-		}
+		public function get url():String{return null;}
 
 		/**
 		 * 返回的数据。
 		 */
-		public function get data():*{
-				return null;
-		}
+		public function get data():*{return null;}
 
 		/**
 		 * 本对象所封装的原生 XMLHttpRequest 引用。
 		 */
-		public function get http():*{
-				return null;
-		}
+		public function get http():*{return null;}
 	}
 
 }

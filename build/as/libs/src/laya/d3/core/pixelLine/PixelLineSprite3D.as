@@ -14,19 +14,19 @@ package laya.d3.core.pixelLine {
 		/**
 		 * 最大线数量
 		 */
-		public var maxLineCount:Number;
+		public function get maxLineCount():Number{return null;}
+		public function set maxLineCount(value:Number):void{}
 
 		/**
 		 * 获取线数量。
 		 */
-		public var lineCount:Number;
+		public function get lineCount():Number{return null;}
+		public function set lineCount(value:Number):void{}
 
 		/**
 		 * line渲染器。
 		 */
-		public function get pixelLineRenderer():PixelLineRenderer{
-				return null;
-		}
+		public function get pixelLineRenderer():PixelLineRenderer{return null;}
 
 		/**
 		 * 创建一个 <code>PixelLineSprite3D</code> 实例。

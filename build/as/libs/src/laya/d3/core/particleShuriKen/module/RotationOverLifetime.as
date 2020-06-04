@@ -16,9 +16,7 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 获取角速度。
 		 */
-		public function get angularVelocity():GradientAngularVelocity{
-				return null;
-		}
+		public function get angularVelocity():GradientAngularVelocity{return null;}
 
 		/**
 		 * 创建一个 <code>RotationOverLifetime,不允许new，请使用静态创建函数。</code> 实例。

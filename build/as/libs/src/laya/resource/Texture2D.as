@@ -36,6 +36,12 @@ package laya.resource {
 		public static function load(url:String,complete:Handler):void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get defaulteTexture():BaseTexture{return null;}
+
+		/**
 		 * 创建一个 <code>Texture2D</code> 实例。
 		 * @param width 宽。
 		 * @param height 高。

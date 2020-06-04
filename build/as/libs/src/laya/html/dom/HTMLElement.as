@@ -38,10 +38,11 @@ package laya.html.dom {
 		public function reset():HTMLElement{
 			return null;
 		}
-		public var id:String;
+		public function set id(value:String):void{}
 		public function repaint(recreate:Boolean = null):void{}
 		public function parentRepaint(recreate:Boolean = null):void{}
-		public var innerTEXT:String;
+		public function set innerTEXT(value:String):void{}
+		public function get innerTEXT():String{return null;}
 		protected function _setParent(value:HTMLElement):void{}
 		public function appendChild(c:HTMLElement):HTMLElement{
 			return null;
@@ -67,19 +68,22 @@ package laya.html.dom {
 		 * 销毁所有子对象，不销毁自己本身。
 		 */
 		public function destroyChildren():void{}
-		public function get style():HTMLStyle{
-				return null;
-		}
-		public var x:Number;
-		public var y:Number;
-		public var width:Number;
-		public var height:Number;
-		public var href:String;
+		public function get style():HTMLStyle{return null;}
+		public function set x(v:Number):void{}
+		public function get x():Number{return null;}
+		public function set y(v:Number):void{}
+		public function get y():Number{return null;}
+		public function get width():Number{return null;}
+		public function set width(value:Number):void{}
+		public function get height():Number{return null;}
+		public function set height(value:Number):void{}
+		public function set href(url:String):void{}
+		public function get href():String{return null;}
 		public function formatURL(url:String):String{
 			return null;
 		}
-		public var color:String;
-		public var className:String;
+		public function set color(value:String):void{}
+		public function set className(value:String):void{}
 		public function drawToGraphic(graphic:Graphics,gX:Number,gY:Number,recList:Array):void{}
 		public function renderSelfToGraphic(graphic:Graphics,gX:Number,gY:Number,recList:Array):void{}
 		private var workLines:*;

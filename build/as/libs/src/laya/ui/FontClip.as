@@ -75,12 +75,14 @@ package laya.ui {
 		/**
 		 * 设置位图字体内容，空格代表换行。比如"abc123 456"，代表第一行对应的文字为"abc123"，第二行为"456"
 		 */
-		public var sheet:String;
+		public function get sheet():String{return null;}
+		public function set sheet(value:String):void{}
 
 		/**
 		 * 设置位图字体的显示内容
 		 */
-		public var value:String;
+		public function get value():String{return null;}
+		public function set value(value:String):void{}
 
 		/**
 		 * 布局方向。
@@ -90,27 +92,53 @@ package laya.ui {
 		 * <li>"vertical"：表示垂直布局。</li>
 		 * </p>
 		 */
-		public var direction:String;
+		public function get direction():String{return null;}
+		public function set direction(value:String):void{}
 
 		/**
 		 * X方向文字间隙
 		 */
-		public var spaceX:Number;
+		public function get spaceX():Number{return null;}
+		public function set spaceX(value:Number):void{}
 
 		/**
 		 * Y方向文字间隙
 		 */
-		public var spaceY:Number;
+		public function get spaceY():Number{return null;}
+		public function set spaceY(value:Number):void{}
+		public function set align(v:String):void{}
 
 		/**
 		 * 水平对齐方式
 		 */
-		public var align:String;
+		public function get align():String{return null;}
 
 		/**
 		 * 渲染数值
 		 */
 		protected function changeValue():void{}
+
+		/**
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
 
 		/**
 		 * @override 

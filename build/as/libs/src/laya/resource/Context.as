@@ -63,29 +63,32 @@ package laya.resource {
 		/**
 		 * @private 
 		 */
+		public function get lineJoin():String{return null;}
 
 		/**
 		 * @private 
 		 */
-		public var lineJoin:String;
+		public function set lineJoin(value:String):void{}
 
 		/**
 		 * @private 
 		 */
+		public function get lineCap():String{return null;}
 
 		/**
 		 * @private 
 		 */
-		public var lineCap:String;
+		public function set lineCap(value:String):void{}
 
 		/**
 		 * @private 
 		 */
+		public function get miterLimit():String{return null;}
 
 		/**
 		 * @private 
 		 */
-		public var miterLimit:String;
+		public function set miterLimit(value:String):void{}
 
 		/**
 		 * @private 
@@ -169,7 +172,7 @@ package laya.resource {
 		 * 如果value==true，就要给_target赋值
 		 * @param value 
 		 */
-		public var asBitmap:Boolean;
+		public function set asBitmap(value:Boolean):void{}
 
 		/**
 		 * 获得当前矩阵的缩放值
@@ -186,17 +189,24 @@ package laya.resource {
 		public function getFillColor():Number{
 			return null;
 		}
-		public var fillStyle:*;
-		public var globalAlpha:Number;
-		public var textAlign:String;
-		public var textBaseline:String;
-		public var globalCompositeOperation:String;
-		public var strokeStyle:*;
+		public function set fillStyle(value:*):void{}
+		public function get fillStyle():*{return null;}
+		public function set globalAlpha(value:Number):void{}
+		public function get globalAlpha():Number{return null;}
+		public function set textAlign(value:String):void{}
+		public function get textAlign():String{return null;}
+		public function set textBaseline(value:String):void{}
+		public function get textBaseline():String{return null;}
+		public function set globalCompositeOperation(value:String):void{}
+		public function get globalCompositeOperation():String{return null;}
+		public function set strokeStyle(value:*):void{}
+		public function get strokeStyle():*{return null;}
 		public function translate(x:Number,y:Number):void{}
-		public var lineWidth:Number;
+		public function set lineWidth(value:Number):void{}
+		public function get lineWidth():Number{return null;}
 		public function save():void{}
 		public function restore():void{}
-		public var font:String;
+		public function set font(str:String):void{}
 		public function fillText(txt:*,x:Number,y:Number,fontStr:String,color:String,align:String,lineWidth:Number = null,borderColor:String = null):void{}
 		public function drawText(text:*,x:Number,y:Number,font:String,color:String,textAlign:String):void{}
 		public function fillWords(words:Array,x:Number,y:Number,fontStr:String,color:String):void{}
@@ -378,9 +388,7 @@ package laya.resource {
 		/**
 		 * 获取canvas
 		 */
-		public function get canvas():HTMLCanvas{
-				return null;
-		}
+		public function get canvas():HTMLCanvas{return null;}
 		private static var tmpuv1:*;
 
 		/**

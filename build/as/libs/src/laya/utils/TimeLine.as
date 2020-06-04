@@ -173,18 +173,17 @@ package laya.utils {
 		/**
 		 * @private 得到帧索引
 		 */
+		public function get index():Number{return null;}
 
 		/**
 		 * @private 设置帧索引
 		 */
-		public var index:Number;
+		public function set index(value:Number):void{}
 
 		/**
 		 * 得到总帧数。
 		 */
-		public function get total():Number{
-				return null;
-		}
+		public function get total():Number{return null;}
 
 		/**
 		 * 重置所有对象，复用对象的时候使用。

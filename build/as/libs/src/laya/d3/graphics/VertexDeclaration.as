@@ -10,23 +10,17 @@ package laya.d3.graphics {
 		 * 获取唯一标识ID(通常用于优化或识别)。
 		 * @return 唯一标识ID
 		 */
-		public function get id():Number{
-				return null;
-		}
+		public function get id():Number{return null;}
 
 		/**
 		 * 顶点跨度，以字节为单位。
 		 */
-		public function get vertexStride():Number{
-				return null;
-		}
+		public function get vertexStride():Number{return null;}
 
 		/**
 		 * 顶点元素的数量。
 		 */
-		public function get vertexElementCount():Number{
-				return null;
-		}
+		public function get vertexElementCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>VertexDeclaration</code> 实例。

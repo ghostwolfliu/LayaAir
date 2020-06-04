@@ -2,9 +2,9 @@ package laya.d3.physics {
 	import laya.d3.math.Quaternion;
 	import laya.d3.math.Ray;
 	import laya.d3.math.Vector3;
-	import laya.d3.physics.Constraint3D;
 	import laya.d3.physics.HitResult;
 	import laya.d3.physics.shape.ColliderShape;
+	import laya.d3.physics.constraints.ConstraintComponent;
 
 	/**
 	 * <code>Simulation</code> 类用于创建物理模拟器。
@@ -30,12 +30,14 @@ package laya.d3.physics {
 		/**
 		 * 是否进行连续碰撞检测。
 		 */
-		public var continuousCollisionDetection:Boolean;
+		public function get continuousCollisionDetection():Boolean{return null;}
+		public function set continuousCollisionDetection(value:Boolean):void{}
 
 		/**
 		 * 获取重力。
 		 */
-		public var gravity:Vector3;
+		public function get gravity():Vector3{return null;}
+		public function set gravity(value:Vector3):void{}
 
 		/**
 		 * 射线检测第一个碰撞物体。
@@ -126,12 +128,12 @@ package laya.d3.physics {
 		 * @param constraint 约束。
 		 * @param disableCollisionsBetweenLinkedBodies 是否禁用
 		 */
-		public function addConstraint(constraint:Constraint3D,disableCollisionsBetweenLinkedBodies:Boolean = null):void{}
+		public function addConstraint(constraint:ConstraintComponent,disableCollisionsBetweenLinkedBodies:Boolean = null):void{}
 
 		/**
 		 * 移除刚体运动的约束条件。
 		 */
-		public function removeConstraint(constraint:Constraint3D):void{}
+		public function removeConstraint(constraint:ConstraintComponent):void{}
 
 		/**
 		 * 清除力。

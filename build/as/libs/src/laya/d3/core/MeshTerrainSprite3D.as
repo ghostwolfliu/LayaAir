@@ -40,33 +40,25 @@ package laya.d3.core {
 		 * 获取地形X轴最小位置。
 		 * @return 地形X轴最小位置。
 		 */
-		public function get minX():Number{
-				return null;
-		}
+		public function get minX():Number{return null;}
 
 		/**
 		 * 获取地形Z轴最小位置。
 		 * @return 地形X轴最小位置。
 		 */
-		public function get minZ():Number{
-				return null;
-		}
+		public function get minZ():Number{return null;}
 
 		/**
 		 * 获取地形X轴长度。
 		 * @return 地形X轴长度。
 		 */
-		public function get width():Number{
-				return null;
-		}
+		public function get width():Number{return null;}
 
 		/**
 		 * 获取地形Z轴长度。
 		 * @return 地形Z轴长度。
 		 */
-		public function get depth():Number{
-				return null;
-		}
+		public function get depth():Number{return null;}
 
 		/**
 		 * 创建一个 <code>TerrainMeshSprite3D</code> 实例。

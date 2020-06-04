@@ -137,7 +137,8 @@ package laya.ui {
 		 * <p>对象的皮肤地址，以字符串表示。</p>
 		 * @see #stateNum
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
@@ -154,7 +155,8 @@ package laya.ui {
 		 * 按下和选中状态皮肤</li>
 		 * </p>
 		 */
-		public var stateNum:Number;
+		public function get stateNum():Number{return null;}
+		public function set stateNum(value:Number):void{}
 
 		/**
 		 * @private 对象的资源切片发生改变。
@@ -180,23 +182,23 @@ package laya.ui {
 		/**
 		 * 按钮的文本内容。
 		 */
-		public var label:String;
+		public function get label():String{return null;}
+		public function set label(value:String):void{}
 
 		/**
 		 * 表示按钮的选中状态。
 		 * <p>如果值为true，表示该对象处于选中状态。否则该对象处于未选中状态。</p>
 		 * @implements 
 		 */
-		public function get selected():Boolean{
-				return null;
-		}
-		public  function set selected(value:Boolean):void{}
+		public function get selected():Boolean{return null;}
+		public function set selected(value:Boolean):void{}
 
 		/**
 		 * 对象的状态值。
 		 * @see #stateMap
 		 */
-		protected var state:Number;
+		protected function get state():Number{return null;}
+		protected function set state(value:Number):void{}
 
 		/**
 		 * @private 改变对象的状态。
@@ -207,72 +209,77 @@ package laya.ui {
 		 * 表示按钮各个状态下的文本颜色。
 		 * <p><b>格式:</b> "upColor,overColor,downColor,disableColor"。</p>
 		 */
-		public var labelColors:String;
+		public function get labelColors():String{return null;}
+		public function set labelColors(value:String):void{}
 
 		/**
 		 * 表示按钮各个状态下的描边颜色。
 		 * <p><b>格式:</b> "upColor,overColor,downColor,disableColor"。</p>
 		 */
-		public var strokeColors:String;
+		public function get strokeColors():String{return null;}
+		public function set strokeColors(value:String):void{}
 
 		/**
 		 * 表示按钮文本标签的边距。
 		 * <p><b>格式：</b>"上边距,右边距,下边距,左边距"。</p>
 		 */
-		public var labelPadding:String;
+		public function get labelPadding():String{return null;}
+		public function set labelPadding(value:String):void{}
 
 		/**
 		 * 表示按钮文本标签的字体大小。
 		 * @see laya.display.Text.fontSize()
 		 */
-		public var labelSize:Number;
+		public function get labelSize():Number{return null;}
+		public function set labelSize(value:Number):void{}
 
 		/**
 		 * <p>描边宽度（以像素为单位）。</p>
 		 * 默认值0，表示不描边。
 		 * @see laya.display.Text.stroke()
 		 */
-		public var labelStroke:Number;
+		public function get labelStroke():Number{return null;}
+		public function set labelStroke(value:Number):void{}
 
 		/**
 		 * <p>描边颜色，以字符串表示。</p>
 		 * 默认值为 "#000000"（黑色）;
 		 * @see laya.display.Text.strokeColor()
 		 */
-		public var labelStrokeColor:String;
+		public function get labelStrokeColor():String{return null;}
+		public function set labelStrokeColor(value:String):void{}
 
 		/**
 		 * 表示按钮文本标签是否为粗体字。
 		 * @see laya.display.Text.bold()
 		 */
-		public var labelBold:Boolean;
+		public function get labelBold():Boolean{return null;}
+		public function set labelBold(value:Boolean):void{}
 
 		/**
 		 * 表示按钮文本标签的字体名称，以字符串形式表示。
 		 * @see laya.display.Text.font()
 		 */
-		public var labelFont:String;
+		public function get labelFont():String{return null;}
+		public function set labelFont(value:String):void{}
 
 		/**
 		 * 标签对齐模式，默认为居中对齐。
 		 */
-		public var labelAlign:String;
+		public function get labelAlign():String{return null;}
+		public function set labelAlign(value:String):void{}
 
 		/**
 		 * 对象的点击事件处理器函数（无默认参数）。
 		 * @implements 
 		 */
-		public function get clickHandler():Handler{
-				return null;
-		}
-		public  function set clickHandler(value:Handler):void{}
+		public function get clickHandler():Handler{return null;}
+		public function set clickHandler(value:Handler):void{}
 
 		/**
 		 * 按钮文本标签 <code>Text</code> 控件。
 		 */
-		public function get text():Text{
-				return null;
-		}
+		public function get text():Text{return null;}
 
 		/**
 		 * <p>当前实例的位图 <code>AutoImage</code> 实例的有效缩放网格数据。</p>
@@ -280,12 +287,50 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 
 		/**
 		 * 图标x,y偏移，格式：100,100
 		 */
-		public var iconOffset:String;
+		public function get iconOffset():String{return null;}
+		public function set iconOffset(value:String):void{}
 
 		/**
 		 * @private 

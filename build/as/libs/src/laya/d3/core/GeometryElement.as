@@ -10,9 +10,7 @@ package laya.d3.core {
 		 * 获取是否销毁。
 		 * @return 是否销毁。
 		 */
-		public function get destroyed():Boolean{
-				return null;
-		}
+		public function get destroyed():Boolean{return null;}
 
 		/**
 		 * 创建一个 <code>GeometryElement</code> 实例。

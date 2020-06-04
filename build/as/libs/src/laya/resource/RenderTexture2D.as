@@ -20,9 +20,7 @@ package laya.resource {
 		/**
 		 * 获取当前激活的Rendertexture
 		 */
-		public static function get currentActive():RenderTexture2D{
-				return null;
-		}
+		public static function get currentActive():RenderTexture2D{return null;}
 
 		/**
 		 * @private 
@@ -43,9 +41,13 @@ package laya.resource {
 		 * 获取深度格式。
 		 * @return 深度格式。
 		 */
-		public function get depthStencilFormat():Number{
-				return null;
-		}
+		public function get depthStencilFormat():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get defaulteTexture():BaseTexture{return null;}
 		public function getIsReady():Boolean{
 			return null;
 		}
@@ -53,32 +55,24 @@ package laya.resource {
 		/**
 		 * 获取宽度。
 		 */
-		public function get sourceWidth():Number{
-				return null;
-		}
+		public function get sourceWidth():Number{return null;}
 
 		/**
 		 * *
 		 * 获取高度。
 		 */
-		public function get sourceHeight():Number{
-				return null;
-		}
+		public function get sourceHeight():Number{return null;}
 
 		/**
 		 * 获取offsetX。
 		 */
-		public function get offsetX():Number{
-				return null;
-		}
+		public function get offsetX():Number{return null;}
 
 		/**
 		 * *
 		 * 获取offsetY
 		 */
-		public function get offsetY():Number{
-				return null;
-		}
+		public function get offsetY():Number{return null;}
 
 		/**
 		 * @param width 宽度。

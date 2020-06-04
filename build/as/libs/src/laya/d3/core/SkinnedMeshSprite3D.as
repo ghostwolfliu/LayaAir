@@ -17,16 +17,12 @@ package laya.d3.core {
 		/**
 		 * 网格过滤器。
 		 */
-		public function get meshFilter():MeshFilter{
-				return null;
-		}
+		public function get meshFilter():MeshFilter{return null;}
 
 		/**
 		 * 网格渲染器。
 		 */
-		public function get skinnedMeshRenderer():SkinnedMeshRenderer{
-				return null;
-		}
+		public function get skinnedMeshRenderer():SkinnedMeshRenderer{return null;}
 
 		/**
 		 * 创建一个 <code>MeshSprite3D</code> 实例。

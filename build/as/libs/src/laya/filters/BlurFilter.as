@@ -20,6 +20,12 @@ package laya.filters {
 		 */
 
 		public function BlurFilter(strength:Number = undefined){}
+
+		/**
+		 * @private 当前滤镜的类型
+		 * @override 
+		 */
+		override public function get type():Number{return null;}
 		public function getStrenth_sig2_2sig2_native():Float32Array{
 			return null;
 		}

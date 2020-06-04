@@ -222,57 +222,44 @@ package laya.utils {
 		 * 浏览器窗口可视宽度。
 		 * 通过分析浏览器信息获得。浏览器多个属性值优先级为：window.innerWidth(包含滚动条宽度) > document.body.clientWidth(不包含滚动条宽度)，如果前者为0或为空，则选择后者。
 		 */
-		public static function get clientWidth():Number{
-				return null;
-		}
+		public static function get clientWidth():Number{return null;}
 
 		/**
 		 * 浏览器窗口可视高度。
 		 * 通过分析浏览器信息获得。浏览器多个属性值优先级为：window.innerHeight(包含滚动条高度) > document.body.clientHeight(不包含滚动条高度) > document.documentElement.clientHeight(不包含滚动条高度)，如果前者为0或为空，则选择后者。
 		 */
-		public static function get clientHeight():Number{
-				return null;
-		}
+		public static function get clientHeight():Number{return null;}
 
 		/**
 		 * 浏览器窗口物理宽度。考虑了设备像素比。
 		 */
-		public static function get width():Number{
-				return null;
-		}
+		public static function get width():Number{return null;}
 
 		/**
 		 * 浏览器窗口物理高度。考虑了设备像素比。
 		 */
-		public static function get height():Number{
-				return null;
-		}
+		public static function get height():Number{return null;}
 
 		/**
 		 * 获得设备像素比。
 		 */
-		public static function get pixelRatio():Number{
-				return null;
-		}
+		public static function get pixelRatio():Number{return null;}
 
 		/**
 		 * 画布容器，用来盛放画布的容器。方便对画布进行控制
 		 */
-		public static var container:*;
+		public static function get container():*{return null;}
+		public static function set container(value:*):void{}
 
 		/**
 		 * 浏览器原生 window 对象的引用。
 		 */
-		public static function get window():*{
-				return null;
-		}
+		public static function get window():*{return null;}
 
 		/**
 		 * 浏览器原生 document 对象的引用。
 		 */
-		public static function get document():*{
-				return null;
-		}
+		public static function get document():*{return null;}
 	}
 
 }

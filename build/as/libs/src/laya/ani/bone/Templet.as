@@ -211,7 +211,8 @@ package laya.ani.bone {
 		public function getAniNameByIndex(index:Number):String{
 			return null;
 		}
-		public var rate:Number;
+		public function get rate():Number{return null;}
+		public function set rate(v:Number):void{}
 	}
 
 }

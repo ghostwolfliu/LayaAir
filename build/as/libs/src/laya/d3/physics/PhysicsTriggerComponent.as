@@ -9,7 +9,8 @@ package laya.d3.physics {
 		/**
 		 * 是否为触发器。
 		 */
-		public var isTrigger:Boolean;
+		public function get isTrigger():Boolean{return null;}
+		public function set isTrigger(value:Boolean):void{}
 
 		/**
 		 * 创建一个 <code>PhysicsTriggerComponent</code> 实例。

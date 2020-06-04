@@ -370,59 +370,43 @@ package laya.events {
 		/**
 		 * 触摸点列表。
 		 */
-		public function get touches():Array{
-				return null;
-		}
+		public function get touches():Array{return null;}
 
 		/**
 		 * 表示 Alt 键是处于活动状态 (true) 还是非活动状态 (false)。
 		 */
-		public function get altKey():Boolean{
-				return null;
-		}
+		public function get altKey():Boolean{return null;}
 
 		/**
 		 * 表示 Ctrl 键是处于活动状态 (true) 还是非活动状态 (false)。
 		 */
-		public function get ctrlKey():Boolean{
-				return null;
-		}
+		public function get ctrlKey():Boolean{return null;}
 
 		/**
 		 * 表示 Shift 键是处于活动状态 (true) 还是非活动状态 (false)。
 		 */
-		public function get shiftKey():Boolean{
-				return null;
-		}
+		public function get shiftKey():Boolean{return null;}
 
 		/**
 		 * 包含按下或释放的键的字符代码值。字符代码值为英文键盘值。
 		 */
-		public function get charCode():Boolean{
-				return null;
-		}
+		public function get charCode():Boolean{return null;}
 
 		/**
 		 * 表示键在键盘上的位置。这对于区分在键盘上多次出现的键非常有用。<br>
 		 * 例如，您可以根据此属性的值来区分左 Shift 键和右 Shift 键：左 Shift 键的值为 KeyLocation.LEFT，右 Shift 键的值为 KeyLocation.RIGHT。另一个示例是区分标准键盘 (KeyLocation.STANDARD) 与数字键盘 (KeyLocation.NUM_PAD) 上按下的数字键。
 		 */
-		public function get keyLocation():Number{
-				return null;
-		}
+		public function get keyLocation():Number{return null;}
 
 		/**
 		 * 鼠标在 Stage 上的 X 轴坐标
 		 */
-		public function get stageX():Number{
-				return null;
-		}
+		public function get stageX():Number{return null;}
 
 		/**
 		 * 鼠标在 Stage 上的 Y 轴坐标
 		 */
-		public function get stageY():Number{
-				return null;
-		}
+		public function get stageY():Number{return null;}
 	}
 
 }

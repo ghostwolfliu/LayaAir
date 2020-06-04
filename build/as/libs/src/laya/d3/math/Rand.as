@@ -32,12 +32,13 @@ package laya.d3.math {
 		 * 获取随机种子。
 		 * @return 随机种子。
 		 */
+		public function get seed():Number{return null;}
 
 		/**
 		 * 设置随机种子。
 		 * @param seed 随机种子。
 		 */
-		public var seed:Number;
+		public function set seed(seed:Number):void{}
 
 		/**
 		 * 创建一个 <code>Rand</code> 实例。

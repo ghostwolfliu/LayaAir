@@ -136,28 +136,33 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Image#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
 		 * X轴（横向）切片数量。
 		 */
-		public var clipX:Number;
+		public function get clipX():Number{return null;}
+		public function set clipX(value:Number):void{}
 
 		/**
 		 * Y轴(竖向)切片数量。
 		 */
-		public var clipY:Number;
+		public function get clipY():Number{return null;}
+		public function set clipY(value:Number):void{}
 
 		/**
 		 * 横向分割时每个切片的宽度，与 <code>clipX</code> 同时设置时优先级高于 <code>clipX</code> 。
 		 */
-		public var clipWidth:Number;
+		public function get clipWidth():Number{return null;}
+		public function set clipWidth(value:Number):void{}
 
 		/**
 		 * 竖向分割时每个切片的高度，与 <code>clipY</code> 同时设置时优先级高于 <code>clipY</code> 。
 		 */
-		public var clipHeight:Number;
+		public function get clipHeight():Number{return null;}
+		public function set clipHeight(value:Number):void{}
 
 		/**
 		 * @private 改变切片的资源、切片的大小。
@@ -174,12 +179,38 @@ package laya.ui {
 		/**
 		 * 源数据。
 		 */
-		public var sources:Array;
+		public function get sources():Array{return null;}
+		public function set sources(value:Array):void{}
 
 		/**
 		 * 资源分组。
 		 */
-		public var group:String;
+		public function get group():String{return null;}
+		public function set group(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
 
 		/**
 		 * @inheritDoc 
@@ -203,36 +234,39 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
 
 		/**
 		 * 当前帧索引。
 		 */
-		public var index:Number;
+		public function get index():Number{return null;}
+		public function set index(value:Number):void{}
 
 		/**
 		 * 切片动画的总帧数。
 		 */
-		public function get total():Number{
-				return null;
-		}
+		public function get total():Number{return null;}
 
 		/**
 		 * 表示是否自动播放动画，若自动播放值为true,否则值为false;
 		 * <p>可控制切片动画的播放、停止。</p>
 		 */
-		public var autoPlay:Boolean;
+		public function get autoPlay():Boolean{return null;}
+		public function set autoPlay(value:Boolean):void{}
 
 		/**
 		 * 表示动画播放间隔时间(以毫秒为单位)。
 		 */
-		public var interval:Number;
+		public function get interval():Number{return null;}
+		public function set interval(value:Number):void{}
 
 		/**
 		 * 表示动画的当前播放状态。
 		 * 如果动画正在播放中，则为true，否则为flash。
 		 */
-		public var isPlaying:Boolean;
+		public function get isPlaying():Boolean{return null;}
+		public function set isPlaying(value:Boolean):void{}
 
 		/**
 		 * 播放动画。
@@ -252,11 +286,21 @@ package laya.ui {
 		public function stop():void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
+
+		/**
 		 * <code>AutoBitmap</code> 位图实例。
 		 */
-		public function get bitmap():AutoBitmap{
-				return null;
-		}
+		public function get bitmap():AutoBitmap{return null;}
 
 		/**
 		 * @private 

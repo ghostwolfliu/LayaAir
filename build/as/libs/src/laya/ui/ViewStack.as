@@ -45,7 +45,8 @@ package laya.ui {
 		/**
 		 * 表示当前视图索引。
 		 */
-		public var selectedIndex:Number;
+		public function get selectedIndex():Number{return null;}
+		public function set selectedIndex(value:Number):void{}
 
 		/**
 		 * @private 通过对象的索引设置项对象的 <code>selected</code> 属性值。
@@ -57,13 +58,15 @@ package laya.ui {
 		/**
 		 * 获取或设置当前选择的项对象。
 		 */
-		public var selection:Node;
+		public function get selection():Node{return null;}
+		public function set selection(value:Node):void{}
 
 		/**
 		 * 索引设置处理器。
 		 * <p>默认回调参数：index:int</p>
 		 */
-		public var setIndexHandler:Handler;
+		public function get setIndexHandler():Handler{return null;}
+		public function set setIndexHandler(value:Handler):void{}
 
 		/**
 		 * @private 设置属性<code>selectedIndex</code>的值。
@@ -74,9 +77,19 @@ package laya.ui {
 		/**
 		 * 视图集合数组。
 		 */
-		public function get items():Array{
-				return null;
-		}
+		public function get items():Array{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 	}
 
 }

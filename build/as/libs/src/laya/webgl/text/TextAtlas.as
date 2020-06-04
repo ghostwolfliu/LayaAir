@@ -30,9 +30,7 @@ package laya.webgl.text {
 		/**
 		 * 大图集格子单元的占用率，老的也算上了。只是表示这个大图集还能插入多少东西。
 		 */
-		public function get usedRate():Number{
-				return null;
-		}
+		public function get usedRate():Number{return null;}
 		public function destroy():void{}
 		public function printDebugInfo():void{}
 	}

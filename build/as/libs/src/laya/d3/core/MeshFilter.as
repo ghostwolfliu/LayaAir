@@ -10,7 +10,8 @@ package laya.d3.core {
 		/**
 		 * 共享网格。
 		 */
-		public var sharedMesh:Mesh;
+		public function get sharedMesh():Mesh{return null;}
+		public function set sharedMesh(value:Mesh):void{}
 
 		/**
 		 * 创建一个新的 <code>MeshFilter</code> 实例。

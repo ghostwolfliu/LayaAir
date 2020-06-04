@@ -39,35 +39,28 @@ package laya.d3.core {
 		/**
 		 * 唯一标识ID。
 		 */
-		public function get id():Number{
-				return null;
-		}
+		public function get id():Number{return null;}
 
 		/**
 		 * 蒙版层。
 		 */
-		public var layer:Number;
+		public function get layer():Number{return null;}
+		public function set layer(value:Number):void{}
 
 		/**
 		 * 资源的URL地址。
 		 */
-		public function get url():String{
-				return null;
-		}
+		public function get url():String{return null;}
 
 		/**
 		 * 是否为静态。
 		 */
-		public function get isStatic():Boolean{
-				return null;
-		}
+		public function get isStatic():Boolean{return null;}
 
 		/**
 		 * 精灵变换。
 		 */
-		public function get transform():Transform3D{
-				return null;
-		}
+		public function get transform():Transform3D{return null;}
 
 		/**
 		 * 创建一个 <code>Sprite3D</code> 实例。

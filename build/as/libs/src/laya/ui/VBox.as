@@ -27,6 +27,17 @@ package laya.ui {
 		public static var RIGHT:String;
 
 		/**
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
 		 * @inheritDoc 
 		 * @override 
 		 */

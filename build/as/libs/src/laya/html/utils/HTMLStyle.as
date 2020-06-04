@@ -109,56 +109,65 @@ package laya.html.utils {
 
 		public function HTMLStyle(){}
 		private var _getExtendStyle:*;
-		public var href:String;
+		public function get href():String{return null;}
+		public function set href(value:String):void{}
 
 		/**
 		 * <p>描边宽度（以像素为单位）。</p>
 		 * 默认值0，表示不描边。
 		 * @default 0
 		 */
-		public var stroke:Number;
+		public function get stroke():Number{return null;}
+		public function set stroke(value:Number):void{}
 
 		/**
 		 * <p>描边颜色，以字符串表示。</p>
 		 * @default "#000000";
 		 */
-		public var strokeColor:String;
+		public function get strokeColor():String{return null;}
+		public function set strokeColor(value:String):void{}
 
 		/**
 		 * <p>垂直行间距（以像素为单位）</p>
 		 */
-		public var leading:Number;
+		public function get leading():Number{return null;}
+		public function set leading(value:Number):void{}
 
 		/**
 		 * 行高。
 		 */
-		public var lineHeight:Number;
+		public function get lineHeight():Number{return null;}
+		public function set lineHeight(value:Number):void{}
+		public function set align(v:String):void{}
 
 		/**
 		 * <p>表示使用此文本格式的文本段落的水平对齐方式。</p>
 		 * @default "left"
 		 */
-		public var align:String;
+		public function get align():String{return null;}
+		public function set valign(v:String):void{}
 
 		/**
 		 * <p>表示使用此文本格式的文本段落的水平对齐方式。</p>
 		 * @default "left"
 		 */
-		public var valign:String;
+		public function get valign():String{return null;}
 
 		/**
 		 * 字体样式字符串。
 		 */
-		public var font:String;
+		public function set font(value:String):void{}
+		public function get font():String{return null;}
 
 		/**
 		 * 是否显示为块级元素。
 		 */
+		public function set block(value:Boolean):void{}
 
 		/**
 		 * 表示元素是否显示为块级元素。
 		 */
-		public var block:Boolean;
+		public function get block():Boolean{return null;}
 
 		/**
 		 * 重置，方便下次复用
@@ -188,19 +197,23 @@ package laya.html.utils {
 		/**
 		 * 表示是否换行。
 		 */
-		public var wordWrap:Boolean;
+		public function get wordWrap():Boolean{return null;}
+		public function set wordWrap(value:Boolean):void{}
 
 		/**
 		 * 是否为粗体
 		 */
-		public var bold:Boolean;
-		public var fontWeight:String;
+		public function get bold():Boolean{return null;}
+		public function set bold(value:Boolean):void{}
+		public function get fontWeight():String{return null;}
+		public function set fontWeight(value:String):void{}
 
 		/**
 		 * 表示使用此文本格式的文本是否为斜体。
 		 * @default false
 		 */
-		public var italic:Boolean;
+		public function get italic():Boolean{return null;}
+		public function set italic(value:Boolean):void{}
 
 		/**
 		 * @inheritDoc 
@@ -208,21 +221,22 @@ package laya.html.utils {
 		public function widthed(sprite:*):Boolean{
 			return null;
 		}
+		public function set whiteSpace(type:String):void{}
 
 		/**
 		 * 设置如何处理元素内的空白。
 		 */
-		public var whiteSpace:String;
+		public function get whiteSpace():String{return null;}
 
 		/**
 		 * 宽度。
 		 */
-		public var width:*;
+		public function set width(w:*):void{}
 
 		/**
 		 * 高度。
 		 */
-		public var height:*;
+		public function set height(h:*):void{}
 
 		/**
 		 * 是否已设置高度。
@@ -251,7 +265,8 @@ package laya.html.utils {
 		/**
 		 * 间距。
 		 */
-		public var letterSpacing:Number;
+		public function get letterSpacing():Number{return null;}
+		public function set letterSpacing(d:Number):void{}
 
 		/**
 		 * 设置 CSS 样式字符串。
@@ -264,32 +279,27 @@ package laya.html.utils {
 		 * @param attrs 属性名与属性值列表。
 		 */
 		public function attrs(attrs:Array):void{}
+		public function set position(value:String):void{}
 
 		/**
 		 * 元素的定位类型。
 		 */
-		public var position:String;
+		public function get position():String{return null;}
 
 		/**
 		 * @inheritDoc 
 		 */
-		public function get absolute():Boolean{
-				return null;
-		}
+		public function get absolute():Boolean{return null;}
 
 		/**
 		 * @inheritDoc 
 		 */
-		public function get paddingLeft():Number{
-				return null;
-		}
+		public function get paddingLeft():Number{return null;}
 
 		/**
 		 * @inheritDoc 
 		 */
-		public function get paddingTop():Number{
-				return null;
-		}
+		public function get paddingTop():Number{return null;}
 
 		/**
 		 * 通过传入的分割符，分割解析CSS样式字符串，返回样式列表。

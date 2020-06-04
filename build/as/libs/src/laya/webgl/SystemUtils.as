@@ -8,23 +8,17 @@ package laya.webgl {
 		/**
 		 * 图形设备支持的最大纹理数量。
 		 */
-		public static function get maxTextureCount():Number{
-				return null;
-		}
+		public static function get maxTextureCount():Number{return null;}
 
 		/**
 		 * 图形设备支持的最大纹理尺寸。
 		 */
-		public static function get maxTextureSize():Number{
-				return null;
-		}
+		public static function get maxTextureSize():Number{return null;}
 
 		/**
 		 * 图形设备着色器的大致能力等级,类似于DirectX的shader model概念。
 		 */
-		public static function get shaderCapailityLevel():Number{
-				return null;
-		}
+		public static function get shaderCapailityLevel():Number{return null;}
 
 		/**
 		 * 是否支持纹理格式。

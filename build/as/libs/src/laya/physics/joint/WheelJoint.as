@@ -70,27 +70,32 @@ package laya.physics.joint {
 		/**
 		 * 弹簧系统的震动频率，可以视为弹簧的弹性系数
 		 */
-		public var frequency:Number;
+		public function get frequency():Number{return null;}
+		public function set frequency(value:Number):void{}
 
 		/**
 		 * 刚体在回归到节点过程中受到的阻尼，取值0~1
 		 */
-		public var damping:Number;
+		public function get damping():Number{return null;}
+		public function set damping(value:Number):void{}
 
 		/**
 		 * 是否开启马达，开启马达可使目标刚体运动
 		 */
-		public var enableMotor:Boolean;
+		public function get enableMotor():Boolean{return null;}
+		public function set enableMotor(value:Boolean):void{}
 
 		/**
 		 * 启用马达后，可以达到的最大旋转速度
 		 */
-		public var motorSpeed:Number;
+		public function get motorSpeed():Number{return null;}
+		public function set motorSpeed(value:Number):void{}
 
 		/**
 		 * 启用马达后，可以施加的最大扭距，如果最大扭矩太小，会导致不旋转
 		 */
-		public var maxMotorTorque:Number;
+		public function get maxMotorTorque():Number{return null;}
+		public function set maxMotorTorque(value:Number):void{}
 	}
 
 }

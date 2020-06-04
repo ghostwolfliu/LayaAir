@@ -46,7 +46,7 @@ package laya.particle {
 		 * 设置 粒子文件地址
 		 * @param path 粒子文件地址
 		 */
-		public var url:String;
+		public function set url(url:String):void{}
 
 		/**
 		 * 加载粒子文件
@@ -63,9 +63,7 @@ package laya.particle {
 		/**
 		 * 获取粒子发射器
 		 */
-		public function get emitter():EmitterBase{
-				return null;
-		}
+		public function get emitter():EmitterBase{return null;}
 
 		/**
 		 * 播放

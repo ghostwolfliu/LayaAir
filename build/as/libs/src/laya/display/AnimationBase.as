@@ -106,7 +106,8 @@ package laya.display {
 		 * <p>动画播放的帧间隔时间(单位：毫秒)。默认值依赖于Config.animationInterval=50，通过Config.animationInterval可以修改默认帧间隔时间。</p>
 		 * <p>要想为某动画设置独立的帧间隔时间，可以使用set interval，注意：如果动画正在播放，设置后会重置帧循环定时器的起始时间为当前时间，也就是说，如果频繁设置interval，会导致动画帧更新的时间间隔会比预想的要慢，甚至不更新。</p>
 		 */
-		public var interval:Number;
+		public function get interval():Number{return null;}
+		public function set interval(value:Number):void{}
 
 		/**
 		 * @private 
@@ -133,9 +134,7 @@ package laya.display {
 		/**
 		 * 是否正在播放中。
 		 */
-		public function get isPlaying():Boolean{
-				return null;
-		}
+		public function get isPlaying():Boolean{return null;}
 
 		/**
 		 * 增加一个帧标签到指定索引的帧上。当动画播放到此索引的帧时会派发Event.LABEL事件，派发事件是在完成当前帧画面更新之后。
@@ -164,7 +163,8 @@ package laya.display {
 		/**
 		 * 动画当前帧的索引。
 		 */
-		public var index:Number;
+		public function get index():Number{return null;}
+		public function set index(value:Number):void{}
 
 		/**
 		 * @private 显示到某帧
@@ -175,9 +175,7 @@ package laya.display {
 		/**
 		 * 当前动画中帧的总数。
 		 */
-		public function get count():Number{
-				return null;
-		}
+		public function get count():Number{return null;}
 
 		/**
 		 * 停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。

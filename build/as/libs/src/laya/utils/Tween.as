@@ -154,7 +154,7 @@ package laya.utils {
 		/**
 		 * 设置当前执行比例*
 		 */
-		public var progress:Number;
+		public function set progress(v:Number):void{}
 
 		/**
 		 * 立即结束缓动并到终点。

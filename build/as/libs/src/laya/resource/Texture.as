@@ -138,36 +138,38 @@ package laya.resource {
 		public static function createFromTexture(texture:Texture,x:Number,y:Number,width:Number,height:Number):Texture{
 			return null;
 		}
-		public var uv:Array;
+		public function get uv():Array{return null;}
+		public function set uv(value:Array):void{}
 
 		/**
 		 * 实际宽度。
 		 */
-		public var width:Number;
+		public function get width():Number{return null;}
+		public function set width(value:Number):void{}
 
 		/**
 		 * 实际高度。
 		 */
-		public var height:Number;
+		public function get height():Number{return null;}
+		public function set height(value:Number):void{}
 
 		/**
 		 * 获取位图。
 		 * @return 位图。
 		 */
+		public function get bitmap():*{return null;}
 
 		/**
 		 * 设置位图。
 		 * @param 位图 。
 		 */
-		public var bitmap:*;
+		public function set bitmap(value:*):void{}
 
 		/**
 		 * 获取是否已经销毁。
 		 * @return 是否已经销毁。
 		 */
-		public function get destroyed():Boolean{
-				return null;
-		}
+		public function get destroyed():Boolean{return null;}
 
 		/**
 		 * 创建一个 <code>Texture</code> 实例。

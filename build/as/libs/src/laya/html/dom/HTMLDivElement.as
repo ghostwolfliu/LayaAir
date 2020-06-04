@@ -83,29 +83,23 @@ package laya.html.dom {
 		/**
 		 * 获取HTML样式
 		 */
-		public function get style():HTMLStyle{
-				return null;
-		}
+		public function get style():HTMLStyle{return null;}
 
 		/**
 		 * 设置标签内容
 		 */
-		public var innerHTML:String;
+		public function set innerHTML(text:String):void{}
 		private var _refresh:*;
 
 		/**
 		 * 获取內容宽度
 		 */
-		public function get contextWidth():Number{
-				return null;
-		}
+		public function get contextWidth():Number{return null;}
 
 		/**
 		 * 获取內容高度
 		 */
-		public function get contextHeight():Number{
-				return null;
-		}
+		public function get contextHeight():Number{return null;}
 
 		/**
 		 * @private 

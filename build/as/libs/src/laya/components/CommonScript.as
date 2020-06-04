@@ -6,6 +6,12 @@ package laya.components {
 	 */
 	public class CommonScript extends Component {
 
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get isSingleton():Boolean{return null;}
+
 		public function CommonScript(){}
 
 		/**

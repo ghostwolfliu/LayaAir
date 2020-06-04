@@ -20,14 +20,13 @@ package laya.d3.graphics {
 		/**
 		 * 获取顶点声明。
 		 */
-		public var vertexDeclaration:VertexDeclaration;
+		public function get vertexDeclaration():VertexDeclaration{return null;}
+		public function set vertexDeclaration(value:VertexDeclaration):void{}
 
 		/**
 		 * 是否可读。
 		 */
-		public function get canRead():Boolean{
-				return null;
-		}
+		public function get canRead():Boolean{return null;}
 
 		/**
 		 * 创建一个 <code>VertexBuffer3D</code> 实例。

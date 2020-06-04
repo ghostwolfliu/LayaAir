@@ -9,23 +9,17 @@ package laya.d3.physics.shape {
 		/**
 		 * 半径。
 		 */
-		public function get radius():Number{
-				return null;
-		}
+		public function get radius():Number{return null;}
 
 		/**
 		 * 长度。
 		 */
-		public function get length():Number{
-				return null;
-		}
+		public function get length():Number{return null;}
 
 		/**
 		 * 方向。
 		 */
-		public function get orientation():Number{
-				return null;
-		}
+		public function get orientation():Number{return null;}
 
 		/**
 		 * 创建一个新的 <code>CapsuleColliderShape</code> 实例。

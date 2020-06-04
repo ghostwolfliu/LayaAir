@@ -60,12 +60,14 @@ package laya.ui {
 		/**
 		 * 子对象的间隔。
 		 */
-		public var space:Number;
+		public function get space():Number{return null;}
+		public function set space(value:Number):void{}
 
 		/**
 		 * 子对象对齐方式。
 		 */
-		public var align:String;
+		public function get align():String{return null;}
+		public function set align(value:String):void{}
 
 		/**
 		 * 排序项目列表。可通过重写改变默认排序规则。

@@ -202,7 +202,8 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Image#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
@@ -253,23 +254,27 @@ package laya.ui {
 		/**
 		 * 获取或设置表示最高滚动位置的数字。
 		 */
-		public var max:Number;
+		public function get max():Number{return null;}
+		public function set max(value:Number):void{}
 
 		/**
 		 * 获取或设置表示最低滚动位置的数字。
 		 */
-		public var min:Number;
+		public function get min():Number{return null;}
+		public function set min(value:Number):void{}
 
 		/**
 		 * 获取或设置表示当前滚动位置的数字。
 		 */
-		public var value:Number;
+		public function get value():Number{return null;}
+		public function set value(v:Number):void{}
 
 		/**
 		 * 一个布尔值，指示滚动条是否为垂直滚动。如果值为true，则为垂直滚动，否则为水平滚动。
 		 * <p>默认值为：true。</p>
 		 */
-		public var isVertical:Boolean;
+		public function get isVertical():Boolean{return null;}
+		public function set isVertical(value:Boolean):void{}
 
 		/**
 		 * <p>当前实例的 <code>Slider</code> 实例的有效缩放网格数据。</p>
@@ -277,43 +282,63 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
 
 		/**
 		 * 获取或设置一个值，该值表示按下滚动条轨道时页面滚动的增量。
 		 */
-		public var scrollSize:Number;
+		public function get scrollSize():Number{return null;}
+		public function set scrollSize(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 
 		/**
 		 * 获取或设置一个值，该值表示滑条长度比例，值为：（0-1）。
 		 */
-		public var thumbPercent:Number;
+		public function get thumbPercent():Number{return null;}
+		public function set thumbPercent(value:Number):void{}
 
 		/**
 		 * 设置滚动对象。
 		 * @see laya.ui.TouchScroll#target
 		 */
-		public var target:Sprite;
+		public function get target():Sprite{return null;}
+		public function set target(value:Sprite):void{}
 
 		/**
 		 * 是否隐藏滚动条，不显示滚动条，但是可以正常滚动，默认为false。
 		 */
-		public var hide:Boolean;
+		public function get hide():Boolean{return null;}
+		public function set hide(value:Boolean):void{}
 
 		/**
 		 * 一个布尔值，指定是否显示向上、向下按钮，默认值为true。
 		 */
-		public var showButtons:Boolean;
+		public function get showButtons():Boolean{return null;}
+		public function set showButtons(value:Boolean):void{}
 
 		/**
 		 * 一个布尔值，指定是否开启触摸，默认值为true。
 		 */
-		public var touchScrollEnable:Boolean;
+		public function get touchScrollEnable():Boolean{return null;}
+		public function set touchScrollEnable(value:Boolean):void{}
 
 		/**
 		 * 一个布尔值，指定是否滑轮滚动，默认值为true。
 		 */
-		public var mouseWheelEnable:Boolean;
+		public function get mouseWheelEnable():Boolean{return null;}
+		public function set mouseWheelEnable(value:Boolean):void{}
 
 		/**
 		 * @private 
@@ -330,9 +355,7 @@ package laya.ui {
 		public var triggerDownDragLimit:Function;
 		public var triggerUpDragLimit:Function;
 		private var checkTriggers:*;
-		public function get lastOffset():Number{
-				return null;
-		}
+		public function get lastOffset():Number{return null;}
 		public function startTweenMoveForce(lastOffset:Number):void{}
 
 		/**
@@ -363,7 +386,8 @@ package laya.ui {
 		/**
 		 * 滚动的刻度值，滑动数值为tick的整数倍。默认值为1。
 		 */
-		public var tick:Number;
+		public function get tick():Number{return null;}
+		public function set tick(value:Number):void{}
 	}
 
 }

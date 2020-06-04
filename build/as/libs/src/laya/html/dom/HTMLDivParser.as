@@ -43,7 +43,12 @@ package laya.html.dom {
 		/**
 		 * 设置标签内容
 		 */
-		public var innerHTML:String;
+		public function set innerHTML(text:String):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
 
 		/**
 		 * 追加内容，解析并对显示对象排版
@@ -68,6 +73,23 @@ package laya.html.dom {
 		 * @private 对显示内容进行排版
 		 */
 		public function layout():void{}
+
+		/**
+		 * 获取对象的高
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * 获取对象的宽
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
 	}
 
 }

@@ -113,7 +113,7 @@ package laya.utils {
 		/**
 		 * 点击性能统计显示区域的处理函数。
 		 */
-		public static var onclick:Function;
+		public static function set onclick(fn:Function):void{}
 	}
 
 }

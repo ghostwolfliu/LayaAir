@@ -16,9 +16,7 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 获取尺寸。
 		 */
-		public function get size():GradientSize{
-				return null;
-		}
+		public function get size():GradientSize{return null;}
 
 		/**
 		 * 创建一个 <code>SizeOverLifetime</code> 实例。

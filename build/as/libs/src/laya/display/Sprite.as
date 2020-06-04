@@ -109,7 +109,7 @@ package laya.display {
 		/**
 		 * 设置是否开启自定义渲染，只有开启自定义渲染，才能使用customRender函数渲染。
 		 */
-		public var customRenderEnable:Boolean;
+		public function set customRenderEnable(b:Boolean):void{}
 
 		/**
 		 * <p>指定显示对象是否缓存为静态图像，cacheAs时，子对象发生变化，会自动重新缓存，同时也可以手动调用reCache方法更新缓存。</p>
@@ -120,7 +120,8 @@ package laya.display {
 		 * <p>webgl下renderTarget缓存模式缺点：会额外创建renderTarget对象，增加内存开销，缓存面积有最大2048限制，不断重绘时会增加CPU开销。优点：大幅减少drawcall，渲染性能最高。
 		 * webgl下命令缓存模式缺点：只会减少节点遍历及命令组织，不会减少drawcall数，性能中等。优点：没有额外内存开销，无需renderTarget支持。</p>
 		 */
-		public var cacheAs:String;
+		public function get cacheAs():String{return null;}
+		public function set cacheAs(value:String):void{}
 
 		/**
 		 * 更新_cnavas相关的状态
@@ -130,7 +131,8 @@ package laya.display {
 		/**
 		 * 设置cacheAs为非空时此值才有效，staticCache=true时，子对象变化时不会自动更新缓存，只能通过调用reCache方法手动刷新。
 		 */
-		public var staticCache:Boolean;
+		public function get staticCache():Boolean{return null;}
+		public function set staticCache(value:Boolean):void{}
 
 		/**
 		 * 在设置cacheAs的情况下，调用此方法会重新刷新缓存。
@@ -143,19 +145,22 @@ package laya.display {
 		/**
 		 * 表示显示对象相对于父容器的水平方向坐标值。
 		 */
-		public var x:Number;
+		public function get x():Number{return null;}
+		public function set x(value:Number):void{}
 
 		/**
 		 * 表示显示对象相对于父容器的垂直方向坐标值。
 		 */
-		public var y:Number;
+		public function get y():Number{return null;}
+		public function set y(value:Number):void{}
 
 		/**
 		 * <p>显示对象的宽度，单位为像素，默认为0。</p>
 		 * <p>此宽度用于鼠标碰撞检测，并不影响显示对象图像大小。需要对显示对象的图像进行缩放，请使用scale、scaleX、scaleY。</p>
 		 * <p>可以通过getbounds获取显示对象图像的实际宽度。</p>
 		 */
-		public var width:Number;
+		public function get width():Number{return null;}
+		public function set width(value:Number):void{}
 		public function set_width(value:Number):void{}
 		public function get_width():Number{
 			return null;
@@ -166,7 +171,8 @@ package laya.display {
 		 * <p>此高度用于鼠标碰撞检测，并不影响显示对象图像大小。需要对显示对象的图像进行缩放，请使用scale、scaleX、scaleY。</p>
 		 * <p>可以通过getbounds获取显示对象图像的实际高度。</p>
 		 */
-		public var height:Number;
+		public function get height():Number{return null;}
+		public function set height(value:Number):void{}
 		public function set_height(value:Number):void{}
 		public function get_height():Number{
 			return null;
@@ -175,16 +181,12 @@ package laya.display {
 		/**
 		 * <p>对象的显示宽度（以像素为单位）。</p>
 		 */
-		public function get displayWidth():Number{
-				return null;
-		}
+		public function get displayWidth():Number{return null;}
 
 		/**
 		 * <p>对象的显示高度（以像素为单位）。</p>
 		 */
-		public function get displayHeight():Number{
-				return null;
-		}
+		public function get displayHeight():Number{return null;}
 
 		/**
 		 * 设置对象bounds大小，如果有设置，则不再通过getBounds计算，合理使用能提高性能。
@@ -236,12 +238,14 @@ package laya.display {
 		/**
 		 * X轴缩放值，默认值为1。设置为负数，可以实现水平反转效果，比如scaleX=-1。
 		 */
-		public var scaleX:Number;
+		public function get scaleX():Number{return null;}
+		public function set scaleX(value:Number):void{}
 
 		/**
 		 * Y轴缩放值，默认值为1。设置为负数，可以实现垂直反转效果，比如scaleX=-1。
 		 */
-		public var scaleY:Number;
+		public function get scaleY():Number{return null;}
+		public function set scaleY(value:Number):void{}
 		public function set_scaleX(value:Number):void{}
 		public function get_scaleX():Number{
 			return null;
@@ -254,17 +258,20 @@ package laya.display {
 		/**
 		 * 旋转角度，默认值为0。以角度为单位。
 		 */
-		public var rotation:Number;
+		public function get rotation():Number{return null;}
+		public function set rotation(value:Number):void{}
 
 		/**
 		 * 水平倾斜角度，默认值为0。以角度为单位。
 		 */
-		public var skewX:Number;
+		public function get skewX():Number{return null;}
+		public function set skewX(value:Number):void{}
 
 		/**
 		 * 垂直倾斜角度，默认值为0。以角度为单位。
 		 */
-		public var skewY:Number;
+		public function get skewY():Number{return null;}
+		public function set skewY(value:Number):void{}
 
 		/**
 		 * @private 
@@ -277,7 +284,8 @@ package laya.display {
 		 * <p>对象的矩阵信息。通过设置矩阵可以实现节点旋转，缩放，位移效果。</p>
 		 * <p>矩阵更多信息请参考 <code>Matrix</code></p>
 		 */
-		public var transform:Matrix;
+		public function get transform():Matrix{return null;}
+		public function set transform(value:Matrix):void{}
 		public function get_transform():Matrix{
 			return null;
 		}
@@ -286,22 +294,26 @@ package laya.display {
 		/**
 		 * X轴 轴心点的位置，单位为像素，默认为0。轴心点会影响对象位置，缩放中心，旋转中心。
 		 */
-		public var pivotX:Number;
+		public function get pivotX():Number{return null;}
+		public function set pivotX(value:Number):void{}
 
 		/**
 		 * Y轴 轴心点的位置，单位为像素，默认为0。轴心点会影响对象位置，缩放中心，旋转中心。
 		 */
-		public var pivotY:Number;
+		public function get pivotY():Number{return null;}
+		public function set pivotY(value:Number):void{}
 
 		/**
 		 * 透明度，值为0-1，默认值为1，表示不透明。更改alpha值会影响drawcall。
 		 */
-		public var alpha:Number;
+		public function get alpha():Number{return null;}
+		public function set alpha(value:Number):void{}
 
 		/**
 		 * 表示是否可见，默认为true。如果设置不可见，节点将不被渲染。
 		 */
-		public var visible:Boolean;
+		public function get visible():Boolean{return null;}
+		public function set visible(value:Boolean):void{}
 		public function get_visible():Boolean{
 			return null;
 		}
@@ -310,12 +322,14 @@ package laya.display {
 		/**
 		 * 指定要使用的混合模式。目前只支持"lighter"。
 		 */
-		public var blendMode:String;
+		public function get blendMode():String{return null;}
+		public function set blendMode(value:String):void{}
 
 		/**
 		 * 绘图对象。封装了绘制位图和矢量图的接口，Sprite所有的绘图操作都通过Graphics来实现的。
 		 */
-		public var graphics:Graphics;
+		public function get graphics():Graphics{return null;}
+		public function set graphics(value:Graphics):void{}
 
 		/**
 		 * <p>显示对象的滚动矩形范围，具有裁剪效果(如果只想限制子对象渲染区域，请使用viewport)</p>
@@ -323,7 +337,8 @@ package laya.display {
 		 * 1.srollRect自带裁剪效果，viewport只影响子对象渲染是否渲染，不具有裁剪效果（性能更高）。<br/>
 		 * 2.设置rect的x,y属性均能实现区域滚动效果，但scrollRect会保持0,0点位置不变。</p>
 		 */
-		public var scrollRect:Rectangle;
+		public function get scrollRect():Rectangle{return null;}
+		public function set scrollRect(value:Rectangle):void{}
 
 		/**
 		 * <p>设置坐标位置。相当于分别设置x和y属性。</p>
@@ -455,7 +470,8 @@ package laya.display {
 		/**
 		 * 滤镜集合。可以设置多个滤镜组合。
 		 */
-		public var filters:Array;
+		public function get filters():Array{return null;}
+		public function set filters(value:Array):void{}
 
 		/**
 		 * 把本地坐标转换为相对stage的全局坐标。
@@ -584,27 +600,28 @@ package laya.display {
 		/**
 		 * 对舞台 <code>stage</code> 的引用。
 		 */
-		public function get stage():Stage{
-				return null;
-		}
+		public function get stage():Stage{return null;}
 
 		/**
 		 * <p>可以设置一个Rectangle区域作为点击区域，或者设置一个<code>HitArea</code>实例作为点击区域，HitArea内可以设置可点击和不可点击区域。</p>
 		 * <p>如果不设置hitArea，则根据宽高形成的区域进行碰撞。</p>
 		 */
-		public var hitArea:*;
+		public function get hitArea():*{return null;}
+		public function set hitArea(value:*):void{}
 
 		/**
 		 * <p>遮罩，可以设置一个对象(支持位图和矢量图)，根据对象形状进行遮罩显示。</p>
 		 * <p>【注意】遮罩对象坐标系是相对遮罩对象本身的，和Flash机制不同</p>
 		 */
-		public var mask:Sprite;
+		public function get mask():Sprite{return null;}
+		public function set mask(value:Sprite):void{}
 
 		/**
 		 * 是否接受鼠标事件。
 		 * 默认为false，如果监听鼠标事件，则会自动设置本对象及父节点的属性 mouseEnable 的值都为 true（如果父节点手动设置为false，则不会更改）。
 		 */
-		public var mouseEnabled:Boolean;
+		public function get mouseEnabled():Boolean{return null;}
+		public function set mouseEnabled(value:Boolean):void{}
 
 		/**
 		 * 开始拖动此对象。
@@ -643,49 +660,41 @@ package laya.display {
 		/**
 		 * 获得相对于stage的全局X轴缩放值（会叠加父亲节点的缩放值）。
 		 */
-		public function get globalScaleX():Number{
-				return null;
-		}
+		public function get globalScaleX():Number{return null;}
 
 		/**
 		 * 获得相对于stage的全局旋转值（会叠加父亲节点的旋转值）。
 		 */
-		public function get globalRotation():Number{
-				return null;
-		}
+		public function get globalRotation():Number{return null;}
 
 		/**
 		 * 获得相对于stage的全局Y轴缩放值（会叠加父亲节点的缩放值）。
 		 */
-		public function get globalScaleY():Number{
-				return null;
-		}
+		public function get globalScaleY():Number{return null;}
 
 		/**
 		 * 返回鼠标在此对象坐标系上的 X 轴坐标信息。
 		 */
-		public function get mouseX():Number{
-				return null;
-		}
+		public function get mouseX():Number{return null;}
 
 		/**
 		 * 返回鼠标在此对象坐标系上的 Y 轴坐标信息。
 		 */
-		public function get mouseY():Number{
-				return null;
-		}
+		public function get mouseY():Number{return null;}
 
 		/**
 		 * z排序，更改此值，则会按照值的大小对同一容器的所有对象重新排序。值越大，越靠上。默认为0，则根据添加顺序排序。
 		 */
-		public var zOrder:Number;
+		public function get zOrder():Number{return null;}
+		public function set zOrder(value:Number):void{}
 
 		/**
 		 * 设置一个Texture实例，并显示此图片（如果之前有其他绘制，则会被清除掉）。
 		 * 等同于graphics.clear();graphics.drawImage()，但性能更高
 		 * 还可以赋值一个图片地址，则会自动加载图片，然后显示
 		 */
-		public var texture:Texture;
+		public function get texture():Texture{return null;}
+		public function set texture(value:Texture):void{}
 
 		/**
 		 * <p>视口大小，视口外的子对象，将不被渲染(如果想实现裁剪效果，请使用srollRect)，合理使用能提高渲染性能。比如由一个个小图片拼成的地图块，viewport外面的小图片将不渲染</p>
@@ -694,7 +703,8 @@ package laya.display {
 		 * 2. 设置rect的x,y属性均能实现区域滚动效果，但scrollRect会保持0,0点位置不变。</p>
 		 * @default null
 		 */
-		public var viewport:Rectangle;
+		public function get viewport():Rectangle{return null;}
+		public function set viewport(value:Rectangle):void{}
 
 		/**
 		 * @private 
@@ -705,7 +715,8 @@ package laya.display {
 		 * @private 
 		 */
 		public function releaseMouseEvent():void{}
-		public var drawCallOptimize:Boolean;
+		public function set drawCallOptimize(value:Boolean):void{}
+		public function get drawCallOptimize():Boolean{return null;}
 	}
 
 }

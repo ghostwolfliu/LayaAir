@@ -89,7 +89,8 @@ package laya.display {
 		/**
 		 * 当前动画的帧图像数组。本类中，每个帧图像是一个Graphics对象，而动画播放就是定时切换Graphics对象的过程。
 		 */
-		public var frames:Array;
+		public function get frames():Array{return null;}
+		public function set frames(value:Array):void{}
 
 		/**
 		 * <p>动画数据源。</p>
@@ -99,17 +100,17 @@ package laya.display {
 		 * 3. 图片路径集合：使用此类型创建的动画模版不会被缓存到动画模版缓存池中，如果需要缓存，请使用loadImages(...)方法。</p>
 		 * @param value 数据源。比如：图集："xx/a1.atlas"；图片集合："a1.png,a2.png,a3.png"；LayaAir IDE动画"xx/a1.ani"。
 		 */
-		public var source:String;
+		public function set source(value:String):void{}
 
 		/**
 		 * 设置自动播放的动画名称，在LayaAir IDE中可以创建的多个动画组成的动画集合，选择其中一个动画名称进行播放。
 		 */
-		public var autoAnimation:String;
+		public function set autoAnimation(value:String):void{}
 
 		/**
 		 * 是否自动播放，默认为false。如果设置为true，则动画被创建并添加到舞台后自动播放。
 		 */
-		public var autoPlay:Boolean;
+		public function set autoPlay(value:Boolean):void{}
 
 		/**
 		 * 停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。

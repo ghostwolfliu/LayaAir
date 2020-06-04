@@ -59,7 +59,8 @@ package laya.net {
 		/**
 		 * 是否启用。
 		 */
-		public static var enable:Boolean;
+		public static function set enable(value:Boolean):void{}
+		public static function get enable():Boolean{return null;}
 
 		/**
 		 * @private 

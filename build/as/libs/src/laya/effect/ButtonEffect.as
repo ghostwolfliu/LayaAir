@@ -38,7 +38,7 @@ package laya.effect {
 		 * 设置控制对象
 		 * @param tar 
 		 */
-		public var target:Sprite;
+		public function set target(tar:Sprite):void{}
 		private var toChangedState:*;
 		private var toInitState:*;
 		private var tweenComplete:*;

@@ -45,19 +45,19 @@ package laya.media {
 		 * 设置触发播放的事件
 		 * @param events 
 		 */
-		public var playEvent:String;
+		public function set playEvent(events:String):void{}
 
 		/**
 		 * 设置控制播放的对象
 		 * @param tar 
 		 */
-		public var target:Sprite;
+		public function set target(tar:Sprite):void{}
 
 		/**
 		 * 设置触发停止的事件
 		 * @param events 
 		 */
-		public var stopEvent:String;
+		public function set stopEvent(events:String):void{}
 	}
 
 }

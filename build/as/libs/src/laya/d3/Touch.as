@@ -16,17 +16,13 @@ package laya.d3 {
 		 * 获取唯一识别ID。
 		 * @return 唯一识别ID。
 		 */
-		public function get identifier():Number{
-				return null;
-		}
+		public function get identifier():Number{return null;}
 
 		/**
 		 * 获取触摸点的像素坐标。
 		 * @return 触摸点的像素坐标 [只读]。
 		 */
-		public function get position():Vector2{
-				return null;
-		}
+		public function get position():Vector2{return null;}
 
 		/**
 		 * [实现ISingletonElement接口]

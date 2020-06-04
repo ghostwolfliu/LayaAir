@@ -157,7 +157,8 @@ package laya.ui {
 		/**
 		 * 表示当前选择的项索引。默认值为-1。
 		 */
-		public var selectedIndex:Number;
+		public function get selectedIndex():Number{return null;}
+		public function set selectedIndex(value:Number):void{}
 
 		/**
 		 * @private 通过对象的索引设置项对象的 <code>selected</code> 属性值。
@@ -169,13 +170,15 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Image#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
 		 * 标签集合字符串。以逗号做分割，如"item0,item1,item2,item3,item4,item5"。
 		 */
-		public var labels:String;
+		public function get labels():String{return null;}
+		public function set labels(value:String):void{}
 
 		/**
 		 * @private 创建一个项显示对象。
@@ -189,55 +192,64 @@ package laya.ui {
 		/**
 		 * @copy laya.ui.Button#labelColors()
 		 */
-		public var labelColors:String;
+		public function get labelColors():String{return null;}
+		public function set labelColors(value:String):void{}
 
 		/**
 		 * <p>描边宽度（以像素为单位）。</p>
 		 * 默认值0，表示不描边。
 		 * @see laya.display.Text.stroke()
 		 */
-		public var labelStroke:Number;
+		public function get labelStroke():Number{return null;}
+		public function set labelStroke(value:Number):void{}
 
 		/**
 		 * <p>描边颜色，以字符串表示。</p>
 		 * 默认值为 "#000000"（黑色）;
 		 * @see laya.display.Text.strokeColor()
 		 */
-		public var labelStrokeColor:String;
+		public function get labelStrokeColor():String{return null;}
+		public function set labelStrokeColor(value:String):void{}
 
 		/**
 		 * <p>表示各个状态下的描边颜色。</p>
 		 * @see laya.display.Text.strokeColor()
 		 */
-		public var strokeColors:String;
+		public function get strokeColors():String{return null;}
+		public function set strokeColors(value:String):void{}
 
 		/**
 		 * 表示按钮文本标签的字体大小。
 		 */
-		public var labelSize:Number;
+		public function get labelSize():Number{return null;}
+		public function set labelSize(value:Number):void{}
 
 		/**
 		 * 表示按钮的状态值，以数字表示，默认为3态。
 		 * @see laya.ui.Button#stateNum
 		 */
-		public var stateNum:Number;
+		public function get stateNum():Number{return null;}
+		public function set stateNum(value:Number):void{}
 
 		/**
 		 * 表示按钮文本标签是否为粗体字。
 		 */
-		public var labelBold:Boolean;
+		public function get labelBold():Boolean{return null;}
+		public function set labelBold(value:Boolean):void{}
 
 		/**
 		 * 表示按钮文本标签的字体名称，以字符串形式表示。
 		 * @see laya.display.Text.font()
 		 */
-		public var labelFont:String;
+		public function get labelFont():String{return null;}
+		public function set labelFont(value:String):void{}
 
 		/**
 		 * 表示按钮文本标签的边距。
 		 * <p><b>格式：</b>"上边距,右边距,下边距,左边距"。</p>
 		 */
-		public var labelPadding:String;
+		public function get labelPadding():String{return null;}
+		public function set labelPadding(value:String):void{}
 
 		/**
 		 * 布局方向。
@@ -247,12 +259,14 @@ package laya.ui {
 		 * <li>"vertical"：表示垂直布局。</li>
 		 * </p>
 		 */
-		public var direction:String;
+		public function get direction():String{return null;}
+		public function set direction(value:String):void{}
 
 		/**
 		 * 项对象们之间的间隔（以像素为单位）。
 		 */
-		public var space:Number;
+		public function get space():Number{return null;}
+		public function set space(value:Number):void{}
 
 		/**
 		 * @private 更改项对象的属性值。
@@ -268,14 +282,25 @@ package laya.ui {
 		/**
 		 * 项对象们的存放数组。
 		 */
-		public function get items():Array{
-				return null;
-		}
+		public function get items():Array{return null;}
 
 		/**
 		 * 获取或设置当前选择的项对象。
 		 */
-		public var selection:ISelect;
+		public function get selection():ISelect{return null;}
+		public function set selection(value:ISelect):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 
 		/**
 		 * @private 

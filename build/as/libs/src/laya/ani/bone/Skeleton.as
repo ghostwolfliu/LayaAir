@@ -54,11 +54,12 @@ package laya.ani.bone {
 		/**
 		 * 得到资源的URL
 		 */
+		public function get url():String{return null;}
 
 		/**
 		 * 设置动画路径
 		 */
-		public var url:String;
+		public function set url(path:String):void{}
 
 		/**
 		 * 通过加载直接创建动画
@@ -191,33 +192,28 @@ package laya.ani.bone {
 		/**
 		 * @private 得到帧索引
 		 */
+		public function get index():Number{return null;}
 
 		/**
 		 * @private 设置帧索引
 		 */
-		public var index:Number;
+		public function set index(value:Number):void{}
 
 		/**
 		 * 得到总帧数据
 		 */
-		public function get total():Number{
-				return null;
-		}
+		public function get total():Number{return null;}
 
 		/**
 		 * 得到播放器的引用
 		 */
-		public function get player():AnimationPlayer{
-				return null;
-		}
+		public function get player():AnimationPlayer{return null;}
 
 		/**
 		 * 得到动画模板的引用
 		 * @return templet.
 		 */
-		public function get templet():Templet{
-				return null;
-		}
+		public function get templet():Templet{return null;}
 	}
 
 }

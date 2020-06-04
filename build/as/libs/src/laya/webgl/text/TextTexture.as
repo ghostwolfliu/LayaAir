@@ -57,9 +57,7 @@ package laya.webgl.text {
 		 */
 		public static function clean():void{}
 		public function touchRect(ri:CharRenderInfo,curloop:Number):void{}
-		public function get texture():*{
-				return null;
-		}
+		public function get texture():*{return null;}
 		public function drawOnScreen(x:Number,y:Number):void{}
 	}
 

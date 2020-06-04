@@ -29,9 +29,7 @@ package laya.display.cmd {
 		/**
 		 * @private 
 		 */
-		public function get cmdID():String{
-				return null;
-		}
+		public function get cmdID():String{return null;}
 	}
 
 }

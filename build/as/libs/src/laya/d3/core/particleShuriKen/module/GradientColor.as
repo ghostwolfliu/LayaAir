@@ -52,51 +52,37 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 生命周期颜色类型,0为固定颜色模式,1渐变模式,2为随机双固定颜色模式,3随机双渐变模式。
 		 */
-		public function get type():Number{
-				return null;
-		}
+		public function get type():Number{return null;}
 
 		/**
 		 * 固定颜色。
 		 */
-		public function get constant():Vector4{
-				return null;
-		}
+		public function get constant():Vector4{return null;}
 
 		/**
 		 * 最小固定颜色。
 		 */
-		public function get constantMin():Vector4{
-				return null;
-		}
+		public function get constantMin():Vector4{return null;}
 
 		/**
 		 * 最大固定颜色。
 		 */
-		public function get constantMax():Vector4{
-				return null;
-		}
+		public function get constantMax():Vector4{return null;}
 
 		/**
 		 * 渐变颜色。
 		 */
-		public function get gradient():Gradient{
-				return null;
-		}
+		public function get gradient():Gradient{return null;}
 
 		/**
 		 * 最小渐变颜色。
 		 */
-		public function get gradientMin():Gradient{
-				return null;
-		}
+		public function get gradientMin():Gradient{return null;}
 
 		/**
 		 * 最大渐变颜色。
 		 */
-		public function get gradientMax():Gradient{
-				return null;
-		}
+		public function get gradientMax():Gradient{return null;}
 
 		/**
 		 * 创建一个 <code>GradientColor,不允许new，请使用静态创建函数。</code> 实例。

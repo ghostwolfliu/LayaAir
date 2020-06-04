@@ -16,56 +16,60 @@ package laya.d3.physics {
 		/**
 		 * 弹力。
 		 */
-		public var restitution:Number;
+		public function get restitution():Number{return null;}
+		public function set restitution(value:Number):void{}
 
 		/**
 		 * 摩擦力。
 		 */
-		public var friction:Number;
+		public function get friction():Number{return null;}
+		public function set friction(value:Number):void{}
 
 		/**
 		 * 滚动摩擦力。
 		 */
-		public var rollingFriction:Number;
+		public function get rollingFriction():Number{return null;}
+		public function set rollingFriction(value:Number):void{}
 
 		/**
 		 * 用于连续碰撞检测(CCD)的速度阈值,当物体移动速度小于该值时不进行CCD检测,防止快速移动物体(例如:子弹)错误的穿过其它物体,0表示禁止。
 		 */
-		public var ccdMotionThreshold:Number;
+		public function get ccdMotionThreshold():Number{return null;}
+		public function set ccdMotionThreshold(value:Number):void{}
 
 		/**
 		 * 获取用于进入连续碰撞检测(CCD)范围的球半径。
 		 */
-		public var ccdSweptSphereRadius:Number;
+		public function get ccdSweptSphereRadius():Number{return null;}
+		public function set ccdSweptSphereRadius(value:Number):void{}
 
 		/**
 		 * 获取是否激活。
 		 */
-		public function get isActive():Boolean{
-				return null;
-		}
+		public function get isActive():Boolean{return null;}
 
 		/**
 		 * 碰撞形状。
 		 */
-		public var colliderShape:ColliderShape;
+		public function get colliderShape():ColliderShape{return null;}
+		public function set colliderShape(value:ColliderShape):void{}
 
 		/**
 		 * 模拟器。
 		 */
-		public function get simulation():PhysicsSimulation{
-				return null;
-		}
+		public function get simulation():PhysicsSimulation{return null;}
 
 		/**
 		 * 所属碰撞组。
 		 */
-		public var collisionGroup:Number;
+		public function get collisionGroup():Number{return null;}
+		public function set collisionGroup(value:Number):void{}
 
 		/**
 		 * 可碰撞的碰撞组,基于位运算。
 		 */
-		public var canCollideWith:Number;
+		public function get canCollideWith():Number{return null;}
+		public function set canCollideWith(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>PhysicsComponent</code> 实例。

@@ -76,6 +76,12 @@ package laya.filters {
 		}
 
 		/**
+		 * @private 
+		 * @override 
+		 */
+		override public function get type():Number{return null;}
+
+		/**
 		 * 调整颜色，包括亮度，对比度，饱和度和色调
 		 * @param brightness 亮度,范围:-100~100
 		 * @param contrast 对比度,范围:-100~100

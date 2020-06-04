@@ -53,16 +53,25 @@ package laya.effect {
 		 * @override 
 		 */
 		override protected function buildFilter():void{}
-		public var brightness:Number;
-		public var contrast:Number;
-		public var saturation:Number;
-		public var hue:Number;
-		public var red:Number;
-		public var green:Number;
-		public var blue:Number;
+		public function get brightness():Number{return null;}
+		public function set brightness(value:Number):void{}
+		public function get contrast():Number{return null;}
+		public function set contrast(value:Number):void{}
+		public function get saturation():Number{return null;}
+		public function set saturation(value:Number):void{}
+		public function get hue():Number{return null;}
+		public function set hue(value:Number):void{}
+		public function get red():Number{return null;}
+		public function set red(value:Number):void{}
+		public function get green():Number{return null;}
+		public function set green(value:Number):void{}
+		public function get blue():Number{return null;}
+		public function set blue(value:Number):void{}
 		private var _color:*;
-		public var color:String;
-		public var alpha:Number;
+		public function get color():String{return null;}
+		public function set color(value:String):void{}
+		public function get alpha():Number{return null;}
+		public function set alpha(value:Number):void{}
 	}
 
 }

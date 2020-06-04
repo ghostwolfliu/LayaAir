@@ -16,34 +16,37 @@ package laya.d3.text {
 		 * 获取文本。
 		 * @return 文本。
 		 */
+		public function get text():String{return null;}
 
 		/**
 		 * 设置文本。
 		 * @param value 文本。
 		 */
-		public var text:String;
+		public function set text(value:String):void{}
 
 		/**
 		 * 获取字体尺寸。
 		 * @param value 字体尺寸。
 		 */
+		public function get fontSize():Number{return null;}
 
 		/**
 		 * 设置字体储存。
 		 * @return 字体尺寸。
 		 */
-		public var fontSize:Number;
+		public function set fontSize(value:Number):void{}
 
 		/**
 		 * 获取颜色。
 		 * @return 颜色。
 		 */
+		public function get color():Color{return null;}
 
 		/**
 		 * 设置颜色。
 		 * @param 颜色 。
 		 */
-		public var color:Color;
+		public function set color(value:Color):void{}
 
 		/**
 		 * 创建一个新的 <code>TextMesh</code> 实例。

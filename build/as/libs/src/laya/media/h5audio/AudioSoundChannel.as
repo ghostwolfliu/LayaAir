@@ -24,6 +24,19 @@ package laya.media.h5audio {
 		override public function play():void{}
 
 		/**
+		 * 当前播放到的位置
+		 * @return 
+		 * @override 
+		 */
+		override public function get position():Number{return null;}
+
+		/**
+		 * 获取总时间。
+		 * @override 
+		 */
+		override public function get duration():Number{return null;}
+
+		/**
 		 * 停止播放
 		 * @override 
 		 */
@@ -38,6 +51,20 @@ package laya.media.h5audio {
 		 * @override 
 		 */
 		override public function resume():void{}
+
+		/**
+		 * 设置音量
+		 * @param v 
+		 * @override 
+		 */
+		override public function set volume(v:Number):void{}
+
+		/**
+		 * 获取音量
+		 * @return 
+		 * @override 
+		 */
+		override public function get volume():Number{return null;}
 	}
 
 }

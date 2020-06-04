@@ -7,12 +7,8 @@ package laya.d3.core.pixelLine {
 	 */
 	public class PixelLineVertex {
 		private static var _vertexDeclaration:*;
-		public static function get vertexDeclaration():VertexDeclaration{
-				return null;
-		}
-		public function get vertexDeclaration():VertexDeclaration{
-				return null;
-		}
+		public static function get vertexDeclaration():VertexDeclaration{return null;}
+		public function get vertexDeclaration():VertexDeclaration{return null;}
 
 		public function PixelLineVertex(){}
 	}

@@ -70,42 +70,50 @@ package laya.ui {
 		/**
 		 * <p>从组件顶边到其内容区域顶边之间的垂直距离（以像素为单位）。</p>
 		 */
-		public var top:Number;
+		public function get top():Number{return null;}
+		public function set top(value:Number):void{}
 
 		/**
 		 * <p>从组件底边到其内容区域底边之间的垂直距离（以像素为单位）。</p>
 		 */
-		public var bottom:Number;
+		public function get bottom():Number{return null;}
+		public function set bottom(value:Number):void{}
 
 		/**
 		 * <p>从组件左边到其内容区域左边之间的水平距离（以像素为单位）。</p>
 		 */
-		public var left:Number;
+		public function get left():Number{return null;}
+		public function set left(value:Number):void{}
 
 		/**
 		 * <p>从组件右边到其内容区域右边之间的水平距离（以像素为单位）。</p>
 		 */
-		public var right:Number;
+		public function get right():Number{return null;}
+		public function set right(value:Number):void{}
 
 		/**
 		 * <p>在父容器中，此对象的水平方向中轴线与父容器的水平方向中心线的距离（以像素为单位）。</p>
 		 */
-		public var centerX:Number;
+		public function get centerX():Number{return null;}
+		public function set centerX(value:Number):void{}
 
 		/**
 		 * <p>在父容器中，此对象的垂直方向中轴线与父容器的垂直方向中心线的距离（以像素为单位）。</p>
 		 */
-		public var centerY:Number;
+		public function get centerY():Number{return null;}
+		public function set centerY(value:Number):void{}
 
 		/**
 		 * X锚点，值为0-1，设置anchorX值最终通过pivotX值来改变节点轴心点。
 		 */
-		public var anchorX:Number;
+		public function get anchorX():Number{return null;}
+		public function set anchorX(value:Number):void{}
 
 		/**
 		 * Y锚点，值为0-1，设置anchorY值最终通过pivotY值来改变节点轴心点。
 		 */
-		public var anchorY:Number;
+		public function get anchorY():Number{return null;}
+		public function set anchorY(value:Number):void{}
 
 		/**
 		 * @private 
@@ -126,10 +134,8 @@ package laya.ui {
 		/**
 		 * @implements laya.ui.UIComponent#dataSource
 		 */
-		public function get dataSource():*{
-				return null;
-		}
-		public  function set dataSource(value:*):void{}
+		public function get dataSource():*{return null;}
+		public function set dataSource(value:*):void{}
 	}
 
 }

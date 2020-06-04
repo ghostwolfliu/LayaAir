@@ -73,35 +73,39 @@ package laya.d3.core {
 		/**
 		 * 天空渲染器。
 		 */
-		public function get skyRenderer():SkyRenderer{
-				return null;
-		}
+		public function get skyRenderer():SkyRenderer{return null;}
 
 		/**
 		 * 视野。
 		 */
-		public var fieldOfView:Number;
+		public function get fieldOfView():Number{return null;}
+		public function set fieldOfView(value:Number):void{}
 
 		/**
 		 * 近裁面。
 		 */
-		public var nearPlane:Number;
+		public function get nearPlane():Number{return null;}
+		public function set nearPlane(value:Number):void{}
 
 		/**
 		 * 远裁面。
 		 */
-		public var farPlane:Number;
+		public function get farPlane():Number{return null;}
+		public function set farPlane(vaule:Number):void{}
 
 		/**
 		 * 是否正交投影矩阵。
 		 */
-		public var orthographic:Boolean;
+		public function get orthographic():Boolean{return null;}
+		public function set orthographic(vaule:Boolean):void{}
 
 		/**
 		 * 正交投影垂直矩阵尺寸。
 		 */
-		public var orthographicVerticalSize:Number;
-		public var renderingOrder:Number;
+		public function get orthographicVerticalSize():Number{return null;}
+		public function set orthographicVerticalSize(vaule:Number):void{}
+		public function get renderingOrder():Number{return null;}
+		public function set renderingOrder(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>BaseCamera</code> 实例。

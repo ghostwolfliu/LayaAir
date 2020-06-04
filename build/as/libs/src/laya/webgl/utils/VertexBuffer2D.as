@@ -5,9 +5,7 @@ package laya.webgl.utils {
 		public var _floatArray32:Float32Array;
 		public var _uint32Array:Uint32Array;
 		private var _vertexStride:*;
-		public function get vertexStride():Number{
-				return null;
-		}
+		public function get vertexStride():Number{return null;}
 
 		public function VertexBuffer2D(vertexStride:Number = undefined,bufferUsage:Number = undefined){}
 		public function getFloat32Array():Float32Array{

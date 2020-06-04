@@ -11,9 +11,7 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 二维向量渐变数量。
 		 */
-		public function get gradientCount():Number{
-				return null;
-		}
+		public function get gradientCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>GradientDataVector2</code> 实例。

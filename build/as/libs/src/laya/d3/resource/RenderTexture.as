@@ -10,9 +10,7 @@ package laya.d3.resource {
 		/**
 		 * 获取当前激活的Rendertexture。
 		 */
-		public static function get currentActive():RenderTexture{
-				return null;
-		}
+		public static function get currentActive():RenderTexture{return null;}
 
 		/**
 		 * 从对象池获取临时渲染目标。
@@ -29,9 +27,12 @@ package laya.d3.resource {
 		/**
 		 * 深度格式。
 		 */
-		public function get depthStencilFormat():Number{
-				return null;
-		}
+		public function get depthStencilFormat():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function get defaulteTexture():BaseTexture{return null;}
 
 		/**
 		 * @param width 宽度。

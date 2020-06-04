@@ -48,106 +48,135 @@ package laya.d3.core.material {
 		private var _albedoColor:*;
 		private var _albedoIntensity:*;
 		private var _enableVertexColor:*;
+		public function set _ColorR(value:Number):void{}
+		public function set _ColorG(value:Number):void{}
+		public function set _ColorB(value:Number):void{}
+		public function set _ColorA(value:Number):void{}
+		public function set _AlbedoIntensity(value:Number):void{}
+		public function set _MainTex_STX(x:Number):void{}
+		public function set _MainTex_STY(y:Number):void{}
+		public function set _MainTex_STZ(z:Number):void{}
+		public function set _MainTex_STW(w:Number):void{}
+		public function set _Cutoff(value:Number):void{}
 
 		/**
 		 * 反照率颜色R分量。
 		 */
-		public var albedoColorR:Number;
+		public function get albedoColorR():Number{return null;}
+		public function set albedoColorR(value:Number):void{}
 
 		/**
 		 * 反照率颜色G分量。
 		 */
-		public var albedoColorG:Number;
+		public function get albedoColorG():Number{return null;}
+		public function set albedoColorG(value:Number):void{}
 
 		/**
 		 * 反照率颜色B分量。
 		 */
-		public var albedoColorB:Number;
+		public function get albedoColorB():Number{return null;}
+		public function set albedoColorB(value:Number):void{}
 
 		/**
 		 * 反照率颜色Z分量。
 		 */
-		public var albedoColorA:Number;
+		public function get albedoColorA():Number{return null;}
+		public function set albedoColorA(value:Number):void{}
 
 		/**
 		 * 反照率颜色。
 		 */
-		public var albedoColor:Vector4;
+		public function get albedoColor():Vector4{return null;}
+		public function set albedoColor(value:Vector4):void{}
 
 		/**
 		 * 反照率强度。
 		 */
-		public var albedoIntensity:Number;
+		public function get albedoIntensity():Number{return null;}
+		public function set albedoIntensity(value:Number):void{}
 
 		/**
 		 * 反照率贴图。
 		 */
-		public var albedoTexture:BaseTexture;
+		public function get albedoTexture():BaseTexture{return null;}
+		public function set albedoTexture(value:BaseTexture):void{}
 
 		/**
 		 * 纹理平铺和偏移X分量。
 		 */
-		public var tilingOffsetX:Number;
+		public function get tilingOffsetX():Number{return null;}
+		public function set tilingOffsetX(x:Number):void{}
 
 		/**
 		 * 纹理平铺和偏移Y分量。
 		 */
-		public var tilingOffsetY:Number;
+		public function get tilingOffsetY():Number{return null;}
+		public function set tilingOffsetY(y:Number):void{}
 
 		/**
 		 * 纹理平铺和偏移Z分量。
 		 */
-		public var tilingOffsetZ:Number;
+		public function get tilingOffsetZ():Number{return null;}
+		public function set tilingOffsetZ(z:Number):void{}
 
 		/**
 		 * 纹理平铺和偏移W分量。
 		 */
-		public var tilingOffsetW:Number;
+		public function get tilingOffsetW():Number{return null;}
+		public function set tilingOffsetW(w:Number):void{}
 
 		/**
 		 * 纹理平铺和偏移。
 		 */
-		public var tilingOffset:Vector4;
+		public function get tilingOffset():Vector4{return null;}
+		public function set tilingOffset(value:Vector4):void{}
 
 		/**
 		 * 是否支持顶点色。
 		 */
-		public var enableVertexColor:Boolean;
+		public function get enableVertexColor():Boolean{return null;}
+		public function set enableVertexColor(value:Boolean):void{}
 
 		/**
 		 * 渲染模式。
 		 */
-		public var renderMode:Number;
+		public function set renderMode(value:Number):void{}
 
 		/**
 		 * 是否写入深度。
 		 */
-		public var depthWrite:Boolean;
+		public function get depthWrite():Boolean{return null;}
+		public function set depthWrite(value:Boolean):void{}
 
 		/**
 		 * 剔除方式。
 		 */
-		public var cull:Number;
+		public function get cull():Number{return null;}
+		public function set cull(value:Number):void{}
 
 		/**
 		 * 混合方式。
 		 */
-		public var blend:Number;
+		public function get blend():Number{return null;}
+		public function set blend(value:Number):void{}
 
 		/**
 		 * 混合源。
 		 */
-		public var blendSrc:Number;
+		public function get blendSrc():Number{return null;}
+		public function set blendSrc(value:Number):void{}
 
 		/**
 		 * 混合目标。
 		 */
-		public var blendDst:Number;
+		public function get blendDst():Number{return null;}
+		public function set blendDst(value:Number):void{}
 
 		/**
 		 * 深度测试方式。
 		 */
-		public var depthTest:Number;
+		public function get depthTest():Number{return null;}
+		public function set depthTest(value:Number):void{}
 
 		public function UnlitMaterial(){}
 

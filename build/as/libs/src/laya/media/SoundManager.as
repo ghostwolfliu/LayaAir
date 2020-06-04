@@ -123,11 +123,12 @@ package laya.media {
 		 * 失去焦点后是否自动停止背景音乐。
 		 * @param v Boolean 失去焦点后是否自动停止背景音乐。
 		 */
+		public static function set autoStopMusic(v:Boolean):void{}
 
 		/**
 		 * 失去焦点后是否自动停止背景音乐。
 		 */
-		public static var autoStopMusic:Boolean;
+		public static function get autoStopMusic():Boolean{return null;}
 		private static var _visibilityChange:*;
 		private static var _stageOnBlur:*;
 		private static var _recoverWebAudio:*;
@@ -136,18 +137,22 @@ package laya.media {
 		/**
 		 * 背景音乐和所有音效是否静音。
 		 */
-		public static var muted:Boolean;
+		public static function set muted(value:Boolean):void{}
+		public static function get muted():Boolean{return null;}
 
 		/**
 		 * 所有音效（不包括背景音乐）是否静音。
 		 */
-		public static var soundMuted:Boolean;
+		public static function set soundMuted(value:Boolean):void{}
+		public static function get soundMuted():Boolean{return null;}
 
 		/**
 		 * 背景音乐（不包括音效）是否静音。
 		 */
-		public static var musicMuted:Boolean;
-		public static var useAudioMusic:Boolean;
+		public static function set musicMuted(value:Boolean):void{}
+		public static function get musicMuted():Boolean{return null;}
+		public static function get useAudioMusic():Boolean{return null;}
+		public static function set useAudioMusic(value:Boolean):void{}
 
 		/**
 		 * 播放音效。音效可以同时播放多个。
@@ -169,7 +174,7 @@ package laya.media {
 		public static function destroySound(url:String):void{}
 
 		/**
-		 * 播放背景音乐。背景音乐同时只能播放一个，如果在播放背景音乐时再次调用本方法，会先停止之前的背景音乐，再播发当前的背景音乐。
+		 * 播放背景音乐。背景音乐同时只能播放一个，如果在播放背景音乐时再次调用本方法，会先停止之前的背景音乐，再播放当前的背景音乐。
 		 * @param url 声音文件地址。
 		 * @param loops 循环次数,0表示无限循环。
 		 * @param complete 声音播放完成回调。

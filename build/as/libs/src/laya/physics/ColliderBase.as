@@ -61,22 +61,26 @@ package laya.physics {
 		/**
 		 * 是否是传感器，传感器能够触发碰撞事件，但不会产生碰撞反应
 		 */
-		public var isSensor:Boolean;
+		public function get isSensor():Boolean{return null;}
+		public function set isSensor(value:Boolean):void{}
 
 		/**
 		 * 密度值，值可以为零或者是正数，建议使用相似的密度，这样做可以改善堆叠稳定性，默认值为10
 		 */
-		public var density:Number;
+		public function get density():Number{return null;}
+		public function set density(value:Number):void{}
 
 		/**
 		 * 摩擦力，取值范围0-1，值越大，摩擦越大，默认值为0.2
 		 */
-		public var friction:Number;
+		public function get friction():Number{return null;}
+		public function set friction(value:Number):void{}
 
 		/**
 		 * 弹性系数，取值范围0-1，值越大，弹性越大，默认值为0
 		 */
-		public var restitution:Number;
+		public function get restitution():Number{return null;}
+		public function set restitution(value:Number):void{}
 
 		/**
 		 * @private 碰撞体参数发生变化后，刷新物理世界碰撞信息
@@ -87,6 +91,12 @@ package laya.physics {
 		 * @private 重置形状
 		 */
 		public function resetShape(re:Boolean = null):void{}
+
+		/**
+		 * 获取是否为单实例组件。
+		 * @override 
+		 */
+		override public function get isSingleton():Boolean{return null;}
 	}
 
 }

@@ -12,9 +12,7 @@ package laya.d3.shader {
 		/**
 		 * 渲染状态。
 		 */
-		public function get renderState():RenderState{
-				return null;
-		}
+		public function get renderState():RenderState{return null;}
 
 		public function ShaderPass(owner:SubShader = undefined,vs:String = undefined,ps:String = undefined,stateMap:Object = undefined){}
 

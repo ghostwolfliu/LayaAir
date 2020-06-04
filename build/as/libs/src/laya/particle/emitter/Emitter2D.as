@@ -13,7 +13,8 @@ package laya.particle.emitter {
 		private var _emitFun:*;
 
 		public function Emitter2D(_template:ParticleTemplateBase = undefined){}
-		public var template:ParticleTemplateBase;
+		public function set template(template:ParticleTemplateBase):void{}
+		public function get template():ParticleTemplateBase{return null;}
 
 		/**
 		 * @override 

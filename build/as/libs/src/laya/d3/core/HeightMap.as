@@ -40,33 +40,25 @@ package laya.d3.core {
 		 * 获取宽度。
 		 * @return value 宽度。
 		 */
-		public function get width():Number{
-				return null;
-		}
+		public function get width():Number{return null;}
 
 		/**
 		 * 获取高度。
 		 * @return value 高度。
 		 */
-		public function get height():Number{
-				return null;
-		}
+		public function get height():Number{return null;}
 
 		/**
 		 * 最大高度。
 		 * @return value 最大高度。
 		 */
-		public function get maxHeight():Number{
-				return null;
-		}
+		public function get maxHeight():Number{return null;}
 
 		/**
 		 * 最大高度。
 		 * @return value 最大高度。
 		 */
-		public function get minHeight():Number{
-				return null;
-		}
+		public function get minHeight():Number{return null;}
 
 		/**
 		 * 创建一个 <code>HeightMap</code> 实例。

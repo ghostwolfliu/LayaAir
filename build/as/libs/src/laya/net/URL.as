@@ -39,26 +39,23 @@ package laya.net {
 		/**
 		 * 格式化后的地址。
 		 */
-		public function get url():String{
-				return null;
-		}
+		public function get url():String{return null;}
 
 		/**
 		 * 地址的文件夹路径（不包括文件名）。
 		 */
-		public function get path():String{
-				return null;
-		}
+		public function get path():String{return null;}
 
 		/**
 		 * root路径。只针对'~'类型的url路径有效
 		 */
 		public static var rootPath:String;
+		public static function set basePath(value:String):void{}
 
 		/**
 		 * 基础路径。如果不设置，默认为当前网页的路径。最终地址将被格式化为 basePath+相对URL地址，
 		 */
-		public static var basePath:String;
+		public static function get basePath():String{return null;}
 
 		/**
 		 * 自定义URL格式化的方式。例如： customFormat = function(url:String):String{}

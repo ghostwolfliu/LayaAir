@@ -7,6 +7,8 @@ package  {
 	 * <code>Config3D</code> 类用于创建3D初始化配置。
 	 */
 	public class Config3D implements IClone {
+		public static function get useCannonPhysics():Boolean{return null;}
+		public static function set useCannonPhysics(value:Boolean):void{}
 
 		/**
 		 * 是否开启抗锯齿。
@@ -71,19 +73,27 @@ package  {
 		public var pbrRenderQuality:PBRRenderQuality;
 
 		/**
+		 * 是否使用CANNONJS物理引擎
+		 */
+		public var isUseCannonPhysicsEngine:Boolean;
+
+		/**
 		 * 默认物理功能初始化内存，单位为M。
 		 */
-		public var defaultPhysicsMemory:Number;
+		public function get defaultPhysicsMemory():Number{return null;}
+		public function set defaultPhysicsMemory(value:Number):void{}
 
 		/**
 		 * 最大光源数量。
 		 */
-		public var maxLightCount:Number;
+		public function get maxLightCount():Number{return null;}
+		public function set maxLightCount(value:Number):void{}
 
 		/**
 		 * X、Y、Z轴的光照集群数量,Z值会影响Cluster接受区域光(点光、聚光)影响的数量,Math.floor(2048 / lightClusterCount.z - 1) * 4 为每个Cluster的最大平均接受区域光数量,如果每个Cluster所接受光源影响的平均数量大于该值，则较远的Cluster会忽略其中多余的光照影响。
 		 */
-		public var lightClusterCount:Vector3;
+		public function get lightClusterCount():Vector3{return null;}
+		public function set lightClusterCount(value:Vector3):void{}
 
 		/**
 		 * 创建一个 <code>Config3D</code> 实例。

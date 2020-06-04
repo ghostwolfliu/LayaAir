@@ -25,25 +25,19 @@ package laya.d3.core.particleShuriKen.module {
 		 * 获取爆裂时间,单位为秒。
 		 * @return 爆裂时间,单位为秒。
 		 */
-		public function get time():Number{
-				return null;
-		}
+		public function get time():Number{return null;}
 
 		/**
 		 * 获取爆裂的最小数量。
 		 * @return 爆裂的最小数量。
 		 */
-		public function get minCount():Number{
-				return null;
-		}
+		public function get minCount():Number{return null;}
 
 		/**
 		 * 获取爆裂的最大数量。
 		 * @return 爆裂的最大数量。
 		 */
-		public function get maxCount():Number{
-				return null;
-		}
+		public function get maxCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>Burst</code> 实例。

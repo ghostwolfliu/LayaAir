@@ -33,10 +33,14 @@ package laya.effect {
 		 * @override 
 		 */
 		override protected function buildFilter():void{}
-		public var color:String;
-		public var blur:Number;
-		public var offX:Number;
-		public var offY:Number;
+		public function get color():String{return null;}
+		public function set color(value:String):void{}
+		public function get blur():Number{return null;}
+		public function set blur(value:Number):void{}
+		public function get offX():Number{return null;}
+		public function set offX(value:Number):void{}
+		public function get offY():Number{return null;}
+		public function set offY(value:Number):void{}
 	}
 
 }

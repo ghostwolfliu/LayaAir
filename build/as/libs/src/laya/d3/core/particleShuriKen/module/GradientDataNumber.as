@@ -10,9 +10,7 @@ package laya.d3.core.particleShuriKen.module {
 		/**
 		 * 渐变浮点数量。
 		 */
-		public function get gradientCount():Number{
-				return null;
-		}
+		public function get gradientCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>GradientDataNumber</code> 实例。

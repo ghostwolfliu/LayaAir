@@ -60,27 +60,32 @@ package laya.physics.joint {
 		/**
 		 * 基于otherBody坐标位置的偏移量，也是selfBody的目标位置
 		 */
-		public var linearOffset:Array;
+		public function get linearOffset():Array{return null;}
+		public function set linearOffset(value:Array):void{}
 
 		/**
 		 * 基于otherBody的角度偏移量，也是selfBody的目标角度
 		 */
-		public var angularOffset:Number;
+		public function get angularOffset():Number{return null;}
+		public function set angularOffset(value:Number):void{}
 
 		/**
 		 * 当selfBody偏离目标位置时，为使其恢复到目标位置，马达关节所施加的最大作用力
 		 */
-		public var maxForce:Number;
+		public function get maxForce():Number{return null;}
+		public function set maxForce(value:Number):void{}
 
 		/**
 		 * 当selfBody角度与目标角度不同时，为使其达到目标角度，马达关节施加的最大扭力
 		 */
-		public var maxTorque:Number;
+		public function get maxTorque():Number{return null;}
+		public function set maxTorque(value:Number):void{}
 
 		/**
 		 * selfBody向目标位置移动时的缓动因子，取值0~1，值越大速度越快
 		 */
-		public var correctionFactor:Number;
+		public function get correctionFactor():Number{return null;}
+		public function set correctionFactor(value:Number):void{}
 	}
 
 }

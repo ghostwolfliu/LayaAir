@@ -47,7 +47,8 @@ package laya.ui {
 		/**
 		 * 获取或设置 <code>Radio</code> 关联的可选用户定义值。
 		 */
-		public var value:*;
+		public function get value():*{return null;}
+		public function set value(obj:*):void{}
 	}
 
 }

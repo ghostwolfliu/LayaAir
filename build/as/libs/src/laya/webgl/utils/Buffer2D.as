@@ -10,10 +10,8 @@ package laya.webgl.utils {
 		protected var _uploadSize:Number;
 		protected var _bufferSize:Number;
 		protected var _u8Array:Uint8Array;
-		public function get bufferLength():Number{
-				return null;
-		}
-		public var byteLength:Number;
+		public function get bufferLength():Number{return null;}
+		public function set byteLength(value:Number):void{}
 		public function setByteLength(value:Number):void{}
 
 		/**

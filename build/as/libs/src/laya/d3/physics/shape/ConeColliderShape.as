@@ -12,23 +12,17 @@ package laya.d3.physics.shape {
 		/**
 		 * 半径。
 		 */
-		public function get radius():Number{
-				return null;
-		}
+		public function get radius():Number{return null;}
 
 		/**
 		 * 高度。
 		 */
-		public function get height():Number{
-				return null;
-		}
+		public function get height():Number{return null;}
 
 		/**
 		 * 方向。
 		 */
-		public function get orientation():Number{
-				return null;
-		}
+		public function get orientation():Number{return null;}
 
 		/**
 		 * 创建一个新的 <code>ConeColliderShape</code> 实例。

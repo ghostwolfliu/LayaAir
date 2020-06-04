@@ -16,12 +16,14 @@ package laya.d3.core.material {
 		/**
 		 * 高光贴图。
 		 */
-		public var specularTexture:BaseTexture;
+		public function get specularTexture():BaseTexture{return null;}
+		public function set specularTexture(value:BaseTexture):void{}
 
 		/**
 		 * 高光颜色。
 		 */
-		public var specularColor:Vector4;
+		public function get specularColor():Vector4{return null;}
+		public function set specularColor(value:Vector4):void{}
 
 		/**
 		 * 创建一个 <code>PBRSpecularMaterial</code> 实例。

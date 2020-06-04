@@ -11,16 +11,12 @@ package laya.d3.core.trail {
 		/**
 		 * Trail过滤器。
 		 */
-		public function get trailFilter():TrailFilter{
-				return null;
-		}
+		public function get trailFilter():TrailFilter{return null;}
 
 		/**
 		 * Trail渲染器。
 		 */
-		public function get trailRenderer():TrailRenderer{
-				return null;
-		}
+		public function get trailRenderer():TrailRenderer{return null;}
 
 		public function TrailSprite3D(name:String = undefined){}
 

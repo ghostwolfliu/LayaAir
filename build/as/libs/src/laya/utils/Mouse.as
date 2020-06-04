@@ -19,7 +19,8 @@ package laya.utils {
 		 * 设置鼠标样式
 		 * @param cursorStr 例如auto move no-drop col-resizeall-scroll pointer not-allowed row-resizecrosshair progress e-resize ne-resizedefault text n-resize nw-resizehelp vertical-text s-resize se-resizeinherit wait w-resize sw-resize
 		 */
-		public static var cursor:String;
+		public static function set cursor(cursorStr:String):void{}
+		public static function get cursor():String{return null;}
 
 		/**
 		 * 隐藏鼠标

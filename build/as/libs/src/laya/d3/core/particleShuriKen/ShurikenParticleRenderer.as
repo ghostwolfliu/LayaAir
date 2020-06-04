@@ -27,18 +27,26 @@ package laya.d3.core.particleShuriKen {
 		/**
 		 * 获取渲染模式,0为BILLBOARD、1为STRETCHEDBILLBOARD、2为HORIZONTALBILLBOARD、3为VERTICALBILLBOARD、4为MESH。
 		 */
-		public var renderMode:Number;
+		public function get renderMode():Number{return null;}
+		public function set renderMode(value:Number):void{}
 
 		/**
 		 * 获取网格渲染模式所使用的Mesh,rendderMode为4时生效。
 		 */
-		public var mesh:Mesh;
+		public function get mesh():Mesh{return null;}
+		public function set mesh(value:Mesh):void{}
 
 		/**
 		 * 创建一个 <code>ShurikenParticleRender</code> 实例。
 		 */
 
 		public function ShurikenParticleRenderer(owner:ShuriKenParticle3D = undefined){}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get bounds():Bounds{return null;}
 	}
 
 }

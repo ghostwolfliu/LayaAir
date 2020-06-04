@@ -86,30 +86,25 @@ package laya.net {
 		/**
 		 * 缓存的服务端发来的数据。
 		 */
-		public function get input():*{
-				return null;
-		}
+		public function get input():*{return null;}
 
 		/**
 		 * 表示需要发送至服务端的缓冲区中的数据。
 		 */
-		public function get output():*{
-				return null;
-		}
+		public function get output():*{return null;}
 
 		/**
 		 * 表示此 Socket 对象目前是否已连接。
 		 */
-		public function get connected():Boolean{
-				return null;
-		}
+		public function get connected():Boolean{return null;}
 
 		/**
 		 * <p>主机字节序，是 CPU 存放数据的两种不同顺序，包括小端字节序和大端字节序。</p>
 		 * <p> LITTLE_ENDIAN ：小端字节序，地址低位存储值的低位，地址高位存储值的高位。</p>
 		 * <p> BIG_ENDIAN ：大端字节序，地址低位存储值的高位，地址高位存储值的低位。</p>
 		 */
-		public var endian:String;
+		public function get endian():String{return null;}
+		public function set endian(value:String):void{}
 
 		/**
 		 * <p>创建新的 Socket 对象。默认字节序为 Socket.BIG_ENDIAN 。若未指定参数，将创建一个最初处于断开状态的套接字。若指定了有效参数，则尝试连接到指定的主机和端口。</p>

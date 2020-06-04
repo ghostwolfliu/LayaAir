@@ -13,126 +13,144 @@ package laya.d3.core {
 		/**
 		 * 所属精灵。
 		 */
-		public function get owner():Sprite3D{
-				return null;
-		}
+		public function get owner():Sprite3D{return null;}
 
 		/**
 		 * 世界矩阵是否需要更新。
 		 */
-		public function get worldNeedUpdate():Boolean{
-				return null;
-		}
+		public function get worldNeedUpdate():Boolean{return null;}
 
 		/**
 		 * 局部位置X轴分量。
 		 */
-		public var localPositionX:Number;
+		public function get localPositionX():Number{return null;}
+		public function set localPositionX(x:Number):void{}
 
 		/**
 		 * 局部位置Y轴分量。
 		 */
-		public var localPositionY:Number;
+		public function get localPositionY():Number{return null;}
+		public function set localPositionY(y:Number):void{}
 
 		/**
 		 * 局部位置Z轴分量。
 		 */
-		public var localPositionZ:Number;
+		public function get localPositionZ():Number{return null;}
+		public function set localPositionZ(z:Number):void{}
 
 		/**
 		 * 局部位置。
 		 */
-		public var localPosition:Vector3;
+		public function get localPosition():Vector3{return null;}
+		public function set localPosition(value:Vector3):void{}
 
 		/**
 		 * 局部旋转四元数X分量。
 		 */
-		public var localRotationX:Number;
+		public function get localRotationX():Number{return null;}
+		public function set localRotationX(x:Number):void{}
 
 		/**
 		 * 局部旋转四元数Y分量。
 		 */
-		public var localRotationY:Number;
+		public function get localRotationY():Number{return null;}
+		public function set localRotationY(y:Number):void{}
 
 		/**
 		 * 局部旋转四元数Z分量。
 		 */
-		public var localRotationZ:Number;
+		public function get localRotationZ():Number{return null;}
+		public function set localRotationZ(z:Number):void{}
 
 		/**
 		 * 局部旋转四元数W分量。
 		 */
-		public var localRotationW:Number;
+		public function get localRotationW():Number{return null;}
+		public function set localRotationW(w:Number):void{}
 
 		/**
 		 * 局部旋转。
 		 */
-		public var localRotation:Quaternion;
+		public function get localRotation():Quaternion{return null;}
+		public function set localRotation(value:Quaternion):void{}
 
 		/**
 		 * 局部缩放X。
 		 */
-		public var localScaleX:Number;
+		public function get localScaleX():Number{return null;}
+		public function set localScaleX(value:Number):void{}
 
 		/**
 		 * 局部缩放Y。
 		 */
-		public var localScaleY:Number;
+		public function get localScaleY():Number{return null;}
+		public function set localScaleY(value:Number):void{}
 
 		/**
 		 * 局部缩放Z。
 		 */
-		public var localScaleZ:Number;
+		public function get localScaleZ():Number{return null;}
+		public function set localScaleZ(value:Number):void{}
 
 		/**
 		 * 局部缩放。
 		 */
-		public var localScale:Vector3;
+		public function get localScale():Vector3{return null;}
+		public function set localScale(value:Vector3):void{}
 
 		/**
 		 * 局部空间的X轴欧拉角。
 		 */
-		public var localRotationEulerX:Number;
+		public function get localRotationEulerX():Number{return null;}
+		public function set localRotationEulerX(value:Number):void{}
 
 		/**
 		 * 局部空间的Y轴欧拉角。
 		 */
-		public var localRotationEulerY:Number;
+		public function get localRotationEulerY():Number{return null;}
+		public function set localRotationEulerY(value:Number):void{}
 
 		/**
 		 * 局部空间的Z轴欧拉角。
 		 */
-		public var localRotationEulerZ:Number;
+		public function get localRotationEulerZ():Number{return null;}
+		public function set localRotationEulerZ(value:Number):void{}
 
 		/**
 		 * 局部空间欧拉角。
 		 */
-		public var localRotationEuler:Vector3;
+		public function get localRotationEuler():Vector3{return null;}
+		public function set localRotationEuler(value:Vector3):void{}
 
 		/**
 		 * 局部矩阵。
 		 */
-		public var localMatrix:Matrix4x4;
+		public function get localMatrix():Matrix4x4{return null;}
+		public function set localMatrix(value:Matrix4x4):void{}
 
 		/**
 		 * 世界位置。
 		 */
-		public var position:Vector3;
+		public function get position():Vector3{return null;}
+		public function set position(value:Vector3):void{}
 
 		/**
 		 * 世界旋转。
 		 */
-		public var rotation:Quaternion;
+		public function get rotation():Quaternion{return null;}
+		public function set rotation(value:Quaternion):void{}
 
 		/**
 		 * 世界空间的旋转角度，顺序为x、y、z。
 		 */
-		public var rotationEuler:Vector3;
+		public function get rotationEuler():Vector3{return null;}
+		public function set rotationEuler(value:Vector3):void{}
 
 		/**
 		 * 世界矩阵。
 		 */
-		public var worldMatrix:Matrix4x4;
+		public function get worldMatrix():Matrix4x4{return null;}
+		public function set worldMatrix(value:Matrix4x4):void{}
 
 		/**
 		 * 创建一个 <code>Transform3D</code> 实例。
@@ -201,11 +219,12 @@ package laya.d3.core {
 		/**
 		 * @deprecated 
 		 */
+		public function get scale():Vector3{return null;}
 
 		/**
 		 * @deprecated 
 		 */
-		public var scale:Vector3;
+		public function set scale(value:Vector3):void{}
 	}
 
 }

@@ -14,7 +14,7 @@ package laya.effect {
 		protected function addFilter(sprite:Sprite):void{}
 		protected function removeFilter(sprite:Sprite):void{}
 		private var _target:*;
-		public var target:*;
+		public function set target(value:*):void{}
 	}
 
 }

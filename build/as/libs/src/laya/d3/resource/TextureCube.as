@@ -25,16 +25,12 @@ package laya.d3.resource {
 		/**
 		 * 黑色纯色纹理。
 		 */
-		public static function get blackTexture():TextureCube{
-				return null;
-		}
+		public static function get blackTexture():TextureCube{return null;}
 
 		/**
 		 * 灰色纯色纹理。
 		 */
-		public static function get grayTexture():TextureCube{
-				return null;
-		}
+		public static function get grayTexture():TextureCube{return null;}
 
 		/**
 		 * @inheritDoc 
@@ -56,6 +52,12 @@ package laya.d3.resource {
 		 * @param complete 完成回调。
 		 */
 		public static function load(url:String,complete:Handler):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get defaulteTexture():BaseTexture{return null;}
 
 		/**
 		 * 创建一个 <code>TextureCube</code> 实例。

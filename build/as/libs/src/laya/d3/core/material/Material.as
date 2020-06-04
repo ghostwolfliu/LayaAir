@@ -68,19 +68,19 @@ package laya.d3.core.material {
 		/**
 		 * 着色器数据。
 		 */
-		public function get shaderData():ShaderData{
-				return null;
-		}
+		public function get shaderData():ShaderData{return null;}
 
 		/**
 		 * 透明测试模式裁剪值。
 		 */
-		public var alphaTestValue:Number;
+		public function get alphaTestValue():Number{return null;}
+		public function set alphaTestValue(value:Number):void{}
 
 		/**
 		 * 是否透明裁剪。
 		 */
-		public var alphaTest:Boolean;
+		public function get alphaTest():Boolean{return null;}
+		public function set alphaTest(value:Boolean):void{}
 
 		/**
 		 * 创建一个 <code>BaseMaterial</code> 实例。
@@ -111,9 +111,7 @@ package laya.d3.core.material {
 		 * @return 克隆副本。
 		 */
 		public function clone():*{}
-		public function get _defineDatas():DefineDatas{
-				return null;
-		}
+		public function get _defineDatas():DefineDatas{return null;}
 	}
 
 }

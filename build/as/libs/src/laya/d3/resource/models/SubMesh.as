@@ -10,9 +10,7 @@ package laya.d3.resource.models {
 		/**
 		 * 获取索引数量。
 		 */
-		public function get indexCount():Number{
-				return null;
-		}
+		public function get indexCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>SubMesh</code> 实例。

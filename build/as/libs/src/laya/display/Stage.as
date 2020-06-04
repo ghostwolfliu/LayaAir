@@ -280,18 +280,48 @@ package laya.display {
 		private var _isInputting:*;
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set transform(value:Matrix):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get transform():Matrix{return null;}
+
+		/**
 		 * 舞台是否获得焦点。
 		 */
-		public function get isFocused():Boolean{
-				return null;
-		}
+		public function get isFocused():Boolean{return null;}
 
 		/**
 		 * 舞台是否处于可见状态(是否进入后台)。
 		 */
-		public function get isVisibility():Boolean{
-				return null;
-		}
+		public function get isVisibility():Boolean{return null;}
 
 		/**
 		 * @private 
@@ -328,7 +358,8 @@ package laya.display {
 		 * <li>"fixedauto" ：根据宽高比，自动选择使用fixedwidth或fixedheight；</li>
 		 * </ul></p>
 		 */
-		public var scaleMode:String;
+		public function get scaleMode():String{return null;}
+		public function set scaleMode(value:String):void{}
 
 		/**
 		 * <p>水平对齐方式。默认值为"left"。</p>
@@ -338,7 +369,8 @@ package laya.display {
 		 * <li>"right" ：居右对齐；</li>
 		 * </ul></p>
 		 */
-		public var alignH:String;
+		public function get alignH():String{return null;}
+		public function set alignH(value:String):void{}
 
 		/**
 		 * <p>垂直对齐方式。默认值为"top"。</p>
@@ -348,12 +380,24 @@ package laya.display {
 		 * <li>"bottom" ：居底部对齐；</li>
 		 * </ul></p>
 		 */
-		public var alignV:String;
+		public function get alignV():String{return null;}
+		public function set alignV(value:String):void{}
 
 		/**
 		 * 舞台的背景颜色，默认为黑色，null为透明。
 		 */
-		public var bgColor:String;
+		public function get bgColor():String{return null;}
+		public function set bgColor(value:String):void{}
+
+		/**
+		 * 鼠标在 Stage 上的 X 轴坐标。@override
+		 */
+		override public function get mouseX():Number{return null;}
+
+		/**
+		 * 鼠标在 Stage 上的 Y 轴坐标。@override
+		 */
+		override public function get mouseY():Number{return null;}
 
 		/**
 		 * @inheritDoc 
@@ -366,16 +410,12 @@ package laya.display {
 		/**
 		 * 当前视窗由缩放模式导致的 X 轴缩放系数。
 		 */
-		public function get clientScaleX():Number{
-				return null;
-		}
+		public function get clientScaleX():Number{return null;}
 
 		/**
 		 * 当前视窗由缩放模式导致的 Y 轴缩放系数。
 		 */
-		public function get clientScaleY():Number{
-				return null;
-		}
+		public function get clientScaleY():Number{return null;}
 
 		/**
 		 * <p>场景布局类型。</p>
@@ -385,7 +425,8 @@ package laya.display {
 		 * <li>"vertical" ：自动竖屏</li>
 		 * </ul></p>
 		 */
-		public var screenMode:String;
+		public function get screenMode():String{return null;}
+		public function set screenMode(value:String):void{}
 
 		/**
 		 * @inheritDoc 
@@ -420,6 +461,18 @@ package laya.display {
 		}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set visible(value:Boolean):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get visible():Boolean{return null;}
+
+		/**
 		 * @private 
 		 */
 		public static var clear:Function;
@@ -436,8 +489,9 @@ package laya.display {
 		 * <p>是否开启全屏，用户点击后进入全屏。</p>
 		 * <p>兼容性提示：部分浏览器不允许点击进入全屏，比如Iphone等。</p>
 		 */
-		public var fullScreenEnabled:Boolean;
-		public var frameRate:String;
+		public function set fullScreenEnabled(value:Boolean):void{}
+		public function get frameRate():String{return null;}
+		public function set frameRate(value:String):void{}
 
 		/**
 		 * @private 

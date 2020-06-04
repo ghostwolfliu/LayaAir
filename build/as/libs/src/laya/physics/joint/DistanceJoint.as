@@ -60,17 +60,20 @@ package laya.physics.joint {
 		/**
 		 * 约束的目标静止长度
 		 */
-		public var length:Number;
+		public function get length():Number{return null;}
+		public function set length(value:Number):void{}
 
 		/**
 		 * 弹簧系统的震动频率，可以视为弹簧的弹性系数
 		 */
-		public var frequency:Number;
+		public function get frequency():Number{return null;}
+		public function set frequency(value:Number):void{}
 
 		/**
 		 * 刚体在回归到节点过程中受到的阻尼，建议取值0~1
 		 */
-		public var damping:Number;
+		public function get damping():Number{return null;}
+		public function set damping(value:Number):void{}
 	}
 
 }

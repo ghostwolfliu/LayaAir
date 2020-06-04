@@ -42,58 +42,70 @@ package laya.ui {
 		override protected function initialize():void{}
 
 		/**
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
 		 * 垂直滚动条皮肤
 		 */
-		public var vScrollBarSkin:String;
+		public function get vScrollBarSkin():String{return null;}
+		public function set vScrollBarSkin(value:String):void{}
 
 		/**
 		 * 水平滚动条皮肤
 		 */
-		public var hScrollBarSkin:String;
+		public function get hScrollBarSkin():String{return null;}
+		public function set hScrollBarSkin(value:String):void{}
 		protected function onVBarChanged(e:Event):void{}
 		protected function onHBarChanged(e:Event):void{}
 
 		/**
 		 * 垂直滚动条实体
 		 */
-		public function get vScrollBar():VScrollBar{
-				return null;
-		}
+		public function get vScrollBar():VScrollBar{return null;}
 
 		/**
 		 * 水平滚动条实体
 		 */
-		public function get hScrollBar():HScrollBar{
-				return null;
-		}
+		public function get hScrollBar():HScrollBar{return null;}
 
 		/**
 		 * 垂直滚动最大值
 		 */
-		public function get maxScrollY():Number{
-				return null;
-		}
+		public function get maxScrollY():Number{return null;}
 
 		/**
 		 * 垂直滚动值
 		 */
-		public function get scrollY():Number{
-				return null;
-		}
+		public function get scrollY():Number{return null;}
 
 		/**
 		 * 水平滚动最大值
 		 */
-		public function get maxScrollX():Number{
-				return null;
-		}
+		public function get maxScrollX():Number{return null;}
 
 		/**
 		 * 水平滚动值
 		 */
-		public function get scrollX():Number{
-				return null;
-		}
+		public function get scrollX():Number{return null;}
 		private var changeScroll:*;
 
 		/**

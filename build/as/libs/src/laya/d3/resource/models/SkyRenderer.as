@@ -10,12 +10,14 @@ package laya.d3.resource.models {
 		/**
 		 * 材质。
 		 */
-		public var material:Material;
+		public function get material():Material{return null;}
+		public function set material(value:Material):void{}
 
 		/**
 		 * 网格。
 		 */
-		public var mesh:SkyMesh;
+		public function get mesh():SkyMesh{return null;}
+		public function set mesh(value:SkyMesh):void{}
 
 		/**
 		 * 创建一个新的 <code>SkyRenderer</code> 实例。

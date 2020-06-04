@@ -288,30 +288,22 @@ package laya.net {
 		/**
 		 * 加载地址。
 		 */
-		public function get url():String{
-				return null;
-		}
+		public function get url():String{return null;}
 
 		/**
 		 * 加载类型。
 		 */
-		public function get type():String{
-				return null;
-		}
+		public function get type():String{return null;}
 
 		/**
 		 * 是否缓存。
 		 */
-		public function get cache():Boolean{
-				return null;
-		}
+		public function get cache():Boolean{return null;}
 
 		/**
 		 * 返回的数据。
 		 */
-		public function get data():*{
-				return null;
-		}
+		public function get data():*{return null;}
 
 		/**
 		 * 清理指定资源地址的缓存。

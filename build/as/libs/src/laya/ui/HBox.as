@@ -36,6 +36,18 @@ package laya.ui {
 		 * @inheritDoc 
 		 * @override 
 		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
 		override protected function changeItems():void{}
 	}
 

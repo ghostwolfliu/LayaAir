@@ -56,17 +56,20 @@ package laya.ui {
 		 * <p>如果资源未加载，则先加载资源，加载完成后应用于此对象。</p>
 		 * <b>注意：</b>资源加载完成后，会自动缓存至资源库中。
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 
 		/**
 		 * @copy laya.ui.AutoBitmap#source
 		 */
-		public var source:Texture;
+		public function get source():Texture{return null;}
+		public function set source(value:Texture):void{}
 
 		/**
 		 * 资源分组。
 		 */
-		public var group:String;
+		public function get group():String{return null;}
+		public function set group(value:String):void{}
 
 		/**
 		 * @private 设置皮肤资源。
@@ -90,12 +93,49 @@ package laya.ui {
 		}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
 		 * <p>当前实例的位图 <code>AutoImage</code> 实例的有效缩放网格数据。</p>
 		 * <p>数据格式："上边距,右边距,下边距,左边距,是否重复填充(值为0：不重复填充，1：重复填充)"，以逗号分隔。
 		 * <ul><li>例如："4,4,4,4,1"。</li></ul></p>
 		 * @see laya.ui.AutoBitmap#sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 	}
 
 }

@@ -44,7 +44,8 @@ package laya.ui {
 		 * 当前文本内容字符串。
 		 * @see laya.display.Text.text
 		 */
-		public var text:String;
+		public function get text():String{return null;}
+		public function set text(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#changeText()
@@ -54,85 +55,97 @@ package laya.ui {
 		/**
 		 * @copy laya.display.Text#wordWrap
 		 */
+		public function get wordWrap():Boolean{return null;}
 
 		/**
 		 * @copy laya.display.Text#wordWrap
 		 */
-		public var wordWrap:Boolean;
+		public function set wordWrap(value:Boolean):void{}
 
 		/**
 		 * @copy laya.display.Text#color
 		 */
-		public var color:String;
+		public function get color():String{return null;}
+		public function set color(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#font
 		 */
-		public var font:String;
+		public function get font():String{return null;}
+		public function set font(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#align
 		 */
-		public var align:String;
+		public function get align():String{return null;}
+		public function set align(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#valign
 		 */
-		public var valign:String;
+		public function get valign():String{return null;}
+		public function set valign(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#bold
 		 */
-		public var bold:Boolean;
+		public function get bold():Boolean{return null;}
+		public function set bold(value:Boolean):void{}
 
 		/**
 		 * @copy laya.display.Text#italic
 		 */
-		public var italic:Boolean;
+		public function get italic():Boolean{return null;}
+		public function set italic(value:Boolean):void{}
 
 		/**
 		 * @copy laya.display.Text#leading
 		 */
-		public var leading:Number;
+		public function get leading():Number{return null;}
+		public function set leading(value:Number):void{}
 
 		/**
 		 * @copy laya.display.Text#fontSize
 		 */
-		public var fontSize:Number;
+		public function get fontSize():Number{return null;}
+		public function set fontSize(value:Number):void{}
 
 		/**
 		 * <p>边距信息</p>
 		 * <p>"上边距，右边距，下边距 , 左边距（边距以像素为单位）"</p>
 		 * @see laya.display.Text.padding
 		 */
-		public var padding:String;
+		public function get padding():String{return null;}
+		public function set padding(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#bgColor
 		 */
-		public var bgColor:String;
+		public function get bgColor():String{return null;}
+		public function set bgColor(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#borderColor
 		 */
-		public var borderColor:String;
+		public function get borderColor():String{return null;}
+		public function set borderColor(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#stroke
 		 */
-		public var stroke:Number;
+		public function get stroke():Number{return null;}
+		public function set stroke(value:Number):void{}
 
 		/**
 		 * @copy laya.display.Text#strokeColor
 		 */
-		public var strokeColor:String;
+		public function get strokeColor():String{return null;}
+		public function set strokeColor(value:String):void{}
 
 		/**
 		 * 文本控件实体 <code>Text</code> 实例。
 		 */
-		public function get textField():Text{
-				return null;
-		}
+		public function get textField():Text{return null;}
 
 		/**
 		 * @inheritDoc 
@@ -151,31 +164,70 @@ package laya.ui {
 		}
 
 		/**
-		 * @copy laya.display.Text#overflow
+		 * @inheritDoc 
+		 * @override 
 		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 
 		/**
 		 * @copy laya.display.Text#overflow
 		 */
-		public var overflow:String;
+		public function get overflow():String{return null;}
+
+		/**
+		 * @copy laya.display.Text#overflow
+		 */
+		public function set overflow(value:String):void{}
 
 		/**
 		 * @copy laya.display.Text#underline
 		 */
+		public function get underline():Boolean{return null;}
 
 		/**
 		 * @copy laya.display.Text#underline
 		 */
-		public var underline:Boolean;
+		public function set underline(value:Boolean):void{}
 
 		/**
 		 * @copy laya.display.Text#underlineColor
 		 */
+		public function get underlineColor():String{return null;}
 
 		/**
 		 * @copy laya.display.Text#underlineColor
 		 */
-		public var underlineColor:String;
+		public function set underlineColor(value:String):void{}
 	}
 
 }

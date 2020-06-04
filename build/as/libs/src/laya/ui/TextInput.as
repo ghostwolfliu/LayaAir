@@ -94,12 +94,14 @@ package laya.ui {
 		/**
 		 * 表示此对象包含的文本背景 <code>AutoBitmap</code> 组件实例。
 		 */
-		public var bg:AutoBitmap;
+		public function get bg():AutoBitmap{return null;}
+		public function set bg(value:AutoBitmap):void{}
 
 		/**
 		 * @copy laya.ui.Image#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 		protected function _skinLoaded():void{}
 
 		/**
@@ -108,18 +110,57 @@ package laya.ui {
 		 * <ul><li>例如："4,4,4,4,1"</li></ul></p>
 		 * @see laya.ui.AutoBitmap.sizeGrid
 		 */
-		public var sizeGrid:String;
+		public function get sizeGrid():String{return null;}
+		public function set sizeGrid(value:String):void{}
+
+		/**
+		 * 当前文本内容字符串。
+		 * @see laya.display.Text.text
+		 * @override 
+		 */
+		override public function set text(value:String):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get text():String{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
 
 		/**
 		 * <p>指示当前是否是文本域。</p>
 		 * 值为true表示当前是文本域，否则不是文本域。
 		 */
-		public var multiline:Boolean;
+		public function get multiline():Boolean{return null;}
+		public function set multiline(value:Boolean):void{}
 
 		/**
 		 * 设置可编辑状态。
 		 */
-		public var editable:Boolean;
+		public function set editable(value:Boolean):void{}
+		public function get editable():Boolean{return null;}
 
 		/**
 		 * 选中输入框内的文本。
@@ -129,32 +170,38 @@ package laya.ui {
 		/**
 		 * 限制输入的字符。
 		 */
-		public var restrict:String;
+		public function get restrict():String{return null;}
+		public function set restrict(pattern:String):void{}
 
 		/**
 		 * @copy laya.display.Input#prompt
 		 */
-		public var prompt:String;
+		public function get prompt():String{return null;}
+		public function set prompt(value:String):void{}
 
 		/**
 		 * @copy laya.display.Input#promptColor
 		 */
-		public var promptColor:String;
+		public function get promptColor():String{return null;}
+		public function set promptColor(value:String):void{}
 
 		/**
 		 * @copy laya.display.Input#maxChars
 		 */
-		public var maxChars:Number;
+		public function get maxChars():Number{return null;}
+		public function set maxChars(value:Number):void{}
 
 		/**
 		 * @copy laya.display.Input#focus
 		 */
-		public var focus:Boolean;
+		public function get focus():Boolean{return null;}
+		public function set focus(value:Boolean):void{}
 
 		/**
 		 * @copy laya.display.Input#type
 		 */
-		public var type:String;
+		public function get type():String{return null;}
+		public function set type(value:String):void{}
 		public function setSelection(startIndex:Number,endIndex:Number):void{}
 	}
 

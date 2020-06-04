@@ -36,21 +36,18 @@ package laya.media {
 		/**
 		 * 音量范围从 0（静音）至 1（最大音量）。
 		 */
-		public var volume:Number;
+		public function set volume(v:Number):void{}
+		public function get volume():Number{return null;}
 
 		/**
 		 * 获取当前播放时间，单位是秒。
 		 */
-		public function get position():Number{
-				return null;
-		}
+		public function get position():Number{return null;}
 
 		/**
 		 * 获取总时间，单位是秒。
 		 */
-		public function get duration():Number{
-				return null;
-		}
+		public function get duration():Number{return null;}
 
 		/**
 		 * 播放声音。

@@ -12,25 +12,30 @@ package laya.d3.core {
 		/**
 		 * 局部边界。
 		 */
-		public var localBounds:Bounds;
+		public function get localBounds():Bounds{return null;}
+		public function set localBounds(value:Bounds):void{}
 
 		/**
 		 * 根节点。
 		 */
-		public var rootBone:Sprite3D;
+		public function get rootBone():Sprite3D{return null;}
+		public function set rootBone(value:Sprite3D):void{}
 
 		/**
 		 * 用于蒙皮的骨骼。
 		 */
-		public function get bones():Array{
-				return null;
-		}
+		public function get bones():Array{return null;}
 
 		/**
 		 * 创建一个 <code>SkinnedMeshRender</code> 实例。
 		 */
 
 		public function SkinnedMeshRenderer(owner:RenderableSprite3D = undefined){}
+
+		/**
+		 * @override 包围盒。
+		 */
+		override public function get bounds():Bounds{return null;}
 	}
 
 }

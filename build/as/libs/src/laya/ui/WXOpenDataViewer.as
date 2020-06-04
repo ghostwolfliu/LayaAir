@@ -18,6 +18,46 @@ package laya.ui {
 		 */
 		override public function onDisable():void{}
 		private var _onLoop:*;
+
+		/**
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set x(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get x():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set y(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get y():Number{return null;}
 		private var _postMsg:*;
 
 		/**

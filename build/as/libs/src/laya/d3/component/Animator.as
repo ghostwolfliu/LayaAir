@@ -29,7 +29,8 @@ package laya.d3.component {
 		/**
 		 * 动画的播放速度,1.0为正常播放速度。
 		 */
-		public var speed:Number;
+		public function get speed():Number{return null;}
+		public function set speed(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>Animation</code> 实例。
@@ -101,7 +102,8 @@ package laya.d3.component {
 		/**
 		 * avatar。
 		 */
-		public var avatar:Avatar;
+		public function get avatar():Avatar{return null;}
+		public function set avatar(value:Avatar):void{}
 
 		/**
 		 * 关联精灵节点到Avatar节点,此Animator必须有Avatar文件。

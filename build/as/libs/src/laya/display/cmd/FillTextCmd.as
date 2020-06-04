@@ -51,29 +51,31 @@ package laya.display.cmd {
 		/**
 		 * @private 
 		 */
-		public function get cmdID():String{
-				return null;
-		}
+		public function get cmdID():String{return null;}
 
 		/**
 		 * 在画布上输出的文本。
 		 */
-		public var text:*;
+		public function get text():*{return null;}
+		public function set text(value:*):void{}
 
 		/**
 		 * 定义字号和字体，比如"20px Arial"。
 		 */
-		public var font:String;
+		public function get font():String{return null;}
+		public function set font(value:String):void{}
 
 		/**
 		 * 定义文本颜色，比如"#ff0000"。
 		 */
-		public var color:String;
+		public function get color():String{return null;}
+		public function set color(value:String):void{}
 
 		/**
 		 * 文本对齐方式，可选值："left"，"center"，"right"。
 		 */
-		public var textAlign:String;
+		public function get textAlign():String{return null;}
+		public function set textAlign(value:String):void{}
 	}
 
 }

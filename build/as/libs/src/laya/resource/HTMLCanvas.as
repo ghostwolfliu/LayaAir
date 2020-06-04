@@ -12,9 +12,7 @@ package laya.resource {
 		/**
 		 * @inheritDoc 
 		 */
-		public function get source():*{
-				return null;
-		}
+		public function get source():*{return null;}
 
 		/**
 		 * 根据指定的类型，创建一个 <code>HTMLCanvas</code> 实例。
@@ -41,9 +39,7 @@ package laya.resource {
 		/**
 		 * Canvas 渲染上下文。
 		 */
-		public function get context():Context{
-				return null;
-		}
+		public function get context():Context{return null;}
 
 		/**
 		 * 获取 Canvas 渲染上下文。

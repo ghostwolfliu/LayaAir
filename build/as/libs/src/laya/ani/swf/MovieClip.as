@@ -64,7 +64,8 @@ package laya.ani.swf {
 		/**
 		 * 当前播放索引。
 		 */
-		public var index:Number;
+		public function get index():Number{return null;}
+		public function set index(value:Number):void{}
 
 		/**
 		 * 增加一个标签到index帧上，播放到此index后会派发label事件
@@ -82,16 +83,12 @@ package laya.ani.swf {
 		/**
 		 * 帧总数。
 		 */
-		public function get count():Number{
-				return null;
-		}
+		public function get count():Number{return null;}
 
 		/**
 		 * 是否在播放中
 		 */
-		public function get playing():Boolean{
-				return null;
-		}
+		public function get playing():Boolean{return null;}
 
 		/**
 		 * 停止播放动画。
@@ -113,7 +110,7 @@ package laya.ani.swf {
 		/**
 		 * 资源地址。
 		 */
-		public var url:String;
+		public function set url(path:String):void{}
 
 		/**
 		 * 加载资源。

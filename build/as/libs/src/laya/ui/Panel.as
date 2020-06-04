@@ -136,6 +136,12 @@ package laya.ui {
 		}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get numChildren():Number{return null;}
+
+		/**
 		 * @private 
 		 */
 		private var changeScroll:*;
@@ -149,16 +155,12 @@ package laya.ui {
 		/**
 		 * @private 获取内容宽度（以像素为单位）。
 		 */
-		public function get contentWidth():Number{
-				return null;
-		}
+		public function get contentWidth():Number{return null;}
 
 		/**
 		 * @private 获取内容高度（以像素为单位）。
 		 */
-		public function get contentHeight():Number{
-				return null;
-		}
+		public function get contentHeight():Number{return null;}
 
 		/**
 		 * @private 设置内容的宽度、高度（以像素为单位）。
@@ -168,35 +170,55 @@ package laya.ui {
 		private var setContentSize:*;
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
+
+		/**
 		 * 垂直方向滚动条皮肤。
 		 */
-		public var vScrollBarSkin:String;
+		public function get vScrollBarSkin():String{return null;}
+		public function set vScrollBarSkin(value:String):void{}
 
 		/**
 		 * 水平方向滚动条皮肤。
 		 */
-		public var hScrollBarSkin:String;
+		public function get hScrollBarSkin():String{return null;}
+		public function set hScrollBarSkin(value:String):void{}
 
 		/**
 		 * 垂直方向滚动条对象。
 		 */
-		public function get vScrollBar():ScrollBar{
-				return null;
-		}
+		public function get vScrollBar():ScrollBar{return null;}
 
 		/**
 		 * 水平方向滚动条对象。
 		 */
-		public function get hScrollBar():ScrollBar{
-				return null;
-		}
+		public function get hScrollBar():ScrollBar{return null;}
 
 		/**
 		 * 获取内容容器对象。
 		 */
-		public function get content():Sprite{
-				return null;
-		}
+		public function get content():Sprite{return null;}
 
 		/**
 		 * @private 滚动条的<code><code>Event.MOUSE_DOWN</code>事件侦听处理函数。</code>事件侦听处理函数。
@@ -218,9 +240,22 @@ package laya.ui {
 		public function refresh():void{}
 
 		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set cacheAs(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get cacheAs():String{return null;}
+
+		/**
 		 * 是否开启橡皮筋效果
 		 */
-		public var elasticEnabled:Boolean;
+		public function get elasticEnabled():Boolean{return null;}
+		public function set elasticEnabled(value:Boolean):void{}
 		private var onScrollStart:*;
 		private var onScrollEnd:*;
 

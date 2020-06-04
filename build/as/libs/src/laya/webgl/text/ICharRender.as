@@ -6,7 +6,8 @@ package laya.webgl.text {
 			return null;
 		}
 		public function scale(sx:Number,sy:Number):void{}
-		public var canvasWidth:Number;
+		public function get canvasWidth():Number{return null;}
+		public function set canvasWidth(w:Number):void{}
 
 		/**
 		 * TODO stroke

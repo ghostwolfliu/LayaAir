@@ -32,7 +32,8 @@ package laya.d3.component {
 		/**
 		 * 动作。
 		 */
-		public var clip:AnimationClip;
+		public function get clip():AnimationClip{return null;}
+		public function set clip(value:AnimationClip):void{}
 
 		/**
 		 * 创建一个 <code>AnimatorState</code> 实例。

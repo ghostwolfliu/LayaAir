@@ -7,9 +7,7 @@ package laya.webgl.utils {
 		protected var _bufferType:Number;
 		protected var _bufferUsage:Number;
 		public var _byteLength:Number;
-		public function get bufferUsage():Number{
-				return null;
-		}
+		public function get bufferUsage():Number{return null;}
 
 		public function Buffer(){}
 

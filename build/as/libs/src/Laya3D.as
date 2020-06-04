@@ -67,9 +67,7 @@ package  {
 		 * 获取是否可以启用物理。
 		 * @param 是否启用物理 。
 		 */
-		public static function get enablePhysics():*{
-				return null;
-		}
+		public static function get enablePhysics():*{return null;}
 		private static var enableNative3D:*;
 
 		/**

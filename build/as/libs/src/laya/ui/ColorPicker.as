@@ -170,12 +170,14 @@ package laya.ui {
 		/**
 		 * 表示选择的颜色值。
 		 */
-		public var selectedColor:String;
+		public function get selectedColor():String{return null;}
+		public function set selectedColor(value:String):void{}
 
 		/**
 		 * @copy laya.ui.Button#skin
 		 */
-		public var skin:String;
+		public function get skin():String{return null;}
+		public function set skin(value:String):void{}
 
 		/**
 		 * 改变颜色。
@@ -185,22 +187,26 @@ package laya.ui {
 		/**
 		 * 表示颜色样本列表面板的背景颜色值。
 		 */
-		public var bgColor:String;
+		public function get bgColor():String{return null;}
+		public function set bgColor(value:String):void{}
 
 		/**
 		 * 表示颜色样本列表面板的边框颜色值。
 		 */
-		public var borderColor:String;
+		public function get borderColor():String{return null;}
+		public function set borderColor(value:String):void{}
 
 		/**
 		 * 表示颜色样本列表面板选择或输入的颜色值。
 		 */
-		public var inputColor:String;
+		public function get inputColor():String{return null;}
+		public function set inputColor(value:String):void{}
 
 		/**
 		 * 表示颜色输入框的背景颜色值。
 		 */
-		public var inputBgColor:String;
+		public function get inputBgColor():String{return null;}
+		public function set inputBgColor(value:String):void{}
 
 		/**
 		 * @private 

@@ -35,22 +35,26 @@ package laya.physics {
 		/**
 		 * 相对节点的x轴偏移
 		 */
-		public var x:Number;
+		public function get x():Number{return null;}
+		public function set x(value:Number):void{}
 
 		/**
 		 * 相对节点的y轴偏移
 		 */
-		public var y:Number;
+		public function get y():Number{return null;}
+		public function set y(value:Number):void{}
 
 		/**
 		 * 矩形宽度
 		 */
-		public var width:Number;
+		public function get width():Number{return null;}
+		public function set width(value:Number):void{}
 
 		/**
 		 * 矩形高度
 		 */
-		public var height:Number;
+		public function get height():Number{return null;}
+		public function set height(value:Number):void{}
 
 		/**
 		 * @private 重置形状

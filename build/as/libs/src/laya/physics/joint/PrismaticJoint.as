@@ -75,32 +75,38 @@ package laya.physics.joint {
 		/**
 		 * 是否开启马达，开启马达可使目标刚体运动
 		 */
-		public var enableMotor:Boolean;
+		public function get enableMotor():Boolean{return null;}
+		public function set enableMotor(value:Boolean):void{}
 
 		/**
 		 * 启用马达后，在axis坐标轴上移动可以达到的最大速度
 		 */
-		public var motorSpeed:Number;
+		public function get motorSpeed():Number{return null;}
+		public function set motorSpeed(value:Number):void{}
 
 		/**
 		 * 启用马达后，可以施加的最大作用力
 		 */
-		public var maxMotorForce:Number;
+		public function get maxMotorForce():Number{return null;}
+		public function set maxMotorForce(value:Number):void{}
 
 		/**
 		 * 是否对刚体的移动范围加以约束
 		 */
-		public var enableLimit:Boolean;
+		public function get enableLimit():Boolean{return null;}
+		public function set enableLimit(value:Boolean):void{}
 
 		/**
 		 * 启用约束后，刚体移动范围的下限，是距离anchor的偏移量
 		 */
-		public var lowerTranslation:Number;
+		public function get lowerTranslation():Number{return null;}
+		public function set lowerTranslation(value:Number):void{}
 
 		/**
 		 * 启用约束后，刚体移动范围的上限，是距离anchor的偏移量
 		 */
-		public var upperTranslation:Number;
+		public function get upperTranslation():Number{return null;}
+		public function set upperTranslation(value:Number):void{}
 	}
 
 }

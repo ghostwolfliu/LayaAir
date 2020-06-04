@@ -12,15 +12,9 @@ package laya.d3.core.trail {
 		public static var TRAIL_TEXTURECOORDINATE0Y:Number;
 		public static var TRAIL_TEXTURECOORDINATE0X:Number;
 		public static var TRAIL_COLOR:Number;
-		public static function get vertexDeclaration1():VertexDeclaration{
-				return null;
-		}
-		public static function get vertexDeclaration2():VertexDeclaration{
-				return null;
-		}
-		public function get vertexDeclaration():VertexDeclaration{
-				return null;
-		}
+		public static function get vertexDeclaration1():VertexDeclaration{return null;}
+		public static function get vertexDeclaration2():VertexDeclaration{return null;}
+		public function get vertexDeclaration():VertexDeclaration{return null;}
 	}
 
 }

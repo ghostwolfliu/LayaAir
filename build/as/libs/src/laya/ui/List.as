@@ -181,31 +181,44 @@ package laya.ui {
 		 * @override 
 		 */
 		override protected function createChildren():void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set cacheAs(value:String):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get cacheAs():String{return null;}
 		private var onScrollStart:*;
 		private var onScrollEnd:*;
 
 		/**
 		 * 获取对 <code>List</code> 组件所包含的内容容器 <code>Box</code> 组件的引用。
 		 */
-		public function get content():Box{
-				return null;
-		}
+		public function get content():Box{return null;}
 
 		/**
 		 * 垂直方向滚动条皮肤。
 		 */
-		public var vScrollBarSkin:String;
+		public function get vScrollBarSkin():String{return null;}
+		public function set vScrollBarSkin(value:String):void{}
 		private var _removePreScrollBar:*;
 
 		/**
 		 * 水平方向滚动条皮肤。
 		 */
-		public var hScrollBarSkin:String;
+		public function get hScrollBarSkin():String{return null;}
+		public function set hScrollBarSkin(value:String):void{}
 
 		/**
 		 * 获取对 <code>List</code> 组件所包含的滚动条 <code>ScrollBar</code> 组件的引用。
 		 */
-		public var scrollBar:ScrollBar;
+		public function get scrollBar():ScrollBar{return null;}
+		public function set scrollBar(value:ScrollBar):void{}
 
 		/**
 		 * 单元格渲染器。
@@ -216,30 +229,56 @@ package laya.ui {
 		 * </ol></p>
 		 * @implements 
 		 */
-		public function get itemRender():*{
-				return null;
-		}
-		public  function set itemRender(value:*):void{}
+		public function get itemRender():*{return null;}
+		public function set itemRender(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
 
 		/**
 		 * 水平方向显示的单元格数量。
 		 */
-		public var repeatX:Number;
+		public function get repeatX():Number{return null;}
+		public function set repeatX(value:Number):void{}
 
 		/**
 		 * 垂直方向显示的单元格数量。
 		 */
-		public var repeatY:Number;
+		public function get repeatY():Number{return null;}
+		public function set repeatY(value:Number):void{}
 
 		/**
 		 * 水平方向显示的单元格之间的间距（以像素为单位）。
 		 */
-		public var spaceX:Number;
+		public function get spaceX():Number{return null;}
+		public function set spaceX(value:Number):void{}
 
 		/**
 		 * 垂直方向显示的单元格之间的间距（以像素为单位）。
 		 */
-		public var spaceY:Number;
+		public function get spaceY():Number{return null;}
+		public function set spaceY(value:Number):void{}
 
 		/**
 		 * @private 更改单元格的信息。在此销毁、创建单元格，并设置单元格的位置等属性。相当于此列表内容发送改变时调用此函数。
@@ -298,7 +337,8 @@ package laya.ui {
 		/**
 		 * 表示当前选择的项索引。selectedIndex值更改会引起list重新渲染
 		 */
-		public var selectedIndex:Number;
+		public function get selectedIndex():Number{return null;}
+		public function set selectedIndex(value:Number):void{}
 
 		/**
 		 * @private 改变单元格的选择状态。
@@ -308,17 +348,20 @@ package laya.ui {
 		/**
 		 * 当前选中的单元格数据源。
 		 */
-		public var selectedItem:*;
+		public function get selectedItem():*{return null;}
+		public function set selectedItem(value:*):void{}
 
 		/**
 		 * 获取或设置当前选择的单元格对象。
 		 */
-		public var selection:Box;
+		public function get selection():Box{return null;}
+		public function set selection(value:Box):void{}
 
 		/**
 		 * 当前显示的单元格列表的开始索引。
 		 */
-		public var startIndex:Number;
+		public function get startIndex():Number{return null;}
+		public function set startIndex(value:Number):void{}
 
 		/**
 		 * @private 渲染单元格列表。
@@ -336,8 +379,9 @@ package laya.ui {
 		/**
 		 * 列表数据源。
 		 */
-		public var array:Array;
+		public function get array():Array{return null;}
 		private var _preLen:*;
+		public function set array(value:Array):void{}
 
 		/**
 		 * 更新数据源，不刷新list，只增加滚动长度
@@ -348,26 +392,36 @@ package laya.ui {
 		/**
 		 * 列表的当前页码。
 		 */
-		public var page:Number;
+		public function get page():Number{return null;}
+		public function set page(value:Number):void{}
 
 		/**
 		 * 列表的数据总个数。
 		 */
-		public function get length():Number{
-				return null;
-		}
+		public function get length():Number{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set dataSource(value:*):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get dataSource():*{return null;}
 
 		/**
 		 * 单元格集合。
 		 */
-		public function get cells():Array{
-				return null;
-		}
+		public function get cells():Array{return null;}
 
 		/**
 		 * 是否开启橡皮筋效果
 		 */
-		public var elasticEnabled:Boolean;
+		public function get elasticEnabled():Boolean{return null;}
+		public function set elasticEnabled(value:Boolean):void{}
 
 		/**
 		 * 刷新列表数据源。

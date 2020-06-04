@@ -50,7 +50,8 @@ package laya.physics.joint {
 		/**
 		 * selfAnchor和otherAnchor之间的最大距离
 		 */
-		public var maxLength:Number;
+		public function get maxLength():Number{return null;}
+		public function set maxLength(value:Number):void{}
 	}
 
 }

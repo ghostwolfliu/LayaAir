@@ -16,44 +16,37 @@ package laya.d3.core {
 		 * 获取梯度模式。
 		 * @return 梯度模式。
 		 */
+		public function get mode():Number{return null;}
 
 		/**
 		 * 设置梯度模式。
 		 * @param value 梯度模式。
 		 */
-		public var mode:Number;
+		public function set mode(value:Number):void{}
 
 		/**
 		 * 获取颜色RGB数量。
 		 * @return 颜色RGB数量。
 		 */
-		public function get colorRGBKeysCount():Number{
-				return null;
-		}
+		public function get colorRGBKeysCount():Number{return null;}
 
 		/**
 		 * 获取颜色Alpha数量。
 		 * @return 颜色Alpha数量。
 		 */
-		public function get colorAlphaKeysCount():Number{
-				return null;
-		}
+		public function get colorAlphaKeysCount():Number{return null;}
 
 		/**
 		 * 获取最大颜色RGB帧数量。
 		 * @return 最大RGB帧数量。
 		 */
-		public function get maxColorRGBKeysCount():Number{
-				return null;
-		}
+		public function get maxColorRGBKeysCount():Number{return null;}
 
 		/**
 		 * 获取最大颜色Alpha帧数量。
 		 * @return 最大Alpha帧数量。
 		 */
-		public function get maxColorAlphaKeysCount():Number{
-				return null;
-		}
+		public function get maxColorAlphaKeysCount():Number{return null;}
 
 		/**
 		 * 创建一个 <code>Gradient</code> 实例。

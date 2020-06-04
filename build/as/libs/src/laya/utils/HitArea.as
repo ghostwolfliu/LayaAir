@@ -44,12 +44,14 @@ package laya.utils {
 		/**
 		 * 可点击区域，可以设置绘制一系列矢量图作为点击区域（目前只支持圆形，矩形，多边形）
 		 */
-		public var hit:Graphics;
+		public function get hit():Graphics{return null;}
+		public function set hit(value:Graphics):void{}
 
 		/**
 		 * 不可点击区域，可以设置绘制一系列矢量图作为非点击区域（目前只支持圆形，矩形，多边形）
 		 */
-		public var unHit:Graphics;
+		public function get unHit():Graphics{return null;}
+		public function set unHit(value:Graphics):void{}
 	}
 
 }

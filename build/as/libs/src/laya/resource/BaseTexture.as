@@ -10,46 +10,42 @@ package laya.resource {
 		/**
 		 * 是否使用mipLevel
 		 */
-		public function get mipmap():Boolean{
-				return null;
-		}
+		public function get mipmap():Boolean{return null;}
 
 		/**
 		 * 纹理格式
 		 */
-		public function get format():Number{
-				return null;
-		}
+		public function get format():Number{return null;}
 
 		/**
 		 * 纹理横向循环模式。
 		 */
-		public var wrapModeU:Number;
+		public function get wrapModeU():Number{return null;}
+		public function set wrapModeU(value:Number):void{}
 
 		/**
 		 * 纹理纵向循环模式。
 		 */
-		public var wrapModeV:Number;
+		public function get wrapModeV():Number{return null;}
+		public function set wrapModeV(value:Number):void{}
 
 		/**
 		 * 缩小过滤器
 		 */
-		public var filterMode:FilterMode;
+		public function get filterMode():FilterMode{return null;}
+		public function set filterMode(value:FilterMode):void{}
 
 		/**
 		 * 各向异性等级
 		 */
-		public var anisoLevel:Number;
+		public function get anisoLevel():Number{return null;}
+		public function set anisoLevel(value:Number):void{}
 
 		/**
 		 * 获取mipmap数量。
 		 */
-		public function get mipmapCount():Number{
-				return null;
-		}
-		public function get defaulteTexture():BaseTexture{
-				return null;
-		}
+		public function get mipmapCount():Number{return null;}
+		public function get defaulteTexture():BaseTexture{return null;}
 
 		/**
 		 * 创建一个 <code>BaseTexture</code> 实例。

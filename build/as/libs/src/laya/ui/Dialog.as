@@ -55,7 +55,8 @@ package laya.ui {
 		 * 对话框管理容器，所有的对话框都在该容器内，并且受管理器管理，可以自定义自己的管理器，来更改窗口管理的流程。
 		 * 任意对话框打开和关闭，都会触发管理类的open和close事件
 		 */
-		public static var manager:DialogManager;
+		public static function get manager():DialogManager{return null;}
+		public static function set manager(value:DialogManager):void{}
 
 		/**
 		 * 对话框被关闭时会触发的回调函数处理器。
@@ -118,7 +119,8 @@ package laya.ui {
 		 * 例如："0,0,100,200"。</p>
 		 * @see #includeExamplesSummary 请参考示例
 		 */
-		public var dragArea:String;
+		public function get dragArea():String{return null;}
+		public function set dragArea(value:String):void{}
 
 		/**
 		 * @private 
@@ -171,9 +173,19 @@ package laya.ui {
 		/**
 		 * 弹出框的显示状态；如果弹框处于显示中，则为true，否则为false;
 		 */
-		public function get isPopup():Boolean{
-				return null;
-		}
+		public function get isPopup():Boolean{return null;}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function set zOrder(value:Number):void{}
+
+		/**
+		 * @inheritDoc 
+		 * @override 
+		 */
+		override public function get zOrder():Number{return null;}
 
 		/**
 		 * 设置锁定界面，在界面未准备好前显示锁定界面，准备完毕后则移除锁定层，如果为空则什么都不显示

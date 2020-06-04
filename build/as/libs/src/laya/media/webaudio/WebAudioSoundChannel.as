@@ -53,6 +53,17 @@ package laya.media.webaudio {
 		 */
 		override public function play():void{}
 		private var __onPlayEnd:*;
+
+		/**
+		 * 获取当前播放位置
+		 * @override 
+		 */
+		override public function get position():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function get duration():Number{return null;}
 		private var _clearBufferSource:*;
 		private var _tryClearBuffer:*;
 
@@ -71,6 +82,18 @@ package laya.media.webaudio {
 		 * @override 
 		 */
 		override public function resume():void{}
+
+		/**
+		 * 设置音量
+		 * @override 
+		 */
+		override public function set volume(v:Number):void{}
+
+		/**
+		 * 获取音量
+		 * @override 
+		 */
+		override public function get volume():Number{return null;}
 	}
 
 }

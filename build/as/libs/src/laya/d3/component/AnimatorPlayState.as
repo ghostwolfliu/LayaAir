@@ -9,23 +9,17 @@ package laya.d3.component {
 		/**
 		 * 播放状态的归一化时间,整数为循环次数，小数为单次播放时间。
 		 */
-		public function get normalizedTime():Number{
-				return null;
-		}
+		public function get normalizedTime():Number{return null;}
 
 		/**
 		 * 当前动画的持续时间，以秒为单位。
 		 */
-		public function get duration():Number{
-				return null;
-		}
+		public function get duration():Number{return null;}
 
 		/**
 		 * 动画状态机。
 		 */
-		public function get animatorState():AnimatorState{
-				return null;
-		}
+		public function get animatorState():AnimatorState{return null;}
 
 		/**
 		 * 创建一个 <code>AnimatorPlayState</code> 实例。

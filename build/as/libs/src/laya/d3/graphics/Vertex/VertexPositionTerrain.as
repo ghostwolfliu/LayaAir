@@ -13,28 +13,16 @@ package laya.d3.graphics.Vertex {
 		public static var TERRAIN_TEXTURECOORDINATE0:Number;
 		public static var TERRAIN_TEXTURECOORDINATE1:Number;
 		private static var _vertexDeclaration:*;
-		public static function get vertexDeclaration():VertexDeclaration{
-				return null;
-		}
+		public static function get vertexDeclaration():VertexDeclaration{return null;}
 		private var _position:*;
 		private var _normal:*;
 		private var _textureCoord0:*;
 		private var _textureCoord1:*;
-		public function get position():Vector3{
-				return null;
-		}
-		public function get normal():Vector3{
-				return null;
-		}
-		public function get textureCoord0():Vector2{
-				return null;
-		}
-		public function get textureCoord1():Vector2{
-				return null;
-		}
-		public function get vertexDeclaration():VertexDeclaration{
-				return null;
-		}
+		public function get position():Vector3{return null;}
+		public function get normal():Vector3{return null;}
+		public function get textureCoord0():Vector2{return null;}
+		public function get textureCoord1():Vector2{return null;}
+		public function get vertexDeclaration():VertexDeclaration{return null;}
 
 		public function VertexPositionTerrain(position:Vector3 = undefined,normal:Vector3 = undefined,textureCoord0:Vector2 = undefined,textureCoord1:Vector2 = undefined){}
 	}

@@ -9,23 +9,17 @@ package laya.d3.physics.shape {
 		/**
 		 * X轴尺寸。
 		 */
-		public function get sizeX():Number{
-				return null;
-		}
+		public function get sizeX():Number{return null;}
 
 		/**
 		 * Y轴尺寸。
 		 */
-		public function get sizeY():Number{
-				return null;
-		}
+		public function get sizeY():Number{return null;}
 
 		/**
 		 * Z轴尺寸。
 		 */
-		public function get sizeZ():Number{
-				return null;
-		}
+		public function get sizeZ():Number{return null;}
 
 		/**
 		 * 创建一个新的 <code>BoxColliderShape</code> 实例。

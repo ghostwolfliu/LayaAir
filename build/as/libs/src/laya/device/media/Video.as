@@ -96,26 +96,24 @@ package laya.device.media {
 		 * <p>buffered.length返回缓冲范围个数。如获取第一个缓冲范围则是buffered.start(0)和buffered.end(0)。以秒计。</p>
 		 * @return TimeRanges(JS)对象
 		 */
-		public function get buffered():*{
-				return null;
-		}
+		public function get buffered():*{return null;}
 
 		/**
 		 * 获取当前播放源路径。
 		 */
-		public function get currentSrc():String{
-				return null;
-		}
+		public function get currentSrc():String{return null;}
 
 		/**
 		 * 设置和获取当前播放头位置。
 		 */
-		public var currentTime:Number;
+		public function get currentTime():Number{return null;}
+		public function set currentTime(value:Number):void{}
 
 		/**
 		 * 设置和获取当前音量。
 		 */
-		public var volume:Number;
+		public function set volume(value:Number):void{}
+		public function get volume():Number{return null;}
 
 		/**
 		 * 表示视频元素的就绪状态：
@@ -127,45 +125,56 @@ package laya.device.media {
 		 * <li>4 = HAVE_ENOUGH_DATA - 可用数据足以开始播放</li>
 		 * </ul>
 		 */
-		public function get readyState():*{
-				return null;
-		}
+		public function get readyState():*{return null;}
 
 		/**
 		 * 获取视频源尺寸。ready事件触发后可用。
 		 */
-		public function get videoWidth():Number{
-				return null;
-		}
-		public function get videoHeight():Number{
-				return null;
-		}
+		public function get videoWidth():Number{return null;}
+		public function get videoHeight():Number{return null;}
 
 		/**
 		 * 获取视频长度（秒）。ready事件触发后可用。
 		 */
-		public function get duration():Number{
-				return null;
-		}
+		public function get duration():Number{return null;}
 
 		/**
 		 * 返回音频/视频的播放是否已结束
 		 */
-		public function get ended():Boolean{
-				return null;
-		}
+		public function get ended():Boolean{return null;}
 
 		/**
 		 * 返回表示音频/视频错误状态的 MediaError（JS）对象。
 		 */
-		public function get error():Boolean{
-				return null;
-		}
+		public function get error():Boolean{return null;}
 
 		/**
 		 * 设置或返回音频/视频是否应在结束时重新播放。
 		 */
-		public var loop:Boolean;
+		public function get loop():Boolean{return null;}
+		public function set loop(value:Boolean):void{}
+
+		/**
+		 * 设置视频的x坐标
+		 * @override 
+		 */
+		override public function set x(val:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get x():Number{return null;}
+
+		/**
+		 * 设置视频的y坐标
+		 * @override 
+		 */
+		override public function set y(val:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get y():Number{return null;}
 
 		/**
 		 * playbackRate 属性设置或返回音频/视频的当前播放速度。如：
@@ -178,19 +187,19 @@ package laya.device.media {
 		 * </ul>
 		 * <p>只有 Google Chrome 和 Safari 支持 playbackRate 属性。</p>
 		 */
-		public var playbackRate:Number;
+		public function get playbackRate():Number{return null;}
+		public function set playbackRate(value:Number):void{}
 
 		/**
 		 * 获取和设置静音状态。
 		 */
-		public var muted:Boolean;
+		public function get muted():Boolean{return null;}
+		public function set muted(value:Boolean):void{}
 
 		/**
 		 * 返回视频是否暂停
 		 */
-		public function get paused():Boolean{
-				return null;
-		}
+		public function get paused():Boolean{return null;}
 
 		/**
 		 * preload 属性设置或返回是否在页面加载后立即加载视频。可赋值如下：
@@ -200,22 +209,19 @@ package laya.device.media {
 		 * <li>none	指示页面加载后不应加载音频/视频。</li>
 		 * </ul>
 		 */
-		public var preload:String;
+		public function get preload():String{return null;}
+		public function set preload(value:String):void{}
 
 		/**
 		 * 参见 <i>http://www.w3school.com.cn/tags/av_prop_seekable.asp</i>。
 		 */
-		public function get seekable():*{
-				return null;
-		}
+		public function get seekable():*{return null;}
 
 		/**
 		 * seeking 属性返回用户目前是否在音频/视频中寻址。
 		 * 寻址中（Seeking）指的是用户在音频/视频中移动/跳跃到新的位置。
 		 */
-		public function get seeking():Boolean{
-				return null;
-		}
+		public function get seeking():Boolean{return null;}
 
 		/**
 		 * @param width 
@@ -225,6 +231,26 @@ package laya.device.media {
 		override public function size(width:Number,height:Number):Sprite{
 			return null;
 		}
+
+		/**
+		 * @override 
+		 */
+		override public function set width(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get width():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set height(value:Number):void{}
+
+		/**
+		 * @override 
+		 */
+		override public function get height():Number{return null;}
 
 		/**
 		 * 销毁内部事件绑定。

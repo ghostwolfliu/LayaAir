@@ -15,6 +15,16 @@ package laya.webgl.text {
 		public function CharRender_Canvas(maxw:Number = undefined,maxh:Number = undefined,scalefont:Boolean = undefined,useImageData:Boolean = undefined,showdbg:Boolean = undefined){}
 
 		/**
+		 * @override 
+		 */
+		override public function get canvasWidth():Number{return null;}
+
+		/**
+		 * @override 
+		 */
+		override public function set canvasWidth(w:Number):void{}
+
+		/**
 		 * @param font 
 		 * @param str 
 		 * @override 

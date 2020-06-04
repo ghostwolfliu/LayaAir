@@ -72,23 +72,27 @@ package laya.ui {
 		 * 同时也支持3宫格，比如0,4,0,4,1为水平3宫格，4,0,4,0,1为垂直3宫格，3宫格性能比9宫格高。
 		 * </p>
 		 */
-		public var sizeGrid:Array;
+		public function get sizeGrid():Array{return null;}
+		public function set sizeGrid(value:Array):void{}
 
 		/**
 		 * 表示显示对象的宽度，以像素为单位。
 		 */
-		public var width:Number;
+		public function get width():Number{return null;}
+		public function set width(value:Number):void{}
 
 		/**
 		 * 表示显示对象的高度，以像素为单位。
 		 */
-		public var height:Number;
+		public function get height():Number{return null;}
+		public function set height(value:Number):void{}
 
 		/**
 		 * 对象的纹理资源。
 		 * @see laya.resource.Texture
 		 */
-		public var source:Texture;
+		public function get source():Texture{return null;}
+		public function set source(value:Texture):void{}
 
 		/**
 		 * @private 

@@ -32,9 +32,7 @@ package laya.device.motion {
 		 * Accelerator的唯一引用。
 		 */
 		private static var _instance:*;
-		public static function get instance():Accelerator{
-				return null;
-		}
+		public static function get instance():Accelerator{return null;}
 		private static var acceleration:*;
 		private static var accelerationIncludingGravity:*;
 		private static var rotationRate:*;

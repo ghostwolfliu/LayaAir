@@ -32,67 +32,73 @@ package laya.d3.core.render {
 		 * 获取泛光过滤器强度,最小值为0。
 		 * @return 强度。
 		 */
+		public function get intensity():Number{return null;}
 
 		/**
 		 * 设置泛光过滤器强度,最小值为0。
 		 * @param value 强度。
 		 */
-		public var intensity:Number;
+		public function set intensity(value:Number):void{}
 
 		/**
 		 * 设置泛光阈值,在该阈值亮度以下的像素会被过滤掉,该值在伽马空间。
 		 * @return 阈值。
 		 */
+		public function get threshold():Number{return null;}
 
 		/**
 		 * 获取泛光阈值,在该阈值亮度以下的像素会被过滤掉,该值在伽马空间。
 		 * @param value 阈值。
 		 */
-		public var threshold:Number;
+		public function set threshold(value:Number):void{}
 
 		/**
 		 * 获取软膝盖过渡强度,在阈值以下进行渐变过渡(0为完全硬过度,1为完全软过度)。
 		 * @return 软膝盖值。
 		 */
+		public function get softKnee():Number{return null;}
 
 		/**
 		 * 设置软膝盖过渡强度,在阈值以下进行渐变过渡(0为完全硬过度,1为完全软过度)。
 		 * @param value 软膝盖值。
 		 */
-		public var softKnee:Number;
+		public function set softKnee(value:Number):void{}
 
 		/**
 		 * 获取扩散值,改变泛光的扩散范围,最好使用整数值保证效果,该值会改变内部的迭代次数,范围是1到10。
 		 * @return 光晕的扩散范围。
 		 */
+		public function get diffusion():Number{return null;}
 
 		/**
 		 * 设置扩散值,改变泛光的扩散范围,最好使用整数值保证效果,该值会改变内部的迭代次数,范围是1到10。
 		 * @param value 光晕的扩散范围。
 		 */
-		public var diffusion:Number;
+		public function set diffusion(value:Number):void{}
 
 		/**
 		 * 获取形变比,通过扭曲泛光产生视觉上形变,负值为垂直扭曲,正值为水平扭曲。
 		 * @return 形变比。
 		 */
+		public function get anamorphicRatio():Number{return null;}
 
 		/**
 		 * 设置形变比,通过扭曲泛光产生视觉上形变,负值为垂直扭曲,正值为水平扭曲。
 		 * @param value 形变比。
 		 */
-		public var anamorphicRatio:Number;
+		public function set anamorphicRatio(value:Number):void{}
 
 		/**
 		 * 获取污渍强度。
 		 * @return 污渍强度。
 		 */
+		public function get dirtIntensity():Number{return null;}
 
 		/**
 		 * 设置污渍强度。
 		 * @param value 污渍强度。
 		 */
-		public var dirtIntensity:Number;
+		public function set dirtIntensity(value:Number):void{}
 
 		/**
 		 * 创建一个 <code>BloomEffect</code> 实例。
