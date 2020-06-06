@@ -7369,12 +7369,12 @@ window.Laya= (function (exports) {
                     }
                 }
                 if ("hbs" in Browser.window) {
-                    window.hbsMiniGame(Laya, Laya);
-                    if (!Laya["HBSMiniAdapter"]) {
+                    window.hwMiniGame(Laya, Laya);
+                    if (!Laya["HWMiniAdapter"]) {
                         console.error("请先添加小游戏适配库!");
                     }
                     else {
-                        Laya["HBSMiniAdapter"].enable();
+                        Laya["HWMiniAdapter"].enable();
                     }
                 }
                 if (u.indexOf("SwanGame") > -1) {
@@ -13574,7 +13574,7 @@ window.Laya= (function (exports) {
                 if (this._components) {
                     for (var i = 0, n = this._components.length; i < n; i++) {
                         var item = this._components[i];
-                        item._destroy();
+                        item && item._destroy();
                     }
                     this._components.length = 0;
                 }
@@ -18886,7 +18886,7 @@ window.Laya= (function (exports) {
                 }
             }
             _loadHttpRequest(url, contentType, onLoadCaller, onLoad, onProcessCaller, onProcess, onErrorCaller, onError) {
-                if (Browser.onVVMiniGame) {
+                if (Browser.onVVMiniGame || Browser.onHWMiniGame) {
                     this._http = new HttpRequest();
                 }
                 else {

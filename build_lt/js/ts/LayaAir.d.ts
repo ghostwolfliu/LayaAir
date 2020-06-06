@@ -13852,7 +13852,7 @@ declare module laya.d3.physics {
 }
 
 declare module laya.d3.physics.constraints {
-	class ConfigurableJoint extends laya.d3.physics.constraints.ConstraintComponent  {
+	class ConfigurableConstraint extends laya.d3.physics.constraints.ConstraintComponent  {
 		static CONFIG_MOTION_TYPE_LOCKED:number;
 		static CONFIG_MOTION_TYPE_LIMITED:number;
 		static CONFIG_MOTION_TYPE_FREE:number;
@@ -14005,7 +14005,7 @@ declare module laya.d3.physics.constraints {
 		/**
 		 * 获取的总力矩
 		 */
-		get currentToque():laya.d3.math.Vector3;
+		get currentTorque():laya.d3.math.Vector3;
 
 		/**
 		 * 设置最大承受力
@@ -15973,6 +15973,11 @@ declare module laya.d3.resource.models {
 	 */
 	class PrimitiveMesh  {
 		static __init__():void;
+
+		/**
+		 * 创建自定义网格
+		 */
+		static _createMesh(vertexDeclaration:laya.d3.graphics.VertexDeclaration,vertices:Float32Array,indices:Uint16Array):laya.d3.resource.models.Mesh;
 
 		/**
 		 * 创建Box网格。
@@ -42001,7 +42006,7 @@ declare module laya.utils {
 		 * 根据类名回收类的实例
 		 * @param instance 类的具体实例
 		 */
-		static createByClass(cls:new () => any):any;
+		static createByClass(cls:new () => T):T;
 
 		/**
 		 * <p>根据传入的对象类型标识字符，获取对象池中此类型标识的一个对象实例。</p>
@@ -42010,7 +42015,7 @@ declare module laya.utils {
 		 * @param cls 用于创建该类型对象的类。
 		 * @return 此类型标识的一个对象。
 		 */
-		static getItemByClass(sign:string,cls:new () => any):any;
+		static getItemByClass(sign:string,cls:new () => T):T;
 
 		/**
 		 * <p>根据传入的对象类型标识字符，获取对象池中此类型标识的一个对象实例。</p>
@@ -46679,7 +46684,7 @@ enum FrustumCorner {
 
 	class Constraint3D extends laya.d3.physics.Constraint3D {}
 
-	class ConfigurableJoint extends laya.d3.physics.constraints.ConfigurableJoint {}
+	class ConfigurableConstraint extends laya.d3.physics.constraints.ConfigurableConstraint {}
 
 	/**
 	 * <code>ConstraintComponent</code> 类用于创建约束的父类。

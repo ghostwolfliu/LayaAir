@@ -1,4 +1,5 @@
 package laya.d3.resource.models {
+	import laya.d3.graphics.VertexDeclaration;
 	import laya.d3.resource.models.Mesh;
 
 	/**
@@ -6,6 +7,13 @@ package laya.d3.resource.models {
 	 */
 	public class PrimitiveMesh {
 		public static function __init__():void{}
+
+		/**
+		 * 创建自定义网格
+		 */
+		public static function _createMesh(vertexDeclaration:VertexDeclaration,vertices:Float32Array,indices:Uint16Array):Mesh{
+			return null;
+		}
 
 		/**
 		 * 创建Box网格。
