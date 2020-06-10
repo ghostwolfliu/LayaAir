@@ -99,7 +99,7 @@ import { CannonPhysicsWorld_BaseCollider } from "../3d/LayaAir3D_CannonPhysics3D
 import { CannonPhysicsWorld_ColliderEvent } from "../3d/LayaAir3D_CannonPhysics3D/CannonPhysicsWorld_ColliderEvent";
 import { CannonPhysicsWorld_PhysicsProperty } from "../3d/LayaAir3D_CannonPhysics3D/CannonPhysicsWorld_PhysicsProperty";
 import { CannonPhysicsWorld_RayCheck } from "../3d/LayaAir3D_CannonPhysics3D/CannonPhysicsWorld_RayCheck";
-import { Config3D } from "Config3D";
+import { SpotLightShadowMap } from "../3d/LayaAir3D_Lighting/SpotLightShadowMap";
 
 
 export class IndexView3D extends IndexViewUI {
@@ -130,8 +130,8 @@ export class IndexView3D extends IndexViewUI {
 	private _demoClsArr: any[] = [GhostModelShow, DamagedHelmetModelShow, CerberusModelShow];
 	private _demoArr: any[] = ['GhostModelShow', 'DamagedHelmetModelShow', 'CerberusModelShow'];
 
-	private _lightingClsArr: any[] = [DirectionLightDemo, PointLightDemo, RealTimeShadow, SpotLightDemo, MultiLight];
-	private _lightingArr: any[] = ['DirectionLight', 'PointLight', 'RealTimeShadow', 'SpotLight', 'MultiLight'];
+	private _lightingClsArr: any[] = [DirectionLightDemo, PointLightDemo, RealTimeShadow,SpotLightShadowMap,  SpotLightDemo, MultiLight];
+	private _lightingArr: any[] = ['DirectionLight', 'PointLight', 'RealTimeShadow', 'SpotLightShadowMap', 'SpotLight', 'MultiLight'];
 
 	private _mterialClsArr: any[] = [BlinnPhong_DiffuseMap, BlinnPhong_NormalMap, BlinnPhong_SpecularMap, BlinnPhongMaterialLoad, EffectMaterialDemo, MaterialDemo, PBRMaterialDemo, UnlitMaterialDemo, WaterPrimaryMaterialDemo];//BlinnPhong_DiffuseMap,BlinnPhong_NormalMap,BlinnPhong_SpecularMap,BlinnPhongMaterialLoad,EffectMaterialDemo,UnlitMaterialDemo
 	private _materilArr: any[] = ['BlinnPhong_DiffuseMap', 'BlinnPhong_NormalMap', "BlinnPhong_SpecularMap", "BlinnPhongMaterialLoad", "EffectMaterial", "Material", "PBRMaterial", "UnlitMaterial", "WaterPrimaryMaterial"];
@@ -275,7 +275,6 @@ export class IndexView3D extends IndexViewUI {
 		else {
 
 			var _comboxBigArr2: any[] = ['Resource', 'Scene3D', 'Camera', 'Lighting', 'Sprite3D', 'Mesh', 'Material', 'Texture', 'Animation3D', 'Physics3D','CannonPhysics3D', 'MouseLnteraction', 'Script', 'Sky', 'Particle3D', 'Trail', 'Shader', 'Performance', 'Advance', 'Demo'];
-			Config3D.useCannonPhysics = false;
 			switch (this._bigIndex) {
 				case 0:
 					this._oldView = new this._resourceClsArr[index];
