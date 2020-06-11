@@ -1536,13 +1536,10 @@ window.box2d=box2d;
 (function (exports, Laya) {
     'use strict';
 
-    let IPhysics = (() => {
-        class IPhysics {
-        }
-        IPhysics.RigidBody = null;
-        IPhysics.Physics = null;
-        return IPhysics;
-    })();
+    class IPhysics {
+    }
+    IPhysics.RigidBody = null;
+    IPhysics.Physics = null;
 
     class ColliderBase extends Laya.Component {
         constructor() {
@@ -1988,173 +1985,170 @@ window.box2d=box2d;
         }
     }
 
-    let Physics = (() => {
-        class Physics extends Laya.EventDispatcher {
-            constructor() {
-                super();
-                this.box2d = window.box2d;
-                this.velocityIterations = 8;
-                this.positionIterations = 3;
-                this._eventList = [];
-            }
-            static get I() {
-                return Physics._I || (Physics._I = new Physics());
-            }
-            static enable(options = null) {
-                Physics.I.start(options);
-                IPhysics.RigidBody = RigidBody;
-                IPhysics.Physics = this;
-            }
-            start(options = null) {
-                if (!this._enabled) {
-                    this._enabled = true;
-                    options || (options = {});
-                    var box2d = window.box2d;
-                    if (box2d == null) {
-                        console.error("Can not find box2d libs, you should request box2d.js first.");
-                        return;
-                    }
-                    var gravity = new box2d.b2Vec2(0, options.gravity || 500 / Physics.PIXEL_RATIO);
-                    this.world = new box2d.b2World(gravity);
-                    this.world.SetDestructionListener(new DestructionListener());
-                    this.world.SetContactListener(new ContactListener());
-                    this.allowSleeping = options.allowSleeping == null ? true : options.allowSleeping;
-                    if (!options.customUpdate)
-                        Laya.Laya.physicsTimer.frameLoop(1, this, this._update);
-                    this._emptyBody = this._createBody(new window.box2d.b2BodyDef());
+    class Physics extends Laya.EventDispatcher {
+        constructor() {
+            super();
+            this.box2d = window.box2d;
+            this.velocityIterations = 8;
+            this.positionIterations = 3;
+            this._eventList = [];
+        }
+        static get I() {
+            return Physics._I || (Physics._I = new Physics());
+        }
+        static enable(options = null) {
+            Physics.I.start(options);
+            IPhysics.RigidBody = RigidBody;
+            IPhysics.Physics = this;
+        }
+        start(options = null) {
+            if (!this._enabled) {
+                this._enabled = true;
+                options || (options = {});
+                var box2d = window.box2d;
+                if (box2d == null) {
+                    console.error("Can not find box2d libs, you should request box2d.js first.");
+                    return;
                 }
+                var gravity = new box2d.b2Vec2(0, options.gravity || 500 / Physics.PIXEL_RATIO);
+                this.world = new box2d.b2World(gravity);
+                this.world.SetDestructionListener(new DestructionListener());
+                this.world.SetContactListener(new ContactListener());
+                this.allowSleeping = options.allowSleeping == null ? true : options.allowSleeping;
+                if (!options.customUpdate)
+                    Laya.Laya.physicsTimer.frameLoop(1, this, this._update);
+                this._emptyBody = this._createBody(new window.box2d.b2BodyDef());
             }
-            _update() {
-                this.world.Step(1 / 60, this.velocityIterations, this.positionIterations, 3);
-                var len = this._eventList.length;
-                if (len > 0) {
-                    for (var i = 0; i < len; i += 2) {
-                        this._sendEvent(this._eventList[i], this._eventList[i + 1]);
-                    }
-                    this._eventList.length = 0;
+        }
+        _update() {
+            this.world.Step(1 / 60, this.velocityIterations, this.positionIterations, 3);
+            var len = this._eventList.length;
+            if (len > 0) {
+                for (var i = 0; i < len; i += 2) {
+                    this._sendEvent(this._eventList[i], this._eventList[i + 1]);
                 }
+                this._eventList.length = 0;
             }
-            _sendEvent(type, contact) {
-                var colliderA = contact.GetFixtureA().collider;
-                var colliderB = contact.GetFixtureB().collider;
-                var ownerA = colliderA.owner;
-                var ownerB = colliderB.owner;
-                contact.getHitInfo = function () {
-                    var manifold = new this.box2d.b2WorldManifold();
-                    this.GetWorldManifold(manifold);
-                    var p = manifold.points[0];
-                    p.x *= Physics.PIXEL_RATIO;
-                    p.y *= Physics.PIXEL_RATIO;
-                    return manifold;
-                };
-                if (ownerA) {
-                    var args = [colliderB, colliderA, contact];
-                    if (type === 0) {
-                        ownerA.event(Laya.Event.TRIGGER_ENTER, args);
-                        if (!ownerA["_triggered"]) {
-                            ownerA["_triggered"] = true;
-                        }
-                        else {
-                            ownerA.event(Laya.Event.TRIGGER_STAY, args);
-                        }
+        }
+        _sendEvent(type, contact) {
+            var colliderA = contact.GetFixtureA().collider;
+            var colliderB = contact.GetFixtureB().collider;
+            var ownerA = colliderA.owner;
+            var ownerB = colliderB.owner;
+            contact.getHitInfo = function () {
+                var manifold = new this.box2d.b2WorldManifold();
+                this.GetWorldManifold(manifold);
+                var p = manifold.points[0];
+                p.x *= Physics.PIXEL_RATIO;
+                p.y *= Physics.PIXEL_RATIO;
+                return manifold;
+            };
+            if (ownerA) {
+                var args = [colliderB, colliderA, contact];
+                if (type === 0) {
+                    ownerA.event(Laya.Event.TRIGGER_ENTER, args);
+                    if (!ownerA["_triggered"]) {
+                        ownerA["_triggered"] = true;
                     }
                     else {
-                        ownerA["_triggered"] = false;
-                        ownerA.event(Laya.Event.TRIGGER_EXIT, args);
+                        ownerA.event(Laya.Event.TRIGGER_STAY, args);
                     }
                 }
-                if (ownerB) {
-                    args = [colliderA, colliderB, contact];
-                    if (type === 0) {
-                        ownerB.event(Laya.Event.TRIGGER_ENTER, args);
-                        if (!ownerB["_triggered"]) {
-                            ownerB["_triggered"] = true;
-                        }
-                        else {
-                            ownerB.event(Laya.Event.TRIGGER_STAY, args);
-                        }
+                else {
+                    ownerA["_triggered"] = false;
+                    ownerA.event(Laya.Event.TRIGGER_EXIT, args);
+                }
+            }
+            if (ownerB) {
+                args = [colliderA, colliderB, contact];
+                if (type === 0) {
+                    ownerB.event(Laya.Event.TRIGGER_ENTER, args);
+                    if (!ownerB["_triggered"]) {
+                        ownerB["_triggered"] = true;
                     }
                     else {
-                        ownerB["_triggered"] = false;
-                        ownerB.event(Laya.Event.TRIGGER_EXIT, args);
+                        ownerB.event(Laya.Event.TRIGGER_STAY, args);
                     }
                 }
-            }
-            _createBody(def) {
-                if (this.world) {
-                    return this.world.CreateBody(def);
-                }
                 else {
-                    console.error('The physical engine should be initialized first.use "Physics.enable()"');
-                    return null;
-                }
-            }
-            _removeBody(body) {
-                if (this.world) {
-                    this.world.DestroyBody(body);
-                }
-                else {
-                    console.error('The physical engine should be initialized first.use "Physics.enable()"');
-                }
-            }
-            _createJoint(def) {
-                if (this.world) {
-                    let joint = this.world.CreateJoint(def);
-                    joint.m_userData = {};
-                    joint.m_userData.isDestroy = false;
-                    return joint;
-                }
-                else {
-                    console.error('The physical engine should be initialized first.use "Physics.enable()"');
-                    return null;
-                }
-            }
-            _removeJoint(joint) {
-                if (this.world) {
-                    this.world.DestroyJoint(joint);
-                }
-                else {
-                    console.error('The physical engine should be initialized first.use "Physics.enable()"');
-                }
-            }
-            stop() {
-                Laya.Laya.physicsTimer.clear(this, this._update);
-            }
-            get allowSleeping() {
-                return this.world.GetAllowSleeping();
-            }
-            set allowSleeping(value) {
-                this.world.SetAllowSleeping(value);
-            }
-            get gravity() {
-                return this.world.GetGravity();
-            }
-            set gravity(value) {
-                this.world.SetGravity(value);
-            }
-            getBodyCount() {
-                return this.world.GetBodyCount();
-            }
-            getContactCount() {
-                return this.world.GetContactCount();
-            }
-            getJointCount() {
-                return this.world.GetJointCount();
-            }
-            get worldRoot() {
-                return this._worldRoot || Laya.Laya.stage;
-            }
-            set worldRoot(value) {
-                this._worldRoot = value;
-                if (value) {
-                    var p = value.localToGlobal(Laya.Point.TEMP.setTo(0, 0));
-                    this.world.ShiftOrigin({ x: p.x / Physics.PIXEL_RATIO, y: p.y / Physics.PIXEL_RATIO });
+                    ownerB["_triggered"] = false;
+                    ownerB.event(Laya.Event.TRIGGER_EXIT, args);
                 }
             }
         }
-        Physics.PIXEL_RATIO = 50;
-        return Physics;
-    })();
+        _createBody(def) {
+            if (this.world) {
+                return this.world.CreateBody(def);
+            }
+            else {
+                console.error('The physical engine should be initialized first.use "Physics.enable()"');
+                return null;
+            }
+        }
+        _removeBody(body) {
+            if (this.world) {
+                this.world.DestroyBody(body);
+            }
+            else {
+                console.error('The physical engine should be initialized first.use "Physics.enable()"');
+            }
+        }
+        _createJoint(def) {
+            if (this.world) {
+                let joint = this.world.CreateJoint(def);
+                joint.m_userData = {};
+                joint.m_userData.isDestroy = false;
+                return joint;
+            }
+            else {
+                console.error('The physical engine should be initialized first.use "Physics.enable()"');
+                return null;
+            }
+        }
+        _removeJoint(joint) {
+            if (this.world) {
+                this.world.DestroyJoint(joint);
+            }
+            else {
+                console.error('The physical engine should be initialized first.use "Physics.enable()"');
+            }
+        }
+        stop() {
+            Laya.Laya.physicsTimer.clear(this, this._update);
+        }
+        get allowSleeping() {
+            return this.world.GetAllowSleeping();
+        }
+        set allowSleeping(value) {
+            this.world.SetAllowSleeping(value);
+        }
+        get gravity() {
+            return this.world.GetGravity();
+        }
+        set gravity(value) {
+            this.world.SetGravity(value);
+        }
+        getBodyCount() {
+            return this.world.GetBodyCount();
+        }
+        getContactCount() {
+            return this.world.GetContactCount();
+        }
+        getJointCount() {
+            return this.world.GetJointCount();
+        }
+        get worldRoot() {
+            return this._worldRoot || Laya.Laya.stage;
+        }
+        set worldRoot(value) {
+            this._worldRoot = value;
+            if (value) {
+                var p = value.localToGlobal(Laya.Point.TEMP.setTo(0, 0));
+                this.world.ShiftOrigin({ x: p.x / Physics.PIXEL_RATIO, y: p.y / Physics.PIXEL_RATIO });
+            }
+        }
+    }
+    Physics.PIXEL_RATIO = 50;
     Laya.ClassUtils.regClass("laya.physics.Physics", Physics);
     Laya.ClassUtils.regClass("Laya.Physics", Physics);
     class ContactListener {
@@ -2358,157 +2352,154 @@ window.box2d=box2d;
     Laya.ClassUtils.regClass("laya.physics.CircleCollider", CircleCollider);
     Laya.ClassUtils.regClass("Laya.CircleCollider", CircleCollider);
 
-    let PhysicsDebugDraw = (() => {
-        class PhysicsDebugDraw extends Laya.Sprite {
-            constructor() {
-                super();
-                this.m_drawFlags = 99;
-                if (!PhysicsDebugDraw._inited) {
-                    PhysicsDebugDraw._inited = true;
-                    PhysicsDebugDraw.init();
-                }
-                this._camera = {};
-                this._camera.m_center = new PhysicsDebugDraw.box2d.b2Vec2(0, 0);
-                this._camera.m_extent = 25;
-                this._camera.m_zoom = 1;
-                this._camera.m_width = 1280;
-                this._camera.m_height = 800;
-                this._mG = new Laya.Graphics();
-                this.graphics = this._mG;
-                this._textSp = new Laya.Sprite();
-                this._textG = this._textSp.graphics;
-                this.addChild(this._textSp);
+    class PhysicsDebugDraw extends Laya.Sprite {
+        constructor() {
+            super();
+            this.m_drawFlags = 99;
+            if (!PhysicsDebugDraw._inited) {
+                PhysicsDebugDraw._inited = true;
+                PhysicsDebugDraw.init();
             }
-            static init() {
-                PhysicsDebugDraw.box2d = Laya.Browser.window.box2d;
-                PhysicsDebugDraw.DrawString_s_color = new PhysicsDebugDraw.box2d.b2Color(0.9, 0.6, 0.6);
-                PhysicsDebugDraw.DrawStringWorld_s_p = new PhysicsDebugDraw.box2d.b2Vec2();
-                PhysicsDebugDraw.DrawStringWorld_s_cc = new PhysicsDebugDraw.box2d.b2Vec2();
-                PhysicsDebugDraw.DrawStringWorld_s_color = new PhysicsDebugDraw.box2d.b2Color(0.5, 0.9, 0.5);
-            }
-            render(ctx, x, y) {
-                this._renderToGraphic();
-                super.render(ctx, x, y);
-            }
-            _renderToGraphic() {
-                if (this.world) {
-                    this._textG.clear();
-                    this._mG.clear();
-                    this._mG.save();
-                    this._mG.scale(Physics.PIXEL_RATIO, Physics.PIXEL_RATIO);
-                    this.lineWidth = 1 / Physics.PIXEL_RATIO;
-                    this.world.DrawDebugData();
-                    this._mG.restore();
-                }
-            }
-            SetFlags(flags) {
-                this.m_drawFlags = flags;
-            }
-            GetFlags() {
-                return this.m_drawFlags;
-            }
-            AppendFlags(flags) {
-                this.m_drawFlags |= flags;
-            }
-            ClearFlags(flags) {
-                this.m_drawFlags &= ~flags;
-            }
-            PushTransform(xf) {
+            this._camera = {};
+            this._camera.m_center = new PhysicsDebugDraw.box2d.b2Vec2(0, 0);
+            this._camera.m_extent = 25;
+            this._camera.m_zoom = 1;
+            this._camera.m_width = 1280;
+            this._camera.m_height = 800;
+            this._mG = new Laya.Graphics();
+            this.graphics = this._mG;
+            this._textSp = new Laya.Sprite();
+            this._textG = this._textSp.graphics;
+            this.addChild(this._textSp);
+        }
+        static init() {
+            PhysicsDebugDraw.box2d = Laya.Browser.window.box2d;
+            PhysicsDebugDraw.DrawString_s_color = new PhysicsDebugDraw.box2d.b2Color(0.9, 0.6, 0.6);
+            PhysicsDebugDraw.DrawStringWorld_s_p = new PhysicsDebugDraw.box2d.b2Vec2();
+            PhysicsDebugDraw.DrawStringWorld_s_cc = new PhysicsDebugDraw.box2d.b2Vec2();
+            PhysicsDebugDraw.DrawStringWorld_s_color = new PhysicsDebugDraw.box2d.b2Color(0.5, 0.9, 0.5);
+        }
+        render(ctx, x, y) {
+            this._renderToGraphic();
+            super.render(ctx, x, y);
+        }
+        _renderToGraphic() {
+            if (this.world) {
+                this._textG.clear();
+                this._mG.clear();
                 this._mG.save();
-                this._mG.translate(xf.p.x, xf.p.y);
-                this._mG.rotate(xf.q.GetAngle());
-            }
-            PopTransform(xf) {
+                this._mG.scale(Physics.PIXEL_RATIO, Physics.PIXEL_RATIO);
+                this.lineWidth = 1 / Physics.PIXEL_RATIO;
+                this.world.DrawDebugData();
                 this._mG.restore();
             }
-            DrawPolygon(vertices, vertexCount, color) {
-                var i, len;
-                len = vertices.length;
-                var points;
-                points = [];
-                for (i = 0; i < vertexCount; i++) {
-                    points.push(vertices[i].x, vertices[i].y);
+        }
+        SetFlags(flags) {
+            this.m_drawFlags = flags;
+        }
+        GetFlags() {
+            return this.m_drawFlags;
+        }
+        AppendFlags(flags) {
+            this.m_drawFlags |= flags;
+        }
+        ClearFlags(flags) {
+            this.m_drawFlags &= ~flags;
+        }
+        PushTransform(xf) {
+            this._mG.save();
+            this._mG.translate(xf.p.x, xf.p.y);
+            this._mG.rotate(xf.q.GetAngle());
+        }
+        PopTransform(xf) {
+            this._mG.restore();
+        }
+        DrawPolygon(vertices, vertexCount, color) {
+            var i, len;
+            len = vertices.length;
+            var points;
+            points = [];
+            for (i = 0; i < vertexCount; i++) {
+                points.push(vertices[i].x, vertices[i].y);
+            }
+            this._mG.drawPoly(0, 0, points, null, color.MakeStyleString(1), this.lineWidth);
+        }
+        DrawSolidPolygon(vertices, vertexCount, color) {
+            var i, len;
+            len = vertices.length;
+            var points;
+            points = [];
+            for (i = 0; i < vertexCount; i++) {
+                points.push(vertices[i].x, vertices[i].y);
+            }
+            this._mG.drawPoly(0, 0, points, color.MakeStyleString(0.5), color.MakeStyleString(1), this.lineWidth);
+        }
+        DrawCircle(center, radius, color) {
+            this._mG.drawCircle(center.x, center.y, radius, null, color.MakeStyleString(1), this.lineWidth);
+        }
+        DrawSolidCircle(center, radius, axis, color) {
+            var cx = center.x;
+            var cy = center.y;
+            this._mG.drawCircle(cx, cy, radius, color.MakeStyleString(0.5), color.MakeStyleString(1), this.lineWidth);
+            this._mG.drawLine(cx, cy, (cx + axis.x * radius), (cy + axis.y * radius), color.MakeStyleString(1), this.lineWidth);
+        }
+        DrawParticles(centers, radius, colors, count) {
+            if (colors !== null) {
+                for (var i = 0; i < count; ++i) {
+                    var center = centers[i];
+                    var color = colors[i];
+                    this._mG.drawCircle(center.x, center.y, radius, color.MakeStyleString(), null, this.lineWidth);
                 }
-                this._mG.drawPoly(0, 0, points, null, color.MakeStyleString(1), this.lineWidth);
             }
-            DrawSolidPolygon(vertices, vertexCount, color) {
-                var i, len;
-                len = vertices.length;
-                var points;
-                points = [];
-                for (i = 0; i < vertexCount; i++) {
-                    points.push(vertices[i].x, vertices[i].y);
+            else {
+                for (i = 0; i < count; ++i) {
+                    center = centers[i];
+                    this._mG.drawCircle(center.x, center.y, radius, "#ffff00", null, this.lineWidth);
                 }
-                this._mG.drawPoly(0, 0, points, color.MakeStyleString(0.5), color.MakeStyleString(1), this.lineWidth);
-            }
-            DrawCircle(center, radius, color) {
-                this._mG.drawCircle(center.x, center.y, radius, null, color.MakeStyleString(1), this.lineWidth);
-            }
-            DrawSolidCircle(center, radius, axis, color) {
-                var cx = center.x;
-                var cy = center.y;
-                this._mG.drawCircle(cx, cy, radius, color.MakeStyleString(0.5), color.MakeStyleString(1), this.lineWidth);
-                this._mG.drawLine(cx, cy, (cx + axis.x * radius), (cy + axis.y * radius), color.MakeStyleString(1), this.lineWidth);
-            }
-            DrawParticles(centers, radius, colors, count) {
-                if (colors !== null) {
-                    for (var i = 0; i < count; ++i) {
-                        var center = centers[i];
-                        var color = colors[i];
-                        this._mG.drawCircle(center.x, center.y, radius, color.MakeStyleString(), null, this.lineWidth);
-                    }
-                }
-                else {
-                    for (i = 0; i < count; ++i) {
-                        center = centers[i];
-                        this._mG.drawCircle(center.x, center.y, radius, "#ffff00", null, this.lineWidth);
-                    }
-                }
-            }
-            DrawSegment(p1, p2, color) {
-                this._mG.drawLine(p1.x, p1.y, p2.x, p2.y, color.MakeStyleString(1), this.lineWidth);
-            }
-            DrawTransform(xf) {
-                this.PushTransform(xf);
-                this._mG.drawLine(0, 0, 1, 0, PhysicsDebugDraw.box2d.b2Color.RED.MakeStyleString(1), this.lineWidth);
-                this._mG.drawLine(0, 0, 0, 1, PhysicsDebugDraw.box2d.b2Color.GREEN.MakeStyleString(1), this.lineWidth);
-                this.PopTransform(xf);
-            }
-            DrawPoint(p, size, color) {
-                size *= this._camera.m_zoom;
-                size /= this._camera.m_extent;
-                var hsize = size / 2;
-                this._mG.drawRect(p.x - hsize, p.y - hsize, size, size, color.MakeStyleString(), null);
-            }
-            DrawString(x, y, message) {
-                this._textG.fillText(message, x, y, "15px DroidSans", PhysicsDebugDraw.DrawString_s_color.MakeStyleString(), "left");
-            }
-            DrawStringWorld(x, y, message) {
-                this.DrawString(x, y, message);
-            }
-            DrawAABB(aabb, color) {
-                var x = aabb.lowerBound.x;
-                var y = aabb.lowerBound.y;
-                var w = aabb.upperBound.x - aabb.lowerBound.x;
-                var h = aabb.upperBound.y - aabb.lowerBound.y;
-                this._mG.drawRect(x, y, w, h, null, color.MakeStyleString(), this.lineWidth);
-            }
-            static enable(flags = 99) {
-                if (!PhysicsDebugDraw.I) {
-                    var debug = new PhysicsDebugDraw();
-                    debug.world = Physics.I.world;
-                    debug.world.SetDebugDraw(debug);
-                    debug.zOrder = 1000;
-                    debug.m_drawFlags = flags;
-                    Laya.Laya.stage.addChild(debug);
-                    PhysicsDebugDraw.I = debug;
-                }
-                return debug;
             }
         }
-        PhysicsDebugDraw._inited = false;
-        return PhysicsDebugDraw;
-    })();
+        DrawSegment(p1, p2, color) {
+            this._mG.drawLine(p1.x, p1.y, p2.x, p2.y, color.MakeStyleString(1), this.lineWidth);
+        }
+        DrawTransform(xf) {
+            this.PushTransform(xf);
+            this._mG.drawLine(0, 0, 1, 0, PhysicsDebugDraw.box2d.b2Color.RED.MakeStyleString(1), this.lineWidth);
+            this._mG.drawLine(0, 0, 0, 1, PhysicsDebugDraw.box2d.b2Color.GREEN.MakeStyleString(1), this.lineWidth);
+            this.PopTransform(xf);
+        }
+        DrawPoint(p, size, color) {
+            size *= this._camera.m_zoom;
+            size /= this._camera.m_extent;
+            var hsize = size / 2;
+            this._mG.drawRect(p.x - hsize, p.y - hsize, size, size, color.MakeStyleString(), null);
+        }
+        DrawString(x, y, message) {
+            this._textG.fillText(message, x, y, "15px DroidSans", PhysicsDebugDraw.DrawString_s_color.MakeStyleString(), "left");
+        }
+        DrawStringWorld(x, y, message) {
+            this.DrawString(x, y, message);
+        }
+        DrawAABB(aabb, color) {
+            var x = aabb.lowerBound.x;
+            var y = aabb.lowerBound.y;
+            var w = aabb.upperBound.x - aabb.lowerBound.x;
+            var h = aabb.upperBound.y - aabb.lowerBound.y;
+            this._mG.drawRect(x, y, w, h, null, color.MakeStyleString(), this.lineWidth);
+        }
+        static enable(flags = 99) {
+            if (!PhysicsDebugDraw.I) {
+                var debug = new PhysicsDebugDraw();
+                debug.world = Physics.I.world;
+                debug.world.SetDebugDraw(debug);
+                debug.zOrder = 1000;
+                debug.m_drawFlags = flags;
+                Laya.Laya.stage.addChild(debug);
+                PhysicsDebugDraw.I = debug;
+            }
+            return debug;
+        }
+    }
+    PhysicsDebugDraw._inited = false;
     Laya.ClassUtils.regClass("laya.physics.PhysicsDebugDraw", PhysicsDebugDraw);
     Laya.ClassUtils.regClass("Laya.PhysicsDebugDraw", PhysicsDebugDraw);
 

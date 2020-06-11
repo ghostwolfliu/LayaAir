@@ -2127,22 +2127,22 @@ declare module laya.d3.component {
 		constructor(name:string);
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_getReferenceCount():number;
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_addReference(count?:number):void;
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_removeReference(count?:number):void;
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_clearReference():void;
 
@@ -2263,22 +2263,22 @@ declare module laya.d3.component {
 		constructor();
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_getReferenceCount():number;
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_addReference(count?:number):void;
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_removeReference(count?:number):void;
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		_clearReference():void;
 
@@ -34675,6 +34675,8 @@ declare module laya.ui {
 		 */
 		protected _panelChanged:boolean;
 
+		constructor(createChildren?:boolean);
+
 		/**
 		 * @inheritDoc 
 		 * @override 
@@ -38776,7 +38778,7 @@ declare module laya.ui {
 		protected measureHeight():number;
 
 		/**
-		 * @implements 数据赋值，通过对UI赋值来控制UI显示逻辑。</p><p>简单赋值会更改组件的默认属性，使用大括号可以指定组件的任意属性进行赋值。</p>
+		 * @implements <p>数据赋值，通过对UI赋值来控制UI显示逻辑。</p><p>简单赋值会更改组件的默认属性，使用大括号可以指定组件的任意属性进行赋值。</p>
 		 * @example //默认属性赋值dataSource = {label1: "改变了label", checkbox1: true};//(更改了label1的text属性值，更改checkbox1的selected属性)。//任意属性赋值dataSource = {label2: {text:"改变了label",size:14}, checkbox2: {selected:true,x:10}};
 		 */
 		get dataSource():any;
@@ -39538,7 +39540,7 @@ declare module laya.ui {
 		protected loadUI(path:string):void;
 
 		/**
-		 * @implements #dataSource
+		 * @implements laya.ui.UIComponent#dataSource
 		 */
 		get dataSource():any;
 		set dataSource(value:any);
@@ -43146,6 +43148,11 @@ declare module laya.utils {
 		 * @private 
 		 */
 		static getFileExtension(path:string):string;
+
+		/**
+		 * @private 为兼容平台后缀名不能用的特殊兼容TODO：
+		 */
+		static getFilecompatibleExtension(path:string):string;
 
 		/**
 		 * 获取指定区域内相对于窗口左上角的transform。

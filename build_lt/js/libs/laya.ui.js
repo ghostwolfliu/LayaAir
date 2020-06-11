@@ -1,33 +1,27 @@
 (function (exports, Laya) {
 	'use strict';
 
-	let UIConfig = (() => {
-	    class UIConfig {
-	    }
-	    UIConfig.touchScrollEnable = true;
-	    UIConfig.mouseWheelEnable = true;
-	    UIConfig.showButtons = true;
-	    UIConfig.popupBgColor = "#000000";
-	    UIConfig.popupBgAlpha = 0.5;
-	    UIConfig.closeDialogOnSide = true;
-	    return UIConfig;
-	})();
+	class UIConfig {
+	}
+	UIConfig.touchScrollEnable = true;
+	UIConfig.mouseWheelEnable = true;
+	UIConfig.showButtons = true;
+	UIConfig.popupBgColor = "#000000";
+	UIConfig.popupBgAlpha = 0.5;
+	UIConfig.closeDialogOnSide = true;
 	window.UIConfig = UIConfig;
 
-	let Styles = (() => {
-	    class Styles {
-	    }
-	    Styles.defaultSizeGrid = [4, 4, 4, 4, 0];
-	    Styles.labelColor = "#000000";
-	    Styles.labelPadding = [2, 2, 2, 2];
-	    Styles.inputLabelPadding = [1, 1, 1, 3];
-	    Styles.buttonStateNum = 3;
-	    Styles.buttonLabelColors = ["#32556b", "#32cc6b", "#ff0000", "#C0C0C0"];
-	    Styles.comboBoxItemColors = ["#5e95b6", "#ffffff", "#000000", "#8fa4b1", "#ffffff"];
-	    Styles.scrollBarMinNum = 15;
-	    Styles.scrollBarDelayTime = 500;
-	    return Styles;
-	})();
+	class Styles {
+	}
+	Styles.defaultSizeGrid = [4, 4, 4, 4, 0];
+	Styles.labelColor = "#000000";
+	Styles.labelPadding = [2, 2, 2, 2];
+	Styles.inputLabelPadding = [1, 1, 1, 3];
+	Styles.buttonStateNum = 3;
+	Styles.buttonLabelColors = ["#32556b", "#32cc6b", "#ff0000", "#C0C0C0"];
+	Styles.comboBoxItemColors = ["#5e95b6", "#ffffff", "#000000", "#8fa4b1", "#ffffff"];
+	Styles.scrollBarMinNum = 15;
+	Styles.scrollBarDelayTime = 500;
 
 	class AutoBitmap extends Laya.Graphics {
 	    constructor() {
@@ -141,241 +135,232 @@
 	Laya.ClassUtils.regClass("laya.ui.AutoBitmap", AutoBitmap);
 	Laya.ClassUtils.regClass("Laya.AutoBitmap", AutoBitmap);
 
-	let Widget = (() => {
-	    class Widget extends Laya.Component {
-	        constructor() {
-	            super(...arguments);
-	            this._top = NaN;
-	            this._bottom = NaN;
-	            this._left = NaN;
-	            this._right = NaN;
-	            this._centerX = NaN;
-	            this._centerY = NaN;
+	class Widget extends Laya.Component {
+	    constructor() {
+	        super(...arguments);
+	        this._top = NaN;
+	        this._bottom = NaN;
+	        this._left = NaN;
+	        this._right = NaN;
+	        this._centerX = NaN;
+	        this._centerY = NaN;
+	    }
+	    onReset() {
+	        this._top = this._bottom = this._left = this._right = this._centerX = this._centerY = NaN;
+	    }
+	    _onEnable() {
+	        if (this.owner.parent)
+	            this._onAdded();
+	        else
+	            this.owner.once(Laya.Event.ADDED, this, this._onAdded);
+	    }
+	    _onDisable() {
+	        this.owner.off(Laya.Event.ADDED, this, this._onAdded);
+	        if (this.owner.parent)
+	            this.owner.parent.off(Laya.Event.RESIZE, this, this._onParentResize);
+	    }
+	    _onAdded() {
+	        if (this.owner.parent)
+	            this.owner.parent.on(Laya.Event.RESIZE, this, this._onParentResize);
+	        this.resetLayoutX();
+	        this.resetLayoutY();
+	    }
+	    _onParentResize() {
+	        var flagX = this.resetLayoutX();
+	        var flagY = this.resetLayoutY();
+	        if (flagX || flagY)
+	            this.owner.event(Laya.Event.RESIZE);
+	    }
+	    resetLayoutX() {
+	        var owner = this.owner;
+	        if (!owner)
+	            return false;
+	        var parent = owner.parent;
+	        if (parent) {
+	            if (!isNaN(this.centerX)) {
+	                owner.x = Math.round((parent.width - owner.displayWidth) * 0.5 + this.centerX + owner.pivotX * owner.scaleX);
+	            }
+	            else if (!isNaN(this.left)) {
+	                owner.x = Math.round(this.left + owner.pivotX * owner.scaleX);
+	                if (!isNaN(this.right)) {
+	                    var temp = (parent._width - this.left - this.right) / (owner.scaleX || 0.01);
+	                    if (temp != owner.width) {
+	                        owner.width = temp;
+	                        return true;
+	                    }
+	                }
+	            }
+	            else if (!isNaN(this.right)) {
+	                owner.x = Math.round(parent.width - owner.displayWidth - this.right + owner.pivotX * owner.scaleX);
+	            }
 	        }
-	        onReset() {
-	            this._top = this._bottom = this._left = this._right = this._centerX = this._centerY = NaN;
+	        return false;
+	    }
+	    resetLayoutY() {
+	        var owner = this.owner;
+	        if (!owner)
+	            return false;
+	        var parent = owner.parent;
+	        if (parent) {
+	            if (!isNaN(this.centerY)) {
+	                owner.y = Math.round((parent.height - owner.displayHeight) * 0.5 + this.centerY + owner.pivotY * owner.scaleY);
+	            }
+	            else if (!isNaN(this.top)) {
+	                owner.y = Math.round(this.top + owner.pivotY * owner.scaleY);
+	                if (!isNaN(this.bottom)) {
+	                    var temp = (parent._height - this.top - this.bottom) / (owner.scaleY || 0.01);
+	                    if (temp != owner.height) {
+	                        owner.height = temp;
+	                        return true;
+	                    }
+	                }
+	            }
+	            else if (!isNaN(this.bottom)) {
+	                owner.y = Math.round(parent.height - owner.displayHeight - this.bottom + owner.pivotY * owner.scaleY);
+	            }
 	        }
-	        _onEnable() {
-	            if (this.owner.parent)
-	                this._onAdded();
-	            else
-	                this.owner.once(Laya.Event.ADDED, this, this._onAdded);
-	        }
-	        _onDisable() {
-	            this.owner.off(Laya.Event.ADDED, this, this._onAdded);
-	            if (this.owner.parent)
-	                this.owner.parent.off(Laya.Event.RESIZE, this, this._onParentResize);
-	        }
-	        _onAdded() {
-	            if (this.owner.parent)
-	                this.owner.parent.on(Laya.Event.RESIZE, this, this._onParentResize);
+	        return false;
+	    }
+	    resetLayout() {
+	        if (this.owner) {
 	            this.resetLayoutX();
 	            this.resetLayoutY();
 	        }
-	        _onParentResize() {
-	            var flagX = this.resetLayoutX();
-	            var flagY = this.resetLayoutY();
-	            if (flagX || flagY)
-	                this.owner.event(Laya.Event.RESIZE);
-	        }
-	        resetLayoutX() {
-	            var owner = this.owner;
-	            if (!owner)
-	                return false;
-	            var parent = owner.parent;
-	            if (parent) {
-	                if (!isNaN(this.centerX)) {
-	                    owner.x = Math.round((parent.width - owner.displayWidth) * 0.5 + this.centerX + owner.pivotX * owner.scaleX);
-	                }
-	                else if (!isNaN(this.left)) {
-	                    owner.x = Math.round(this.left + owner.pivotX * owner.scaleX);
-	                    if (!isNaN(this.right)) {
-	                        var temp = (parent._width - this.left - this.right) / (owner.scaleX || 0.01);
-	                        if (temp != owner.width) {
-	                            owner.width = temp;
-	                            return true;
-	                        }
-	                    }
-	                }
-	                else if (!isNaN(this.right)) {
-	                    owner.x = Math.round(parent.width - owner.displayWidth - this.right + owner.pivotX * owner.scaleX);
-	                }
-	            }
-	            return false;
-	        }
-	        resetLayoutY() {
-	            var owner = this.owner;
-	            if (!owner)
-	                return false;
-	            var parent = owner.parent;
-	            if (parent) {
-	                if (!isNaN(this.centerY)) {
-	                    owner.y = Math.round((parent.height - owner.displayHeight) * 0.5 + this.centerY + owner.pivotY * owner.scaleY);
-	                }
-	                else if (!isNaN(this.top)) {
-	                    owner.y = Math.round(this.top + owner.pivotY * owner.scaleY);
-	                    if (!isNaN(this.bottom)) {
-	                        var temp = (parent._height - this.top - this.bottom) / (owner.scaleY || 0.01);
-	                        if (temp != owner.height) {
-	                            owner.height = temp;
-	                            return true;
-	                        }
-	                    }
-	                }
-	                else if (!isNaN(this.bottom)) {
-	                    owner.y = Math.round(parent.height - owner.displayHeight - this.bottom + owner.pivotY * owner.scaleY);
-	                }
-	            }
-	            return false;
-	        }
-	        resetLayout() {
-	            if (this.owner) {
-	                this.resetLayoutX();
-	                this.resetLayoutY();
-	            }
-	        }
-	        get top() {
-	            return this._top;
-	        }
-	        set top(value) {
-	            if (this._top != value) {
-	                this._top = value;
-	                this.resetLayoutY();
-	            }
-	        }
-	        get bottom() {
-	            return this._bottom;
-	        }
-	        set bottom(value) {
-	            if (this._bottom != value) {
-	                this._bottom = value;
-	                this.resetLayoutY();
-	            }
-	        }
-	        get left() {
-	            return this._left;
-	        }
-	        set left(value) {
-	            if (this._left != value) {
-	                this._left = value;
-	                this.resetLayoutX();
-	            }
-	        }
-	        get right() {
-	            return this._right;
-	        }
-	        set right(value) {
-	            if (this._right != value) {
-	                this._right = value;
-	                this.resetLayoutX();
-	            }
-	        }
-	        get centerX() {
-	            return this._centerX;
-	        }
-	        set centerX(value) {
-	            if (this._centerX != value) {
-	                this._centerX = value;
-	                this.resetLayoutX();
-	            }
-	        }
-	        get centerY() {
-	            return this._centerY;
-	        }
-	        set centerY(value) {
-	            if (this._centerY != value) {
-	                this._centerY = value;
-	                this.resetLayoutY();
-	            }
+	    }
+	    get top() {
+	        return this._top;
+	    }
+	    set top(value) {
+	        if (this._top != value) {
+	            this._top = value;
+	            this.resetLayoutY();
 	        }
 	    }
-	    Widget.EMPTY = null;
-	    return Widget;
-	})();
+	    get bottom() {
+	        return this._bottom;
+	    }
+	    set bottom(value) {
+	        if (this._bottom != value) {
+	            this._bottom = value;
+	            this.resetLayoutY();
+	        }
+	    }
+	    get left() {
+	        return this._left;
+	    }
+	    set left(value) {
+	        if (this._left != value) {
+	            this._left = value;
+	            this.resetLayoutX();
+	        }
+	    }
+	    get right() {
+	        return this._right;
+	    }
+	    set right(value) {
+	        if (this._right != value) {
+	            this._right = value;
+	            this.resetLayoutX();
+	        }
+	    }
+	    get centerX() {
+	        return this._centerX;
+	    }
+	    set centerX(value) {
+	        if (this._centerX != value) {
+	            this._centerX = value;
+	            this.resetLayoutX();
+	        }
+	    }
+	    get centerY() {
+	        return this._centerY;
+	    }
+	    set centerY(value) {
+	        if (this._centerY != value) {
+	            this._centerY = value;
+	            this.resetLayoutY();
+	        }
+	    }
+	}
+	Widget.EMPTY = null;
 	Laya.ILaya.regClass(Widget);
 	Widget.EMPTY = new Widget();
 	Laya.ClassUtils.regClass("laya.ui.Widget", Widget);
 	Laya.ClassUtils.regClass("Laya.Widget", Widget);
 
-	let UIEvent = (() => {
-	    class UIEvent extends Laya.Event {
-	    }
-	    UIEvent.SHOW_TIP = "showtip";
-	    UIEvent.HIDE_TIP = "hidetip";
-	    return UIEvent;
-	})();
+	class UIEvent extends Laya.Event {
+	}
+	UIEvent.SHOW_TIP = "showtip";
+	UIEvent.HIDE_TIP = "hidetip";
 	Laya.ILaya.regClass(UIEvent);
 	Laya.ClassUtils.regClass("laya.ui.UIEvent", UIEvent);
 	Laya.ClassUtils.regClass("Laya.UIEvent", UIEvent);
 
-	let UIUtils = (() => {
-	    class UIUtils {
-	        static fillArray(arr, str, type = null) {
-	            var temp = arr.concat();
-	            if (str) {
-	                var a = str.split(",");
-	                for (var i = 0, n = Math.min(temp.length, a.length); i < n; i++) {
-	                    var value = a[i];
-	                    temp[i] = (value == "true" ? true : (value == "false" ? false : value));
-	                    if (type != null)
-	                        temp[i] = type(value);
-	                }
-	            }
-	            return temp;
-	        }
-	        static toColor(color) {
-	            return Laya.Utils.toHexColor(color);
-	        }
-	        static gray(traget, isGray = true) {
-	            if (isGray) {
-	                UIUtils.addFilter(traget, UIUtils.grayFilter);
-	            }
-	            else {
-	                UIUtils.clearFilter(traget, Laya.ColorFilter);
+	class UIUtils {
+	    static fillArray(arr, str, type = null) {
+	        var temp = arr.concat();
+	        if (str) {
+	            var a = str.split(",");
+	            for (var i = 0, n = Math.min(temp.length, a.length); i < n; i++) {
+	                var value = a[i];
+	                temp[i] = (value == "true" ? true : (value == "false" ? false : value));
+	                if (type != null)
+	                    temp[i] = type(value);
 	            }
 	        }
-	        static addFilter(target, filter) {
-	            var filters = target.filters || [];
-	            filters.push(filter);
-	            target.filters = filters;
+	        return temp;
+	    }
+	    static toColor(color) {
+	        return Laya.Utils.toHexColor(color);
+	    }
+	    static gray(traget, isGray = true) {
+	        if (isGray) {
+	            UIUtils.addFilter(traget, UIUtils.grayFilter);
 	        }
-	        static clearFilter(target, filterType) {
-	            var filters = target.filters;
-	            if (filters != null && filters.length > 0) {
-	                for (var i = filters.length - 1; i > -1; i--) {
-	                    var filter = filters[i];
-	                    if (filter instanceof filterType)
-	                        filters.splice(i, 1);
-	                }
-	                target.filters = filters;
-	            }
-	        }
-	        static _getReplaceStr(word) {
-	            return UIUtils.escapeSequence[word];
-	        }
-	        static adptString(str) {
-	            return str.replace(/\\(\w)/g, UIUtils._getReplaceStr);
-	        }
-	        static getBindFun(value) {
-	            if (!UIUtils._funMap) {
-	                UIUtils._funMap = new Laya.WeakObject();
-	            }
-	            var fun = UIUtils._funMap.get(value);
-	            if (fun == null) {
-	                var temp = "\"" + value + "\"";
-	                temp = temp.replace(/^"\${|}"$/g, "").replace(/\${/g, "\"+").replace(/}/g, "+\"");
-	                var str = "(function(data){if(data==null)return;with(data){try{\nreturn " + temp + "\n}catch(e){}}})";
-	                fun = window.Laya._runScript(str);
-	                UIUtils._funMap.set(value, fun);
-	            }
-	            return fun;
+	        else {
+	            UIUtils.clearFilter(traget, Laya.ColorFilter);
 	        }
 	    }
-	    UIUtils.grayFilter = new Laya.ColorFilter([0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0, 0, 0, 1, 0]);
-	    UIUtils.escapeSequence = { "\\n": "\n", "\\t": "\t" };
-	    UIUtils._funMap = null;
-	    return UIUtils;
-	})();
+	    static addFilter(target, filter) {
+	        var filters = target.filters || [];
+	        filters.push(filter);
+	        target.filters = filters;
+	    }
+	    static clearFilter(target, filterType) {
+	        var filters = target.filters;
+	        if (filters != null && filters.length > 0) {
+	            for (var i = filters.length - 1; i > -1; i--) {
+	                var filter = filters[i];
+	                if (filter instanceof filterType)
+	                    filters.splice(i, 1);
+	            }
+	            target.filters = filters;
+	        }
+	    }
+	    static _getReplaceStr(word) {
+	        return UIUtils.escapeSequence[word];
+	    }
+	    static adptString(str) {
+	        return str.replace(/\\(\w)/g, UIUtils._getReplaceStr);
+	    }
+	    static getBindFun(value) {
+	        if (!UIUtils._funMap) {
+	            UIUtils._funMap = new Laya.WeakObject();
+	        }
+	        var fun = UIUtils._funMap.get(value);
+	        if (fun == null) {
+	            var temp = "\"" + value + "\"";
+	            temp = temp.replace(/^"\${|}"$/g, "").replace(/\${/g, "\"+").replace(/}/g, "+\"");
+	            var str = "(function(data){if(data==null)return;with(data){try{\nreturn " + temp + "\n}catch(e){}}})";
+	            fun = window.Laya._runScript(str);
+	            UIUtils._funMap.set(value, fun);
+	        }
+	        return fun;
+	    }
+	}
+	UIUtils.grayFilter = new Laya.ColorFilter([0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0.3086, 0.6094, 0.082, 0, 0, 0, 0, 0, 1, 0]);
+	UIUtils.escapeSequence = { "\\n": "\n", "\\t": "\t" };
+	UIUtils._funMap = null;
 	Laya.ClassUtils.regClass("laya.ui.UIUtils", UIUtils);
 	Laya.ClassUtils.regClass("Laya.UIUtils", UIUtils);
 
@@ -669,7 +654,7 @@
 	        this.skin = skin;
 	    }
 	    destroy(destroyChild = true) {
-	        super.destroy(true);
+	        super.destroy(destroyChild);
 	        this._bitmap && this._bitmap.destroy();
 	        this._bitmap = null;
 	    }
@@ -974,329 +959,326 @@
 	Laya.ClassUtils.regClass("laya.ui.Box", Box);
 	Laya.ClassUtils.regClass("Laya.Box", Box);
 
-	let Button = (() => {
-	    class Button extends UIComponent {
-	        constructor(skin = null, label = "") {
-	            super();
-	            this._labelColors = Styles.buttonLabelColors;
-	            this._state = 0;
-	            this._autoSize = true;
-	            this._stateNum = Styles.buttonStateNum;
-	            this._stateChanged = false;
-	            this.skin = skin;
-	            this.label = label;
+	class Button extends UIComponent {
+	    constructor(skin = null, label = "") {
+	        super();
+	        this._labelColors = Styles.buttonLabelColors;
+	        this._state = 0;
+	        this._autoSize = true;
+	        this._stateNum = Styles.buttonStateNum;
+	        this._stateChanged = false;
+	        this.skin = skin;
+	        this.label = label;
+	    }
+	    destroy(destroyChild = true) {
+	        super.destroy(destroyChild);
+	        this._bitmap && this._bitmap.destroy();
+	        this._text && this._text.destroy(destroyChild);
+	        this._bitmap = null;
+	        this._text = null;
+	        this._clickHandler = null;
+	        this._labelColors = this._sources = this._strokeColors = null;
+	    }
+	    createChildren() {
+	        this.graphics = this._bitmap = new AutoBitmap();
+	    }
+	    createText() {
+	        if (!this._text) {
+	            this._text = new Laya.Text();
+	            this._text.overflow = Laya.Text.HIDDEN;
+	            this._text.align = "center";
+	            this._text.valign = "middle";
+	            this._text.width = this._width;
+	            this._text.height = this._height;
 	        }
-	        destroy(destroyChild = true) {
-	            super.destroy(destroyChild);
-	            this._bitmap && this._bitmap.destroy();
-	            this._text && this._text.destroy(destroyChild);
-	            this._bitmap = null;
-	            this._text = null;
-	            this._clickHandler = null;
-	            this._labelColors = this._sources = this._strokeColors = null;
+	    }
+	    initialize() {
+	        if (this._mouseState !== 1) {
+	            this.mouseEnabled = true;
+	            this._setBit(Laya.Const.HAS_MOUSE, true);
 	        }
-	        createChildren() {
-	            this.graphics = this._bitmap = new AutoBitmap();
+	        this._createListener(Laya.Event.MOUSE_OVER, this, this.onMouse, null, false, false);
+	        this._createListener(Laya.Event.MOUSE_OUT, this, this.onMouse, null, false, false);
+	        this._createListener(Laya.Event.MOUSE_DOWN, this, this.onMouse, null, false, false);
+	        this._createListener(Laya.Event.MOUSE_UP, this, this.onMouse, null, false, false);
+	        this._createListener(Laya.Event.CLICK, this, this.onMouse, null, false, false);
+	    }
+	    onMouse(e) {
+	        if (this.toggle === false && this._selected)
+	            return;
+	        if (e.type === Laya.Event.CLICK) {
+	            this.toggle && (this.selected = !this._selected);
+	            this._clickHandler && this._clickHandler.run();
+	            return;
 	        }
-	        createText() {
-	            if (!this._text) {
-	                this._text = new Laya.Text();
-	                this._text.overflow = Laya.Text.HIDDEN;
-	                this._text.align = "center";
-	                this._text.valign = "middle";
-	                this._text.width = this._width;
-	                this._text.height = this._height;
-	            }
-	        }
-	        initialize() {
-	            if (this._mouseState !== 1) {
-	                this.mouseEnabled = true;
-	                this._setBit(Laya.Const.HAS_MOUSE, true);
-	            }
-	            this._createListener(Laya.Event.MOUSE_OVER, this, this.onMouse, null, false, false);
-	            this._createListener(Laya.Event.MOUSE_OUT, this, this.onMouse, null, false, false);
-	            this._createListener(Laya.Event.MOUSE_DOWN, this, this.onMouse, null, false, false);
-	            this._createListener(Laya.Event.MOUSE_UP, this, this.onMouse, null, false, false);
-	            this._createListener(Laya.Event.CLICK, this, this.onMouse, null, false, false);
-	        }
-	        onMouse(e) {
-	            if (this.toggle === false && this._selected)
-	                return;
-	            if (e.type === Laya.Event.CLICK) {
-	                this.toggle && (this.selected = !this._selected);
-	                this._clickHandler && this._clickHandler.run();
-	                return;
-	            }
-	            !this._selected && (this.state = Button.stateMap[e.type]);
-	        }
-	        get skin() {
-	            return this._skin;
-	        }
-	        set skin(value) {
-	            if (this._skin != value) {
-	                this._skin = value;
-	                if (value) {
-	                    if (!Laya.Loader.getRes(value)) {
-	                        Laya.ILaya.loader.load(this._skin, Laya.Handler.create(this, this._skinLoaded), null, Laya.Loader.IMAGE, 1);
-	                    }
-	                    else {
-	                        this._skinLoaded();
-	                    }
+	        !this._selected && (this.state = Button.stateMap[e.type]);
+	    }
+	    get skin() {
+	        return this._skin;
+	    }
+	    set skin(value) {
+	        if (this._skin != value) {
+	            this._skin = value;
+	            if (value) {
+	                if (!Laya.Loader.getRes(value)) {
+	                    Laya.ILaya.loader.load(this._skin, Laya.Handler.create(this, this._skinLoaded), null, Laya.Loader.IMAGE, 1);
 	                }
 	                else {
 	                    this._skinLoaded();
 	                }
 	            }
-	        }
-	        _skinLoaded() {
-	            this.callLater(this.changeClips);
-	            this._setStateChanged();
-	            this._sizeChanged();
-	            this.event(Laya.Event.LOADED);
-	        }
-	        get stateNum() {
-	            return this._stateNum;
-	        }
-	        set stateNum(value) {
-	            if (typeof value == 'string') {
-	                value = parseInt(value);
-	            }
-	            if (this._stateNum != value) {
-	                this._stateNum = value < 1 ? 1 : value > 3 ? 3 : value;
-	                this.callLater(this.changeClips);
-	            }
-	        }
-	        changeClips() {
-	            var img = Laya.Loader.getRes(this._skin);
-	            if (!img) {
-	                console.log("lose skin", this._skin);
-	                return;
-	            }
-	            var width = img.sourceWidth;
-	            var height = img.sourceHeight / this._stateNum;
-	            img.$_GID || (img.$_GID = Laya.Utils.getGID());
-	            var key = img.$_GID + "-" + this._stateNum;
-	            var clips = Laya.WeakObject.I.get(key);
-	            if (!Laya.Utils.isOkTextureList(clips)) {
-	                clips = null;
-	            }
-	            if (clips)
-	                this._sources = clips;
 	            else {
-	                this._sources = [];
-	                if (this._stateNum === 1) {
-	                    this._sources.push(img);
-	                }
-	                else {
-	                    for (var i = 0; i < this._stateNum; i++) {
-	                        this._sources.push(Laya.Texture.createFromTexture(img, 0, height * i, width, height));
-	                    }
-	                }
-	                Laya.WeakObject.I.set(key, this._sources);
-	            }
-	            if (this._autoSize) {
-	                this._bitmap.width = this._width || width;
-	                this._bitmap.height = this._height || height;
-	                if (this._text) {
-	                    this._text.width = this._bitmap.width;
-	                    this._text.height = this._bitmap.height;
-	                }
-	            }
-	            else {
-	                this._text && (this._text.x = width);
-	            }
-	        }
-	        measureWidth() {
-	            this.runCallLater(this.changeClips);
-	            if (this._autoSize)
-	                return this._bitmap.width;
-	            this.runCallLater(this.changeState);
-	            return this._bitmap.width + (this._text ? this._text.width : 0);
-	        }
-	        measureHeight() {
-	            this.runCallLater(this.changeClips);
-	            return this._text ? Math.max(this._bitmap.height, this._text.height) : this._bitmap.height;
-	        }
-	        get label() {
-	            return this._text ? this._text.text : null;
-	        }
-	        set label(value) {
-	            if (!this._text && !value)
-	                return;
-	            this.createText();
-	            if (this._text.text != value) {
-	                value && !this._text.parent && this.addChild(this._text);
-	                this._text.text = (value + "").replace(/\\n/g, "\n");
-	                this._setStateChanged();
-	            }
-	        }
-	        get selected() {
-	            return this._selected;
-	        }
-	        set selected(value) {
-	            if (this._selected != value) {
-	                this._selected = value;
-	                this.state = this._selected ? 2 : 0;
-	                this.event(Laya.Event.CHANGE);
-	            }
-	        }
-	        get state() {
-	            return this._state;
-	        }
-	        set state(value) {
-	            if (this._state != value) {
-	                this._state = value;
-	                this._setStateChanged();
-	            }
-	        }
-	        changeState() {
-	            this._stateChanged = false;
-	            this.runCallLater(this.changeClips);
-	            var index = this._state < this._stateNum ? this._state : this._stateNum - 1;
-	            this._sources && (this._bitmap.source = this._sources[index]);
-	            if (this.label) {
-	                this._text.color = this._labelColors[index];
-	                if (this._strokeColors)
-	                    this._text.strokeColor = this._strokeColors[index];
-	            }
-	        }
-	        get labelColors() {
-	            return this._labelColors.join(",");
-	        }
-	        set labelColors(value) {
-	            this._labelColors = UIUtils.fillArray(Styles.buttonLabelColors, value, String);
-	            this._setStateChanged();
-	        }
-	        get strokeColors() {
-	            return this._strokeColors ? this._strokeColors.join(",") : "";
-	        }
-	        set strokeColors(value) {
-	            this._strokeColors = UIUtils.fillArray(Styles.buttonLabelColors, value, String);
-	            this._setStateChanged();
-	        }
-	        get labelPadding() {
-	            this.createText();
-	            return this._text.padding.join(",");
-	        }
-	        set labelPadding(value) {
-	            this.createText();
-	            this._text.padding = UIUtils.fillArray(Styles.labelPadding, value, Number);
-	        }
-	        get labelSize() {
-	            this.createText();
-	            return this._text.fontSize;
-	        }
-	        set labelSize(value) {
-	            this.createText();
-	            this._text.fontSize = value;
-	        }
-	        get labelStroke() {
-	            this.createText();
-	            return this._text.stroke;
-	        }
-	        set labelStroke(value) {
-	            this.createText();
-	            this._text.stroke = value;
-	        }
-	        get labelStrokeColor() {
-	            this.createText();
-	            return this._text.strokeColor;
-	        }
-	        set labelStrokeColor(value) {
-	            this.createText();
-	            this._text.strokeColor = value;
-	        }
-	        get labelBold() {
-	            this.createText();
-	            return this._text.bold;
-	        }
-	        set labelBold(value) {
-	            this.createText();
-	            this._text.bold = value;
-	        }
-	        get labelFont() {
-	            this.createText();
-	            return this._text.font;
-	        }
-	        set labelFont(value) {
-	            this.createText();
-	            this._text.font = value;
-	        }
-	        get labelAlign() {
-	            this.createText();
-	            return this._text.align;
-	        }
-	        set labelAlign(value) {
-	            this.createText();
-	            this._text.align = value;
-	        }
-	        get clickHandler() {
-	            return this._clickHandler;
-	        }
-	        set clickHandler(value) {
-	            this._clickHandler = value;
-	        }
-	        get text() {
-	            this.createText();
-	            return this._text;
-	        }
-	        get sizeGrid() {
-	            if (this._bitmap.sizeGrid)
-	                return this._bitmap.sizeGrid.join(",");
-	            return null;
-	        }
-	        set sizeGrid(value) {
-	            this._bitmap.sizeGrid = UIUtils.fillArray(Styles.defaultSizeGrid, value, Number);
-	        }
-	        set width(value) {
-	            super.set_width(value);
-	            if (this._autoSize) {
-	                this._bitmap.width = value;
-	                this._text && (this._text.width = value);
-	            }
-	        }
-	        get width() {
-	            return super.get_width();
-	        }
-	        set height(value) {
-	            super.set_height(value);
-	            if (this._autoSize) {
-	                this._bitmap.height = value;
-	                this._text && (this._text.height = value);
-	            }
-	        }
-	        get height() {
-	            return super.get_height();
-	        }
-	        set dataSource(value) {
-	            this._dataSource = value;
-	            if (typeof (value) == 'number' || typeof (value) == 'string')
-	                this.label = value + "";
-	            else
-	                super.set_dataSource(value);
-	        }
-	        get dataSource() {
-	            return super.get_dataSource();
-	        }
-	        get iconOffset() {
-	            return this._bitmap._offset ? this._bitmap._offset.join(",") : null;
-	        }
-	        set iconOffset(value) {
-	            if (value)
-	                this._bitmap._offset = UIUtils.fillArray([1, 1], value, Number);
-	            else
-	                this._bitmap._offset = [];
-	        }
-	        _setStateChanged() {
-	            if (!this._stateChanged) {
-	                this._stateChanged = true;
-	                this.callLater(this.changeState);
+	                this._skinLoaded();
 	            }
 	        }
 	    }
-	    Button.stateMap = { "mouseup": 0, "mouseover": 1, "mousedown": 2, "mouseout": 0 };
-	    return Button;
-	})();
+	    _skinLoaded() {
+	        this.callLater(this.changeClips);
+	        this._setStateChanged();
+	        this._sizeChanged();
+	        this.event(Laya.Event.LOADED);
+	    }
+	    get stateNum() {
+	        return this._stateNum;
+	    }
+	    set stateNum(value) {
+	        if (typeof value == 'string') {
+	            value = parseInt(value);
+	        }
+	        if (this._stateNum != value) {
+	            this._stateNum = value < 1 ? 1 : value > 3 ? 3 : value;
+	            this.callLater(this.changeClips);
+	        }
+	    }
+	    changeClips() {
+	        var img = Laya.Loader.getRes(this._skin);
+	        if (!img) {
+	            console.log("lose skin", this._skin);
+	            return;
+	        }
+	        var width = img.sourceWidth;
+	        var height = img.sourceHeight / this._stateNum;
+	        img.$_GID || (img.$_GID = Laya.Utils.getGID());
+	        var key = img.$_GID + "-" + this._stateNum;
+	        var clips = Laya.WeakObject.I.get(key);
+	        if (!Laya.Utils.isOkTextureList(clips)) {
+	            clips = null;
+	        }
+	        if (clips)
+	            this._sources = clips;
+	        else {
+	            this._sources = [];
+	            if (this._stateNum === 1) {
+	                this._sources.push(img);
+	            }
+	            else {
+	                for (var i = 0; i < this._stateNum; i++) {
+	                    this._sources.push(Laya.Texture.createFromTexture(img, 0, height * i, width, height));
+	                }
+	            }
+	            Laya.WeakObject.I.set(key, this._sources);
+	        }
+	        if (this._autoSize) {
+	            this._bitmap.width = this._width || width;
+	            this._bitmap.height = this._height || height;
+	            if (this._text) {
+	                this._text.width = this._bitmap.width;
+	                this._text.height = this._bitmap.height;
+	            }
+	        }
+	        else {
+	            this._text && (this._text.x = width);
+	        }
+	    }
+	    measureWidth() {
+	        this.runCallLater(this.changeClips);
+	        if (this._autoSize)
+	            return this._bitmap.width;
+	        this.runCallLater(this.changeState);
+	        return this._bitmap.width + (this._text ? this._text.width : 0);
+	    }
+	    measureHeight() {
+	        this.runCallLater(this.changeClips);
+	        return this._text ? Math.max(this._bitmap.height, this._text.height) : this._bitmap.height;
+	    }
+	    get label() {
+	        return this._text ? this._text.text : null;
+	    }
+	    set label(value) {
+	        if (!this._text && !value)
+	            return;
+	        this.createText();
+	        if (this._text.text != value) {
+	            value && !this._text.parent && this.addChild(this._text);
+	            this._text.text = (value + "").replace(/\\n/g, "\n");
+	            this._setStateChanged();
+	        }
+	    }
+	    get selected() {
+	        return this._selected;
+	    }
+	    set selected(value) {
+	        if (this._selected != value) {
+	            this._selected = value;
+	            this.state = this._selected ? 2 : 0;
+	            this.event(Laya.Event.CHANGE);
+	        }
+	    }
+	    get state() {
+	        return this._state;
+	    }
+	    set state(value) {
+	        if (this._state != value) {
+	            this._state = value;
+	            this._setStateChanged();
+	        }
+	    }
+	    changeState() {
+	        this._stateChanged = false;
+	        this.runCallLater(this.changeClips);
+	        var index = this._state < this._stateNum ? this._state : this._stateNum - 1;
+	        this._sources && (this._bitmap.source = this._sources[index]);
+	        if (this.label) {
+	            this._text.color = this._labelColors[index];
+	            if (this._strokeColors)
+	                this._text.strokeColor = this._strokeColors[index];
+	        }
+	    }
+	    get labelColors() {
+	        return this._labelColors.join(",");
+	    }
+	    set labelColors(value) {
+	        this._labelColors = UIUtils.fillArray(Styles.buttonLabelColors, value, String);
+	        this._setStateChanged();
+	    }
+	    get strokeColors() {
+	        return this._strokeColors ? this._strokeColors.join(",") : "";
+	    }
+	    set strokeColors(value) {
+	        this._strokeColors = UIUtils.fillArray(Styles.buttonLabelColors, value, String);
+	        this._setStateChanged();
+	    }
+	    get labelPadding() {
+	        this.createText();
+	        return this._text.padding.join(",");
+	    }
+	    set labelPadding(value) {
+	        this.createText();
+	        this._text.padding = UIUtils.fillArray(Styles.labelPadding, value, Number);
+	    }
+	    get labelSize() {
+	        this.createText();
+	        return this._text.fontSize;
+	    }
+	    set labelSize(value) {
+	        this.createText();
+	        this._text.fontSize = value;
+	    }
+	    get labelStroke() {
+	        this.createText();
+	        return this._text.stroke;
+	    }
+	    set labelStroke(value) {
+	        this.createText();
+	        this._text.stroke = value;
+	    }
+	    get labelStrokeColor() {
+	        this.createText();
+	        return this._text.strokeColor;
+	    }
+	    set labelStrokeColor(value) {
+	        this.createText();
+	        this._text.strokeColor = value;
+	    }
+	    get labelBold() {
+	        this.createText();
+	        return this._text.bold;
+	    }
+	    set labelBold(value) {
+	        this.createText();
+	        this._text.bold = value;
+	    }
+	    get labelFont() {
+	        this.createText();
+	        return this._text.font;
+	    }
+	    set labelFont(value) {
+	        this.createText();
+	        this._text.font = value;
+	    }
+	    get labelAlign() {
+	        this.createText();
+	        return this._text.align;
+	    }
+	    set labelAlign(value) {
+	        this.createText();
+	        this._text.align = value;
+	    }
+	    get clickHandler() {
+	        return this._clickHandler;
+	    }
+	    set clickHandler(value) {
+	        this._clickHandler = value;
+	    }
+	    get text() {
+	        this.createText();
+	        return this._text;
+	    }
+	    get sizeGrid() {
+	        if (this._bitmap.sizeGrid)
+	            return this._bitmap.sizeGrid.join(",");
+	        return null;
+	    }
+	    set sizeGrid(value) {
+	        this._bitmap.sizeGrid = UIUtils.fillArray(Styles.defaultSizeGrid, value, Number);
+	    }
+	    set width(value) {
+	        super.set_width(value);
+	        if (this._autoSize) {
+	            this._bitmap.width = value;
+	            this._text && (this._text.width = value);
+	        }
+	    }
+	    get width() {
+	        return super.get_width();
+	    }
+	    set height(value) {
+	        super.set_height(value);
+	        if (this._autoSize) {
+	            this._bitmap.height = value;
+	            this._text && (this._text.height = value);
+	        }
+	    }
+	    get height() {
+	        return super.get_height();
+	    }
+	    set dataSource(value) {
+	        this._dataSource = value;
+	        if (typeof (value) == 'number' || typeof (value) == 'string')
+	            this.label = value + "";
+	        else
+	            super.set_dataSource(value);
+	    }
+	    get dataSource() {
+	        return super.get_dataSource();
+	    }
+	    get iconOffset() {
+	        return this._bitmap._offset ? this._bitmap._offset.join(",") : null;
+	    }
+	    set iconOffset(value) {
+	        if (value)
+	            this._bitmap._offset = UIUtils.fillArray([1, 1], value, Number);
+	        else
+	            this._bitmap._offset = [];
+	    }
+	    _setStateChanged() {
+	        if (!this._stateChanged) {
+	            this._stateChanged = true;
+	            this.callLater(this.changeState);
+	        }
+	    }
+	}
+	Button.stateMap = { "mouseup": 0, "mouseover": 1, "mousedown": 2, "mouseout": 0 };
 	Laya.ILaya.regClass(Button);
 	Laya.ClassUtils.regClass("laya.ui.Button", Button);
 	Laya.ClassUtils.regClass("Laya.Button", Button);
@@ -1595,8 +1577,8 @@
 	Laya.ClassUtils.regClass("Laya.Clip", Clip);
 
 	class ColorPicker extends UIComponent {
-	    constructor() {
-	        super(...arguments);
+	    constructor(createChildren = true) {
+	        super(false);
 	        this._gridSize = 11;
 	        this._bgColor = "#ffffff";
 	        this._borderColor = "#000000";
@@ -1604,8 +1586,14 @@
 	        this._inputBgColor = "#efefef";
 	        this._colors = [];
 	        this._selectedColor = "#000000";
+	        if (createChildren) {
+	            this.preinitialize();
+	            this.createChildren();
+	            this.initialize();
+	        }
 	    }
 	    destroy(destroyChild = true) {
+	        Laya.ILaya.stage.off(Laya.Event.MOUSE_DOWN, this, this.removeColorBox);
 	        super.destroy(destroyChild);
 	        this._colorPanel && this._colorPanel.destroy(destroyChild);
 	        this._colorButton && this._colorButton.destroy(destroyChild);
@@ -1970,281 +1958,278 @@
 	Laya.ClassUtils.regClass("laya.ui.Label", Label);
 	Laya.ClassUtils.regClass("Laya.Label", Label);
 
-	let Slider = (() => {
-	    class Slider extends UIComponent {
-	        constructor(skin = null) {
-	            super();
-	            this.isVertical = true;
-	            this.showLabel = true;
-	            this._max = 100;
-	            this._min = 0;
-	            this._tick = 1;
-	            this._value = 0;
-	            if (!Slider.label) {
-	                Slider.label = new Label();
-	            }
-	            this.skin = skin;
+	class Slider extends UIComponent {
+	    constructor(skin = null) {
+	        super();
+	        this.isVertical = true;
+	        this.showLabel = true;
+	        this._max = 100;
+	        this._min = 0;
+	        this._tick = 1;
+	        this._value = 0;
+	        if (!Slider.label) {
+	            Slider.label = new Label();
 	        }
-	        destroy(destroyChild = true) {
-	            super.destroy(destroyChild);
-	            this._bg && this._bg.destroy(destroyChild);
-	            this._bar && this._bar.destroy(destroyChild);
-	            this._progress && this._progress.destroy(destroyChild);
-	            this._bg = null;
-	            this._bar = null;
-	            this._progress = null;
-	            this.changeHandler = null;
-	        }
-	        createChildren() {
-	            this.addChild(this._bg = new Image());
-	            this.addChild(this._bar = new Button());
-	        }
-	        initialize() {
-	            this._bar.on(Laya.Event.MOUSE_DOWN, this, this.onBarMouseDown);
-	            this._bg.sizeGrid = this._bar.sizeGrid = "4,4,4,4,0";
-	            if (this._progress)
-	                this._progress.sizeGrid = this._bar.sizeGrid;
-	            this.allowClickBack = true;
-	        }
-	        onBarMouseDown(e) {
-	            var Laya$1 = Laya.ILaya;
-	            this._globalSacle || (this._globalSacle = new Laya.Point());
-	            this._globalSacle.setTo(this.globalScaleX || 0.01, this.globalScaleY || 0.01);
-	            this._maxMove = this.isVertical ? (this.height - this._bar.height) : (this.width - this._bar.width);
-	            this._tx = Laya$1.stage.mouseX;
-	            this._ty = Laya$1.stage.mouseY;
-	            Laya$1.stage.on(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
-	            Laya$1.stage.once(Laya.Event.MOUSE_UP, this, this.mouseUp);
-	            Laya$1.stage.once(Laya.Event.MOUSE_OUT, this, this.mouseUp);
-	            this.showValueText();
-	        }
-	        showValueText() {
-	            if (this.showLabel) {
-	                var label = Slider.label;
-	                this.addChild(label);
-	                label.textField.changeText(this._value + "");
-	                if (this.isVertical) {
-	                    label.x = this._bar._x + 20;
-	                    label.y = (this._bar.height - label.height) * 0.5 + this._bar._y;
-	                }
-	                else {
-	                    label.y = this._bar._y - 20;
-	                    label.x = (this._bar.width - label.width) * 0.5 + this._bar._x;
-	                }
-	            }
-	        }
-	        hideValueText() {
-	            Slider.label && Slider.label.removeSelf();
-	        }
-	        mouseUp(e) {
-	            let stage = Laya.ILaya.stage;
-	            stage.off(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
-	            stage.off(Laya.Event.MOUSE_UP, this, this.mouseUp);
-	            stage.off(Laya.Event.MOUSE_OUT, this, this.mouseUp);
-	            this.sendChangeEvent(Laya.Event.CHANGED);
-	            this.hideValueText();
-	        }
-	        mouseMove(e) {
-	            let stage = Laya.ILaya.stage;
-	            var oldValue = this._value;
+	        this.skin = skin;
+	    }
+	    destroy(destroyChild = true) {
+	        super.destroy(destroyChild);
+	        this._bg && this._bg.destroy(destroyChild);
+	        this._bar && this._bar.destroy(destroyChild);
+	        this._progress && this._progress.destroy(destroyChild);
+	        this._bg = null;
+	        this._bar = null;
+	        this._progress = null;
+	        this.changeHandler = null;
+	    }
+	    createChildren() {
+	        this.addChild(this._bg = new Image());
+	        this.addChild(this._bar = new Button());
+	    }
+	    initialize() {
+	        this._bar.on(Laya.Event.MOUSE_DOWN, this, this.onBarMouseDown);
+	        this._bg.sizeGrid = this._bar.sizeGrid = "4,4,4,4,0";
+	        if (this._progress)
+	            this._progress.sizeGrid = this._bar.sizeGrid;
+	        this.allowClickBack = true;
+	    }
+	    onBarMouseDown(e) {
+	        var Laya$1 = Laya.ILaya;
+	        this._globalSacle || (this._globalSacle = new Laya.Point());
+	        this._globalSacle.setTo(this.globalScaleX || 0.01, this.globalScaleY || 0.01);
+	        this._maxMove = this.isVertical ? (this.height - this._bar.height) : (this.width - this._bar.width);
+	        this._tx = Laya$1.stage.mouseX;
+	        this._ty = Laya$1.stage.mouseY;
+	        Laya$1.stage.on(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
+	        Laya$1.stage.once(Laya.Event.MOUSE_UP, this, this.mouseUp);
+	        Laya$1.stage.once(Laya.Event.MOUSE_OUT, this, this.mouseUp);
+	        this.showValueText();
+	    }
+	    showValueText() {
+	        if (this.showLabel) {
+	            var label = Slider.label;
+	            this.addChild(label);
+	            label.textField.changeText(this._value + "");
 	            if (this.isVertical) {
-	                this._bar.y += (stage.mouseY - this._ty) / this._globalSacle.y;
-	                if (this._bar._y > this._maxMove)
-	                    this._bar.y = this._maxMove;
-	                else if (this._bar._y < 0)
-	                    this._bar.y = 0;
-	                this._value = this._bar._y / this._maxMove * (this._max - this._min) + this._min;
-	                if (this._progress)
-	                    this._progress.height = this._bar._y + 0.5 * this._bar.height;
+	                label.x = this._bar._x + 20;
+	                label.y = (this._bar.height - label.height) * 0.5 + this._bar._y;
 	            }
 	            else {
-	                this._bar.x += (stage.mouseX - this._tx) / this._globalSacle.x;
-	                if (this._bar._x > this._maxMove)
-	                    this._bar.x = this._maxMove;
-	                else if (this._bar._x < 0)
-	                    this._bar.x = 0;
-	                this._value = this._bar._x / this._maxMove * (this._max - this._min) + this._min;
-	                if (this._progress)
-	                    this._progress.width = this._bar._x + 0.5 * this._bar.width;
+	                label.y = this._bar._y - 20;
+	                label.x = (this._bar.width - label.width) * 0.5 + this._bar._x;
 	            }
-	            this._tx = stage.mouseX;
-	            this._ty = stage.mouseY;
-	            if (this._tick != 0) {
-	                var pow = Math.pow(10, (this._tick + "").length - 1);
-	                this._value = Math.round(Math.round(this._value / this._tick) * this._tick * pow) / pow;
+	        }
+	    }
+	    hideValueText() {
+	        Slider.label && Slider.label.removeSelf();
+	    }
+	    mouseUp(e) {
+	        let stage = Laya.ILaya.stage;
+	        stage.off(Laya.Event.MOUSE_MOVE, this, this.mouseMove);
+	        stage.off(Laya.Event.MOUSE_UP, this, this.mouseUp);
+	        stage.off(Laya.Event.MOUSE_OUT, this, this.mouseUp);
+	        this.sendChangeEvent(Laya.Event.CHANGED);
+	        this.hideValueText();
+	    }
+	    mouseMove(e) {
+	        let stage = Laya.ILaya.stage;
+	        var oldValue = this._value;
+	        if (this.isVertical) {
+	            this._bar.y += (stage.mouseY - this._ty) / this._globalSacle.y;
+	            if (this._bar._y > this._maxMove)
+	                this._bar.y = this._maxMove;
+	            else if (this._bar._y < 0)
+	                this._bar.y = 0;
+	            this._value = this._bar._y / this._maxMove * (this._max - this._min) + this._min;
+	            if (this._progress)
+	                this._progress.height = this._bar._y + 0.5 * this._bar.height;
+	        }
+	        else {
+	            this._bar.x += (stage.mouseX - this._tx) / this._globalSacle.x;
+	            if (this._bar._x > this._maxMove)
+	                this._bar.x = this._maxMove;
+	            else if (this._bar._x < 0)
+	                this._bar.x = 0;
+	            this._value = this._bar._x / this._maxMove * (this._max - this._min) + this._min;
+	            if (this._progress)
+	                this._progress.width = this._bar._x + 0.5 * this._bar.width;
+	        }
+	        this._tx = stage.mouseX;
+	        this._ty = stage.mouseY;
+	        if (this._tick != 0) {
+	            var pow = Math.pow(10, (this._tick + "").length - 1);
+	            this._value = Math.round(Math.round(this._value / this._tick) * this._tick * pow) / pow;
+	        }
+	        if (this._value != oldValue) {
+	            this.sendChangeEvent();
+	        }
+	        this.showValueText();
+	    }
+	    sendChangeEvent(type = Laya.Event.CHANGE) {
+	        this.event(type);
+	        this.changeHandler && this.changeHandler.runWith(this._value);
+	    }
+	    get skin() {
+	        return this._skin;
+	    }
+	    set skin(value) {
+	        if (this._skin != value) {
+	            this._skin = value;
+	            if (this._skin && !Laya.Loader.getRes(this._skin)) {
+	                Laya.ILaya.loader.load([this._skin, this._skin.replace(".png", "$bar.png")], Laya.Handler.create(this, this._skinLoaded));
 	            }
+	            else {
+	                this._skinLoaded();
+	            }
+	        }
+	    }
+	    _skinLoaded() {
+	        this._bg.skin = this._skin;
+	        this._bar.skin = this._skin.replace(".png", "$bar.png");
+	        var progressSkin = this._skin.replace(".png", "$progress.png");
+	        if (Laya.Loader.getRes(progressSkin)) {
+	            if (!this._progress) {
+	                this.addChild(this._progress = new Image());
+	                this._progress.sizeGrid = this._bar.sizeGrid;
+	                this.setChildIndex(this._progress, 1);
+	            }
+	            this._progress.skin = progressSkin;
+	        }
+	        this.setBarPoint();
+	        this.callLater(this.changeValue);
+	        this._sizeChanged();
+	        this.event(Laya.Event.LOADED);
+	    }
+	    setBarPoint() {
+	        if (this.isVertical)
+	            this._bar.x = Math.round((this._bg.width - this._bar.width) * 0.5);
+	        else
+	            this._bar.y = Math.round((this._bg.height - this._bar.height) * 0.5);
+	    }
+	    measureWidth() {
+	        return Math.max(this._bg.width, this._bar.width);
+	    }
+	    measureHeight() {
+	        return Math.max(this._bg.height, this._bar.height);
+	    }
+	    _sizeChanged() {
+	        super._sizeChanged();
+	        if (this.isVertical)
+	            this._bg.height = this.height;
+	        else
+	            this._bg.width = this.width;
+	        this.setBarPoint();
+	        this.changeValue();
+	    }
+	    get sizeGrid() {
+	        return this._bg.sizeGrid;
+	    }
+	    set sizeGrid(value) {
+	        this._bg.sizeGrid = value;
+	        this._bar.sizeGrid = value;
+	        if (this._progress)
+	            this._progress.sizeGrid = this._bar.sizeGrid;
+	    }
+	    setSlider(min, max, value) {
+	        this._value = -1;
+	        this._min = min;
+	        this._max = max > min ? max : min;
+	        this.value = value < min ? min : value > max ? max : value;
+	    }
+	    get tick() {
+	        return this._tick;
+	    }
+	    set tick(value) {
+	        if (this._tick != value) {
+	            this._tick = value;
+	            this.callLater(this.changeValue);
+	        }
+	    }
+	    changeValue() {
+	        if (this.tick != 0) {
+	            var pow = Math.pow(10, (this._tick + "").length - 1);
+	            this._value = Math.round(Math.round(this._value / this._tick) * this._tick * pow) / pow;
+	        }
+	        this._value = this._value > this._max ? this._max : this._value < this._min ? this._min : this._value;
+	        var num = this._max - this._min;
+	        if (num === 0)
+	            num = 1;
+	        if (this.isVertical) {
+	            this._bar.y = (this._value - this._min) / num * (this.height - this._bar.height);
+	            if (this._progress)
+	                this._progress.height = this._bar._y + 0.5 * this._bar.height;
+	        }
+	        else {
+	            this._bar.x = (this._value - this._min) / num * (this.width - this._bar.width);
+	            if (this._progress)
+	                this._progress.width = this._bar._x + 0.5 * this._bar.width;
+	        }
+	    }
+	    get max() {
+	        return this._max;
+	    }
+	    set max(value) {
+	        if (this._max != value) {
+	            this._max = value;
+	            this.callLater(this.changeValue);
+	        }
+	    }
+	    get min() {
+	        return this._min;
+	    }
+	    set min(value) {
+	        if (this._min != value) {
+	            this._min = value;
+	            this.callLater(this.changeValue);
+	        }
+	    }
+	    get value() {
+	        return this._value;
+	    }
+	    set value(num) {
+	        if (this._value != num) {
+	            var oldValue = this._value;
+	            this._value = num;
+	            this.changeValue();
 	            if (this._value != oldValue) {
 	                this.sendChangeEvent();
 	            }
-	            this.showValueText();
-	        }
-	        sendChangeEvent(type = Laya.Event.CHANGE) {
-	            this.event(type);
-	            this.changeHandler && this.changeHandler.runWith(this._value);
-	        }
-	        get skin() {
-	            return this._skin;
-	        }
-	        set skin(value) {
-	            if (this._skin != value) {
-	                this._skin = value;
-	                if (this._skin && !Laya.Loader.getRes(this._skin)) {
-	                    Laya.ILaya.loader.load([this._skin, this._skin.replace(".png", "$bar.png")], Laya.Handler.create(this, this._skinLoaded));
-	                }
-	                else {
-	                    this._skinLoaded();
-	                }
-	            }
-	        }
-	        _skinLoaded() {
-	            this._bg.skin = this._skin;
-	            this._bar.skin = this._skin.replace(".png", "$bar.png");
-	            var progressSkin = this._skin.replace(".png", "$progress.png");
-	            if (Laya.Loader.getRes(progressSkin)) {
-	                if (!this._progress) {
-	                    this.addChild(this._progress = new Image());
-	                    this._progress.sizeGrid = this._bar.sizeGrid;
-	                    this.setChildIndex(this._progress, 1);
-	                }
-	                this._progress.skin = progressSkin;
-	            }
-	            this.setBarPoint();
-	            this.callLater(this.changeValue);
-	            this._sizeChanged();
-	            this.event(Laya.Event.LOADED);
-	        }
-	        setBarPoint() {
-	            if (this.isVertical)
-	                this._bar.x = Math.round((this._bg.width - this._bar.width) * 0.5);
-	            else
-	                this._bar.y = Math.round((this._bg.height - this._bar.height) * 0.5);
-	        }
-	        measureWidth() {
-	            return Math.max(this._bg.width, this._bar.width);
-	        }
-	        measureHeight() {
-	            return Math.max(this._bg.height, this._bar.height);
-	        }
-	        _sizeChanged() {
-	            super._sizeChanged();
-	            if (this.isVertical)
-	                this._bg.height = this.height;
-	            else
-	                this._bg.width = this.width;
-	            this.setBarPoint();
-	            this.changeValue();
-	        }
-	        get sizeGrid() {
-	            return this._bg.sizeGrid;
-	        }
-	        set sizeGrid(value) {
-	            this._bg.sizeGrid = value;
-	            this._bar.sizeGrid = value;
-	            if (this._progress)
-	                this._progress.sizeGrid = this._bar.sizeGrid;
-	        }
-	        setSlider(min, max, value) {
-	            this._value = -1;
-	            this._min = min;
-	            this._max = max > min ? max : min;
-	            this.value = value < min ? min : value > max ? max : value;
-	        }
-	        get tick() {
-	            return this._tick;
-	        }
-	        set tick(value) {
-	            if (this._tick != value) {
-	                this._tick = value;
-	                this.callLater(this.changeValue);
-	            }
-	        }
-	        changeValue() {
-	            if (this.tick != 0) {
-	                var pow = Math.pow(10, (this._tick + "").length - 1);
-	                this._value = Math.round(Math.round(this._value / this._tick) * this._tick * pow) / pow;
-	            }
-	            this._value = this._value > this._max ? this._max : this._value < this._min ? this._min : this._value;
-	            var num = this._max - this._min;
-	            if (num === 0)
-	                num = 1;
-	            if (this.isVertical) {
-	                this._bar.y = (this._value - this._min) / num * (this.height - this._bar.height);
-	                if (this._progress)
-	                    this._progress.height = this._bar._y + 0.5 * this._bar.height;
-	            }
-	            else {
-	                this._bar.x = (this._value - this._min) / num * (this.width - this._bar.width);
-	                if (this._progress)
-	                    this._progress.width = this._bar._x + 0.5 * this._bar.width;
-	            }
-	        }
-	        get max() {
-	            return this._max;
-	        }
-	        set max(value) {
-	            if (this._max != value) {
-	                this._max = value;
-	                this.callLater(this.changeValue);
-	            }
-	        }
-	        get min() {
-	            return this._min;
-	        }
-	        set min(value) {
-	            if (this._min != value) {
-	                this._min = value;
-	                this.callLater(this.changeValue);
-	            }
-	        }
-	        get value() {
-	            return this._value;
-	        }
-	        set value(num) {
-	            if (this._value != num) {
-	                var oldValue = this._value;
-	                this._value = num;
-	                this.changeValue();
-	                if (this._value != oldValue) {
-	                    this.sendChangeEvent();
-	                }
-	            }
-	        }
-	        get allowClickBack() {
-	            return this._allowClickBack;
-	        }
-	        set allowClickBack(value) {
-	            if (this._allowClickBack != value) {
-	                this._allowClickBack = value;
-	                if (value)
-	                    this._bg.on(Laya.Event.MOUSE_DOWN, this, this.onBgMouseDown);
-	                else
-	                    this._bg.off(Laya.Event.MOUSE_DOWN, this, this.onBgMouseDown);
-	            }
-	        }
-	        onBgMouseDown(e) {
-	            var point = this._bg.getMousePoint();
-	            if (this.isVertical)
-	                this.value = point.y / (this.height - this._bar.height) * (this._max - this._min) + this._min;
-	            else
-	                this.value = point.x / (this.width - this._bar.width) * (this._max - this._min) + this._min;
-	        }
-	        set dataSource(value) {
-	            this._dataSource = value;
-	            if (typeof (value) == 'number' || typeof (value) == 'string')
-	                this.value = Number(value);
-	            else
-	                super.dataSource = value;
-	        }
-	        get dataSource() {
-	            return super.dataSource;
-	        }
-	        get bar() {
-	            return this._bar;
 	        }
 	    }
-	    Slider.label = null;
-	    return Slider;
-	})();
+	    get allowClickBack() {
+	        return this._allowClickBack;
+	    }
+	    set allowClickBack(value) {
+	        if (this._allowClickBack != value) {
+	            this._allowClickBack = value;
+	            if (value)
+	                this._bg.on(Laya.Event.MOUSE_DOWN, this, this.onBgMouseDown);
+	            else
+	                this._bg.off(Laya.Event.MOUSE_DOWN, this, this.onBgMouseDown);
+	        }
+	    }
+	    onBgMouseDown(e) {
+	        var point = this._bg.getMousePoint();
+	        if (this.isVertical)
+	            this.value = point.y / (this.height - this._bar.height) * (this._max - this._min) + this._min;
+	        else
+	            this.value = point.x / (this.width - this._bar.width) * (this._max - this._min) + this._min;
+	    }
+	    set dataSource(value) {
+	        this._dataSource = value;
+	        if (typeof (value) == 'number' || typeof (value) == 'string')
+	            this.value = Number(value);
+	        else
+	            super.dataSource = value;
+	    }
+	    get dataSource() {
+	        return super.dataSource;
+	    }
+	    get bar() {
+	        return this._bar;
+	    }
+	}
+	Slider.label = null;
 	Laya.ILaya.regClass(Slider);
 	Laya.ClassUtils.regClass("laya.ui.Slider", Slider);
 	Laya.ClassUtils.regClass("Laya.Slider", Slider);
@@ -5195,108 +5180,102 @@
 	Laya.ClassUtils.regClass("laya.ui.LayoutBox", LayoutBox);
 	Laya.ClassUtils.regClass("Laya.LayoutBox", LayoutBox);
 
-	let HBox = (() => {
-	    class HBox extends LayoutBox {
-	        sortItem(items) {
-	            if (items)
-	                items.sort(function (a, b) { return a.x - b.x; });
-	        }
-	        set height(value) {
-	            if (this._height != value) {
-	                super.height = value;
-	                this.callLater(this.changeItems);
-	            }
-	        }
-	        get height() {
-	            return super.height;
-	        }
-	        changeItems() {
-	            this._itemChanged = false;
-	            var items = [];
-	            var maxHeight = 0;
-	            for (var i = 0, n = this.numChildren; i < n; i++) {
-	                var item = this.getChildAt(i);
-	                if (item) {
-	                    items.push(item);
-	                    maxHeight = this._height ? this._height : Math.max(maxHeight, item.height * item.scaleY);
-	                }
-	            }
-	            this.sortItem(items);
-	            var left = 0;
-	            for (i = 0, n = items.length; i < n; i++) {
-	                item = items[i];
-	                item.x = left;
-	                left += item.width * item.scaleX + this._space;
-	                if (this._align == HBox.TOP) {
-	                    item.y = 0;
-	                }
-	                else if (this._align == HBox.MIDDLE) {
-	                    item.y = (maxHeight - item.height * item.scaleY) * 0.5;
-	                }
-	                else if (this._align == HBox.BOTTOM) {
-	                    item.y = maxHeight - item.height * item.scaleY;
-	                }
-	            }
-	            this._sizeChanged();
+	class HBox extends LayoutBox {
+	    sortItem(items) {
+	        if (items)
+	            items.sort(function (a, b) { return a.x - b.x; });
+	    }
+	    set height(value) {
+	        if (this._height != value) {
+	            super.height = value;
+	            this.callLater(this.changeItems);
 	        }
 	    }
-	    HBox.NONE = "none";
-	    HBox.TOP = "top";
-	    HBox.MIDDLE = "middle";
-	    HBox.BOTTOM = "bottom";
-	    return HBox;
-	})();
+	    get height() {
+	        return super.height;
+	    }
+	    changeItems() {
+	        this._itemChanged = false;
+	        var items = [];
+	        var maxHeight = 0;
+	        for (var i = 0, n = this.numChildren; i < n; i++) {
+	            var item = this.getChildAt(i);
+	            if (item) {
+	                items.push(item);
+	                maxHeight = this._height ? this._height : Math.max(maxHeight, item.height * item.scaleY);
+	            }
+	        }
+	        this.sortItem(items);
+	        var left = 0;
+	        for (i = 0, n = items.length; i < n; i++) {
+	            item = items[i];
+	            item.x = left;
+	            left += item.width * item.scaleX + this._space;
+	            if (this._align == HBox.TOP) {
+	                item.y = 0;
+	            }
+	            else if (this._align == HBox.MIDDLE) {
+	                item.y = (maxHeight - item.height * item.scaleY) * 0.5;
+	            }
+	            else if (this._align == HBox.BOTTOM) {
+	                item.y = maxHeight - item.height * item.scaleY;
+	            }
+	        }
+	        this._sizeChanged();
+	    }
+	}
+	HBox.NONE = "none";
+	HBox.TOP = "top";
+	HBox.MIDDLE = "middle";
+	HBox.BOTTOM = "bottom";
 	Laya.ILaya.regClass(HBox);
 	Laya.ClassUtils.regClass("laya.ui.HBox", HBox);
 	Laya.ClassUtils.regClass("Laya.HBox", HBox);
 
-	let VBox = (() => {
-	    class VBox extends LayoutBox {
-	        set width(value) {
-	            if (this._width != value) {
-	                super.width = value;
-	                this.callLater(this.changeItems);
-	            }
-	        }
-	        get width() {
-	            return super.width;
-	        }
-	        changeItems() {
-	            this._itemChanged = false;
-	            var items = [];
-	            var maxWidth = 0;
-	            for (var i = 0, n = this.numChildren; i < n; i++) {
-	                var item = this.getChildAt(i);
-	                if (item) {
-	                    items.push(item);
-	                    maxWidth = this._width ? this._width : Math.max(maxWidth, item.width * item.scaleX);
-	                }
-	            }
-	            this.sortItem(items);
-	            var top = 0;
-	            for (i = 0, n = items.length; i < n; i++) {
-	                item = items[i];
-	                item.y = top;
-	                top += item.height * item.scaleY + this._space;
-	                if (this._align == VBox.LEFT) {
-	                    item.x = 0;
-	                }
-	                else if (this._align == VBox.CENTER) {
-	                    item.x = (maxWidth - item.width * item.scaleX) * 0.5;
-	                }
-	                else if (this._align == VBox.RIGHT) {
-	                    item.x = maxWidth - item.width * item.scaleX;
-	                }
-	            }
-	            this._sizeChanged();
+	class VBox extends LayoutBox {
+	    set width(value) {
+	        if (this._width != value) {
+	            super.width = value;
+	            this.callLater(this.changeItems);
 	        }
 	    }
-	    VBox.NONE = "none";
-	    VBox.LEFT = "left";
-	    VBox.CENTER = "center";
-	    VBox.RIGHT = "right";
-	    return VBox;
-	})();
+	    get width() {
+	        return super.width;
+	    }
+	    changeItems() {
+	        this._itemChanged = false;
+	        var items = [];
+	        var maxWidth = 0;
+	        for (var i = 0, n = this.numChildren; i < n; i++) {
+	            var item = this.getChildAt(i);
+	            if (item) {
+	                items.push(item);
+	                maxWidth = this._width ? this._width : Math.max(maxWidth, item.width * item.scaleX);
+	            }
+	        }
+	        this.sortItem(items);
+	        var top = 0;
+	        for (i = 0, n = items.length; i < n; i++) {
+	            item = items[i];
+	            item.y = top;
+	            top += item.height * item.scaleY + this._space;
+	            if (this._align == VBox.LEFT) {
+	                item.x = 0;
+	            }
+	            else if (this._align == VBox.CENTER) {
+	                item.x = (maxWidth - item.width * item.scaleX) * 0.5;
+	            }
+	            else if (this._align == VBox.RIGHT) {
+	                item.x = maxWidth - item.width * item.scaleX;
+	            }
+	        }
+	        this._sizeChanged();
+	    }
+	}
+	VBox.NONE = "none";
+	VBox.LEFT = "left";
+	VBox.CENTER = "center";
+	VBox.RIGHT = "right";
 	Laya.ILaya.regClass(VBox);
 	Laya.ClassUtils.regClass("laya.ui.VBox", VBox);
 	Laya.ClassUtils.regClass("Laya.VBox", VBox);
@@ -5466,151 +5445,145 @@
 	Laya.ClassUtils.regClass("laya.ui.FontClip", FontClip);
 	Laya.ClassUtils.regClass("Laya.FontClip", FontClip);
 
-	let View = (() => {
-	    class View extends Laya.Scene {
-	        constructor() {
-	            super(false);
-	            this._watchMap = {};
-	            this._anchorX = NaN;
-	            this._anchorY = NaN;
-	            this._widget = Widget.EMPTY;
-	            this.createChildren();
-	        }
-	        static __init__() {
-	            Laya.ILaya.ClassUtils.regShortClassName([ViewStack, Button, TextArea, ColorPicker, Box, ScaleBox, CheckBox, Clip, ComboBox, UIComponent,
-	                HScrollBar, HSlider, Image, Label, List, Panel, ProgressBar, Radio, RadioGroup, ScrollBar, Slider, Tab, TextInput, View,
-	                VScrollBar, VSlider, Tree, HBox, VBox, Laya.Animation, Laya.Text, FontClip]);
-	        }
-	        static regComponent(key, compClass) {
-	            Laya.ILaya.ClassUtils.regClass(key, compClass);
-	        }
-	        static regViewRuntime(key, compClass) {
-	            Laya.ILaya.ClassUtils.regClass(key, compClass);
-	        }
-	        static regUI(url, json) {
-	            Laya.ILaya.loader.cacheRes(url, json);
-	        }
-	        destroy(destroyChild = true) {
-	            this._watchMap = null;
-	            super.destroy(destroyChild);
-	        }
-	        changeData(key) {
-	            var arr = this._watchMap[key];
-	            if (!arr)
-	                return;
-	            for (var i = 0, n = arr.length; i < n; i++) {
-	                var watcher = arr[i];
-	                watcher.exe(this);
-	            }
-	        }
-	        get top() {
-	            return this._widget.top;
-	        }
-	        set top(value) {
-	            if (value != this._widget.top) {
-	                this._getWidget().top = value;
-	            }
-	        }
-	        get bottom() {
-	            return this._widget.bottom;
-	        }
-	        set bottom(value) {
-	            if (value != this._widget.bottom) {
-	                this._getWidget().bottom = value;
-	            }
-	        }
-	        get left() {
-	            return this._widget.left;
-	        }
-	        set left(value) {
-	            if (value != this._widget.left) {
-	                this._getWidget().left = value;
-	            }
-	        }
-	        get right() {
-	            return this._widget.right;
-	        }
-	        set right(value) {
-	            if (value != this._widget.right) {
-	                this._getWidget().right = value;
-	            }
-	        }
-	        get centerX() {
-	            return this._widget.centerX;
-	        }
-	        set centerX(value) {
-	            if (value != this._widget.centerX) {
-	                this._getWidget().centerX = value;
-	            }
-	        }
-	        get centerY() {
-	            return this._widget.centerY;
-	        }
-	        set centerY(value) {
-	            if (value != this._widget.centerY) {
-	                this._getWidget().centerY = value;
-	            }
-	        }
-	        get anchorX() {
-	            return this._anchorX;
-	        }
-	        set anchorX(value) {
-	            if (this._anchorX != value) {
-	                this._anchorX = value;
-	                this.callLater(this._sizeChanged);
-	            }
-	        }
-	        get anchorY() {
-	            return this._anchorY;
-	        }
-	        set anchorY(value) {
-	            if (this._anchorY != value) {
-	                this._anchorY = value;
-	                this.callLater(this._sizeChanged);
-	            }
-	        }
-	        _sizeChanged() {
-	            if (!isNaN(this._anchorX))
-	                this.pivotX = this.anchorX * this.width;
-	            if (!isNaN(this._anchorY))
-	                this.pivotY = this.anchorY * this.height;
-	            this.event(Laya.Event.RESIZE);
-	        }
-	        _getWidget() {
-	            this._widget === Widget.EMPTY && (this._widget = this.addComponent(Widget));
-	            return this._widget;
-	        }
-	        loadUI(path) {
-	            var uiView = View.uiMap[path];
-	            View.uiMap && this.createView(uiView);
-	        }
-	        get dataSource() {
-	            return this._dataSource;
-	        }
-	        set dataSource(value) {
-	            this._dataSource = value;
-	            for (var name in value) {
-	                var comp = this.getChildByName(name);
-	                if (comp instanceof UIComponent)
-	                    comp.dataSource = value[name];
-	                else if (name in this && !(this[name] instanceof Function))
-	                    this[name] = value[name];
-	            }
+	class View extends Laya.Scene {
+	    constructor() {
+	        super(false);
+	        this._watchMap = {};
+	        this._anchorX = NaN;
+	        this._anchorY = NaN;
+	        this._widget = Widget.EMPTY;
+	        this.createChildren();
+	    }
+	    static __init__() {
+	        Laya.ILaya.ClassUtils.regShortClassName([ViewStack, Button, TextArea, ColorPicker, Box, ScaleBox, CheckBox, Clip, ComboBox, UIComponent,
+	            HScrollBar, HSlider, Image, Label, List, Panel, ProgressBar, Radio, RadioGroup, ScrollBar, Slider, Tab, TextInput, View,
+	            VScrollBar, VSlider, Tree, HBox, VBox, Laya.Animation, Laya.Text, FontClip]);
+	    }
+	    static regComponent(key, compClass) {
+	        Laya.ILaya.ClassUtils.regClass(key, compClass);
+	    }
+	    static regViewRuntime(key, compClass) {
+	        Laya.ILaya.ClassUtils.regClass(key, compClass);
+	    }
+	    static regUI(url, json) {
+	        Laya.ILaya.loader.cacheRes(url, json);
+	    }
+	    destroy(destroyChild = true) {
+	        this._watchMap = null;
+	        super.destroy(destroyChild);
+	    }
+	    changeData(key) {
+	        var arr = this._watchMap[key];
+	        if (!arr)
+	            return;
+	        for (var i = 0, n = arr.length; i < n; i++) {
+	            var watcher = arr[i];
+	            watcher.exe(this);
 	        }
 	    }
-	    View.uiMap = {};
-	    return View;
-	})();
+	    get top() {
+	        return this._widget.top;
+	    }
+	    set top(value) {
+	        if (value != this._widget.top) {
+	            this._getWidget().top = value;
+	        }
+	    }
+	    get bottom() {
+	        return this._widget.bottom;
+	    }
+	    set bottom(value) {
+	        if (value != this._widget.bottom) {
+	            this._getWidget().bottom = value;
+	        }
+	    }
+	    get left() {
+	        return this._widget.left;
+	    }
+	    set left(value) {
+	        if (value != this._widget.left) {
+	            this._getWidget().left = value;
+	        }
+	    }
+	    get right() {
+	        return this._widget.right;
+	    }
+	    set right(value) {
+	        if (value != this._widget.right) {
+	            this._getWidget().right = value;
+	        }
+	    }
+	    get centerX() {
+	        return this._widget.centerX;
+	    }
+	    set centerX(value) {
+	        if (value != this._widget.centerX) {
+	            this._getWidget().centerX = value;
+	        }
+	    }
+	    get centerY() {
+	        return this._widget.centerY;
+	    }
+	    set centerY(value) {
+	        if (value != this._widget.centerY) {
+	            this._getWidget().centerY = value;
+	        }
+	    }
+	    get anchorX() {
+	        return this._anchorX;
+	    }
+	    set anchorX(value) {
+	        if (this._anchorX != value) {
+	            this._anchorX = value;
+	            this.callLater(this._sizeChanged);
+	        }
+	    }
+	    get anchorY() {
+	        return this._anchorY;
+	    }
+	    set anchorY(value) {
+	        if (this._anchorY != value) {
+	            this._anchorY = value;
+	            this.callLater(this._sizeChanged);
+	        }
+	    }
+	    _sizeChanged() {
+	        if (!isNaN(this._anchorX))
+	            this.pivotX = this.anchorX * this.width;
+	        if (!isNaN(this._anchorY))
+	            this.pivotY = this.anchorY * this.height;
+	        this.event(Laya.Event.RESIZE);
+	    }
+	    _getWidget() {
+	        this._widget === Widget.EMPTY && (this._widget = this.addComponent(Widget));
+	        return this._widget;
+	    }
+	    loadUI(path) {
+	        var uiView = View.uiMap[path];
+	        View.uiMap && this.createView(uiView);
+	    }
+	    get dataSource() {
+	        return this._dataSource;
+	    }
+	    set dataSource(value) {
+	        this._dataSource = value;
+	        for (var name in value) {
+	            var comp = this.getChildByName(name);
+	            if (comp instanceof UIComponent)
+	                comp.dataSource = value[name];
+	            else if (name in this && !(this[name] instanceof Function))
+	                this[name] = value[name];
+	        }
+	    }
+	}
+	View.uiMap = {};
 	Laya.ILaya.regClass(View);
 	Laya.ClassUtils.regClass("laya.ui.View", View);
 	Laya.ClassUtils.regClass("Laya.View", View);
 
-	let IUI = (() => {
-	    class IUI {
-	    }
-	    IUI.Dialog = null;
-	    return IUI;
-	})();
+	class IUI {
+	}
+	IUI.Dialog = null;
 
 	class DialogManager extends Laya.Sprite {
 	    constructor() {
@@ -5763,227 +5736,221 @@
 	Laya.ClassUtils.regClass("laya.ui.DialogManager", DialogManager);
 	Laya.ClassUtils.regClass("Laya.DialogManager", DialogManager);
 
-	let Dialog = (() => {
-	    class Dialog extends View {
-	        constructor() {
-	            super();
-	            this.isShowEffect = true;
-	            this.isPopupCenter = true;
-	            this.popupEffect = Dialog.manager.popupEffectHandler;
-	            this.closeEffect = Dialog.manager.closeEffectHandler;
-	            this._dealDragArea();
-	            this.on(Laya.Event.CLICK, this, this._onClick);
-	        }
-	        static get manager() {
-	            return Dialog._manager = Dialog._manager || new DialogManager();
-	        }
-	        static set manager(value) {
-	            Dialog._manager = value;
-	        }
-	        _dealDragArea() {
-	            var dragTarget = this.getChildByName("drag");
-	            if (dragTarget) {
-	                this.dragArea = dragTarget._x + "," + dragTarget._y + "," + dragTarget.width + "," + dragTarget.height;
-	                dragTarget.removeSelf();
-	            }
-	        }
-	        get dragArea() {
-	            if (this._dragArea)
-	                return this._dragArea.toString();
-	            return null;
-	        }
-	        set dragArea(value) {
-	            if (value) {
-	                var a = UIUtils.fillArray([0, 0, 0, 0], value, Number);
-	                this._dragArea = new Laya.Rectangle(a[0], a[1], a[2], a[3]);
-	                this.on(Laya.Event.MOUSE_DOWN, this, this._onMouseDown);
-	            }
-	            else {
-	                this._dragArea = null;
-	                this.off(Laya.Event.MOUSE_DOWN, this, this._onMouseDown);
-	            }
-	        }
-	        _onMouseDown(e) {
-	            var point = this.getMousePoint();
-	            if (this._dragArea.contains(point.x, point.y))
-	                this.startDrag();
-	            else
-	                this.stopDrag();
-	        }
-	        _onClick(e) {
-	            var btn = e.target;
-	            if (btn) {
-	                switch (btn.name) {
-	                    case Dialog.CLOSE:
-	                    case Dialog.CANCEL:
-	                    case Dialog.SURE:
-	                    case Dialog.NO:
-	                    case Dialog.OK:
-	                    case Dialog.YES:
-	                        this.close(btn.name);
-	                        return;
-	                }
-	            }
-	        }
-	        open(closeOther = true, param = null) {
-	            this._dealDragArea();
-	            this._param = param;
-	            Dialog.manager.open(this, closeOther, this.isShowEffect);
-	            Dialog.manager.lock(false);
-	        }
-	        close(type = null) {
-	            this.closeType = type;
-	            Dialog.manager.close(this);
-	        }
-	        destroy(destroyChild = true) {
-	            this.closeHandler = null;
-	            this.popupEffect = null;
-	            this.closeEffect = null;
-	            this._dragArea = null;
-	            super.destroy(destroyChild);
-	        }
-	        show(closeOther = false, showEffect = true) {
-	            this._open(false, closeOther, showEffect);
-	        }
-	        popup(closeOther = false, showEffect = true) {
-	            this._open(true, closeOther, showEffect);
-	        }
-	        _open(modal, closeOther, showEffect) {
-	            this.isModal = modal;
-	            this.isShowEffect = showEffect;
-	            Dialog.manager.lock(true);
-	            this.open(closeOther);
-	        }
-	        get isPopup() {
-	            return this.parent != null;
-	        }
-	        set zOrder(value) {
-	            super.zOrder = value;
-	            Dialog.manager._checkMask();
-	        }
-	        get zOrder() {
-	            return super.zOrder;
-	        }
-	        static setLockView(view) {
-	            Dialog.manager.setLockView(view);
-	        }
-	        static lock(value) {
-	            Dialog.manager.lock(value);
-	        }
-	        static closeAll() {
-	            Dialog.manager.closeAll();
-	        }
-	        static getDialogsByGroup(group) {
-	            return Dialog.manager.getDialogsByGroup(group);
-	        }
-	        static closeByGroup(group) {
-	            return Dialog.manager.closeByGroup(group);
+	class Dialog extends View {
+	    constructor() {
+	        super();
+	        this.isShowEffect = true;
+	        this.isPopupCenter = true;
+	        this.popupEffect = Dialog.manager.popupEffectHandler;
+	        this.closeEffect = Dialog.manager.closeEffectHandler;
+	        this._dealDragArea();
+	        this.on(Laya.Event.CLICK, this, this._onClick);
+	    }
+	    static get manager() {
+	        return Dialog._manager = Dialog._manager || new DialogManager();
+	    }
+	    static set manager(value) {
+	        Dialog._manager = value;
+	    }
+	    _dealDragArea() {
+	        var dragTarget = this.getChildByName("drag");
+	        if (dragTarget) {
+	            this.dragArea = dragTarget._x + "," + dragTarget._y + "," + dragTarget.width + "," + dragTarget.height;
+	            dragTarget.removeSelf();
 	        }
 	    }
-	    Dialog.CLOSE = "close";
-	    Dialog.CANCEL = "cancel";
-	    Dialog.SURE = "sure";
-	    Dialog.NO = "no";
-	    Dialog.YES = "yes";
-	    Dialog.OK = "ok";
-	    return Dialog;
-	})();
+	    get dragArea() {
+	        if (this._dragArea)
+	            return this._dragArea.toString();
+	        return null;
+	    }
+	    set dragArea(value) {
+	        if (value) {
+	            var a = UIUtils.fillArray([0, 0, 0, 0], value, Number);
+	            this._dragArea = new Laya.Rectangle(a[0], a[1], a[2], a[3]);
+	            this.on(Laya.Event.MOUSE_DOWN, this, this._onMouseDown);
+	        }
+	        else {
+	            this._dragArea = null;
+	            this.off(Laya.Event.MOUSE_DOWN, this, this._onMouseDown);
+	        }
+	    }
+	    _onMouseDown(e) {
+	        var point = this.getMousePoint();
+	        if (this._dragArea.contains(point.x, point.y))
+	            this.startDrag();
+	        else
+	            this.stopDrag();
+	    }
+	    _onClick(e) {
+	        var btn = e.target;
+	        if (btn) {
+	            switch (btn.name) {
+	                case Dialog.CLOSE:
+	                case Dialog.CANCEL:
+	                case Dialog.SURE:
+	                case Dialog.NO:
+	                case Dialog.OK:
+	                case Dialog.YES:
+	                    this.close(btn.name);
+	                    return;
+	            }
+	        }
+	    }
+	    open(closeOther = true, param = null) {
+	        this._dealDragArea();
+	        this._param = param;
+	        Dialog.manager.open(this, closeOther, this.isShowEffect);
+	        Dialog.manager.lock(false);
+	    }
+	    close(type = null) {
+	        this.closeType = type;
+	        Dialog.manager.close(this);
+	    }
+	    destroy(destroyChild = true) {
+	        this.closeHandler = null;
+	        this.popupEffect = null;
+	        this.closeEffect = null;
+	        this._dragArea = null;
+	        super.destroy(destroyChild);
+	    }
+	    show(closeOther = false, showEffect = true) {
+	        this._open(false, closeOther, showEffect);
+	    }
+	    popup(closeOther = false, showEffect = true) {
+	        this._open(true, closeOther, showEffect);
+	    }
+	    _open(modal, closeOther, showEffect) {
+	        this.isModal = modal;
+	        this.isShowEffect = showEffect;
+	        Dialog.manager.lock(true);
+	        this.open(closeOther);
+	    }
+	    get isPopup() {
+	        return this.parent != null;
+	    }
+	    set zOrder(value) {
+	        super.zOrder = value;
+	        Dialog.manager._checkMask();
+	    }
+	    get zOrder() {
+	        return super.zOrder;
+	    }
+	    static setLockView(view) {
+	        Dialog.manager.setLockView(view);
+	    }
+	    static lock(value) {
+	        Dialog.manager.lock(value);
+	    }
+	    static closeAll() {
+	        Dialog.manager.closeAll();
+	    }
+	    static getDialogsByGroup(group) {
+	        return Dialog.manager.getDialogsByGroup(group);
+	    }
+	    static closeByGroup(group) {
+	        return Dialog.manager.closeByGroup(group);
+	    }
+	}
+	Dialog.CLOSE = "close";
+	Dialog.CANCEL = "cancel";
+	Dialog.SURE = "sure";
+	Dialog.NO = "no";
+	Dialog.YES = "yes";
+	Dialog.OK = "ok";
 	IUI.Dialog = Dialog;
 	Laya.ILaya.regClass(Dialog);
 	Laya.ClassUtils.regClass("laya.ui.Dialog", Dialog);
 	Laya.ClassUtils.regClass("Laya.Dialog", Dialog);
 
-	let TipManager = (() => {
-	    class TipManager extends UIComponent {
-	        constructor() {
-	            super();
-	            this._tipBox = new UIComponent();
-	            this._tipBox.addChild(this._tipText = new Laya.Text());
-	            this._tipText.x = this._tipText.y = 5;
-	            this._tipText.color = TipManager.tipTextColor;
-	            this._defaultTipHandler = this._showDefaultTip;
-	            Laya.ILaya.stage.on(UIEvent.SHOW_TIP, this, this._onStageShowTip);
-	            Laya.ILaya.stage.on(UIEvent.HIDE_TIP, this, this._onStageHideTip);
-	            this.zOrder = 1100;
-	        }
-	        _onStageHideTip(e) {
-	            Laya.ILaya.timer.clear(this, this._showTip);
-	            this.closeAll();
-	            this.removeSelf();
-	        }
-	        _onStageShowTip(data) {
-	            Laya.ILaya.timer.once(TipManager.tipDelay, this, this._showTip, [data], true);
-	        }
-	        _showTip(tip) {
-	            if (typeof (tip) == 'string') {
-	                var text = String(tip);
-	                if (Boolean(text)) {
-	                    this._defaultTipHandler(text);
-	                }
-	            }
-	            else if (tip instanceof Laya.Handler) {
-	                tip.run();
-	            }
-	            else if (tip instanceof Function) {
-	                tip.apply();
-	            }
-	            {
-	                Laya.ILaya.stage.on(Laya.Event.MOUSE_MOVE, this, this._onStageMouseMove);
-	                Laya.ILaya.stage.on(Laya.Event.MOUSE_DOWN, this, this._onStageMouseDown);
-	            }
-	            this._onStageMouseMove(null);
-	        }
-	        _onStageMouseDown(e) {
-	            this.closeAll();
-	        }
-	        _onStageMouseMove(e) {
-	            this._showToStage(this, TipManager.offsetX, TipManager.offsetY);
-	        }
-	        _showToStage(dis, offX = 0, offY = 0) {
-	            var rec = dis.getBounds();
-	            dis.x = Laya.ILaya.stage.mouseX + offX;
-	            dis.y = Laya.ILaya.stage.mouseY + offY;
-	            if (dis._x + rec.width > Laya.ILaya.stage.width) {
-	                dis.x -= rec.width + offX;
-	            }
-	            if (dis._y + rec.height > Laya.ILaya.stage.height) {
-	                dis.y -= rec.height + offY;
+	class TipManager extends UIComponent {
+	    constructor() {
+	        super();
+	        this._tipBox = new UIComponent();
+	        this._tipBox.addChild(this._tipText = new Laya.Text());
+	        this._tipText.x = this._tipText.y = 5;
+	        this._tipText.color = TipManager.tipTextColor;
+	        this._defaultTipHandler = this._showDefaultTip;
+	        Laya.ILaya.stage.on(UIEvent.SHOW_TIP, this, this._onStageShowTip);
+	        Laya.ILaya.stage.on(UIEvent.HIDE_TIP, this, this._onStageHideTip);
+	        this.zOrder = 1100;
+	    }
+	    _onStageHideTip(e) {
+	        Laya.ILaya.timer.clear(this, this._showTip);
+	        this.closeAll();
+	        this.removeSelf();
+	    }
+	    _onStageShowTip(data) {
+	        Laya.ILaya.timer.once(TipManager.tipDelay, this, this._showTip, [data], true);
+	    }
+	    _showTip(tip) {
+	        if (typeof (tip) == 'string') {
+	            var text = String(tip);
+	            if (Boolean(text)) {
+	                this._defaultTipHandler(text);
 	            }
 	        }
-	        closeAll() {
-	            Laya.ILaya.timer.clear(this, this._showTip);
-	            Laya.ILaya.stage.off(Laya.Event.MOUSE_MOVE, this, this._onStageMouseMove);
-	            Laya.ILaya.stage.off(Laya.Event.MOUSE_DOWN, this, this._onStageMouseDown);
-	            this.removeChildren();
+	        else if (tip instanceof Laya.Handler) {
+	            tip.run();
 	        }
-	        showDislayTip(tip) {
-	            this.addChild(tip);
-	            this._showToStage(this);
-	            Laya.ILaya.stage.addChild(this);
+	        else if (tip instanceof Function) {
+	            tip.apply();
 	        }
-	        _showDefaultTip(text) {
-	            this._tipText.text = text;
-	            var g = this._tipBox.graphics;
-	            g.clear(true);
-	            g.drawRect(0, 0, this._tipText.width + 10, this._tipText.height + 10, TipManager.tipBackColor);
-	            this.addChild(this._tipBox);
-	            this._showToStage(this);
-	            Laya.ILaya.stage.addChild(this);
+	        {
+	            Laya.ILaya.stage.on(Laya.Event.MOUSE_MOVE, this, this._onStageMouseMove);
+	            Laya.ILaya.stage.on(Laya.Event.MOUSE_DOWN, this, this._onStageMouseDown);
 	        }
-	        get defaultTipHandler() {
-	            return this._defaultTipHandler;
+	        this._onStageMouseMove(null);
+	    }
+	    _onStageMouseDown(e) {
+	        this.closeAll();
+	    }
+	    _onStageMouseMove(e) {
+	        this._showToStage(this, TipManager.offsetX, TipManager.offsetY);
+	    }
+	    _showToStage(dis, offX = 0, offY = 0) {
+	        var rec = dis.getBounds();
+	        dis.x = Laya.ILaya.stage.mouseX + offX;
+	        dis.y = Laya.ILaya.stage.mouseY + offY;
+	        if (dis._x + rec.width > Laya.ILaya.stage.width) {
+	            dis.x -= rec.width + offX;
 	        }
-	        set defaultTipHandler(value) {
-	            this._defaultTipHandler = value;
+	        if (dis._y + rec.height > Laya.ILaya.stage.height) {
+	            dis.y -= rec.height + offY;
 	        }
 	    }
-	    TipManager.offsetX = 10;
-	    TipManager.offsetY = 15;
-	    TipManager.tipTextColor = "#ffffff";
-	    TipManager.tipBackColor = "#111111";
-	    TipManager.tipDelay = 200;
-	    return TipManager;
-	})();
+	    closeAll() {
+	        Laya.ILaya.timer.clear(this, this._showTip);
+	        Laya.ILaya.stage.off(Laya.Event.MOUSE_MOVE, this, this._onStageMouseMove);
+	        Laya.ILaya.stage.off(Laya.Event.MOUSE_DOWN, this, this._onStageMouseDown);
+	        this.removeChildren();
+	    }
+	    showDislayTip(tip) {
+	        this.addChild(tip);
+	        this._showToStage(this);
+	        Laya.ILaya.stage.addChild(this);
+	    }
+	    _showDefaultTip(text) {
+	        this._tipText.text = text;
+	        var g = this._tipBox.graphics;
+	        g.clear(true);
+	        g.drawRect(0, 0, this._tipText.width + 10, this._tipText.height + 10, TipManager.tipBackColor);
+	        this.addChild(this._tipBox);
+	        this._showToStage(this);
+	        Laya.ILaya.stage.addChild(this);
+	    }
+	    get defaultTipHandler() {
+	        return this._defaultTipHandler;
+	    }
+	    set defaultTipHandler(value) {
+	        this._defaultTipHandler = value;
+	    }
+	}
+	TipManager.offsetX = 10;
+	TipManager.offsetY = 15;
+	TipManager.tipTextColor = "#ffffff";
+	TipManager.tipBackColor = "#111111";
+	TipManager.tipDelay = 200;
 	Laya.ILaya.regClass(TipManager);
 	Laya.ClassUtils.regClass("laya.ui.TipManager", TipManager);
 	Laya.ClassUtils.regClass("Laya.TipManager", TipManager);

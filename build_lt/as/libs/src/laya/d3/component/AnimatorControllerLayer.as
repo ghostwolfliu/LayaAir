@@ -52,24 +52,24 @@ package laya.d3.component {
 		public function AnimatorControllerLayer(name:String = undefined){}
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		public function _getReferenceCount():Number{
 			return null;
 		}
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		public function _addReference(count:Number):void{}
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		public function _removeReference(count:Number):void{}
 
 		/**
-		 * @implements 
+		 * @implements IReferenceCounter
 		 */
 		public function _clearReference():void{}
 

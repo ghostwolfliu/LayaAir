@@ -170,6 +170,13 @@ package laya.utils {
 		}
 
 		/**
+		 * @private 为兼容平台后缀名不能用的特殊兼容TODO：
+		 */
+		public static function getFilecompatibleExtension(path:String):String{
+			return null;
+		}
+
+		/**
 		 * 获取指定区域内相对于窗口左上角的transform。
 		 * @param coordinateSpace 坐标空间，不能是Stage引用
 		 * @param x 相对于coordinateSpace的x坐标
