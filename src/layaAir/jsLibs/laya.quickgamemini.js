@@ -872,12 +872,12 @@ window.qgMiniGame = function (exports, Laya) {
 	        }
 	    }
 	    static _transformImgUrl(url, type, thisLoader) {
-	        if (QGMiniAdapter.isZiYu) {
+	        if (QGMiniAdapter.isZiYu || MiniFileMgr.isLocalNativeFile(url)) {
 	            thisLoader._loadImage(url, false);
 	            return;
 	        }
-	        if (MiniFileMgr.isLocalNativeFile(url)) {
-	            thisLoader._loadImage(url, false);
+	        if (!QGMiniAdapter.autoCacheFile) {
+	            thisLoader._loadImage(url);
 	            return;
 	        }
 	        if (!MiniFileMgr.isLocalNativeFile(url) && !MiniFileMgr.getFileInfo(Laya.URL.formatURL(url))) {
@@ -1059,10 +1059,11 @@ window.qgMiniGame = function (exports, Laya) {
 	    static onMkdirCallBack(errorCode, data) {
 	        if (!errorCode) {
 	            MiniFileMgr.filesListObj = JSON.parse(data.data);
-	            MiniFileMgr.fakeObj = MiniFileMgr.filesListObj || {};
+	            MiniFileMgr.fakeObj = JSON.parse(data.data) || {};
 	        }
 	        else {
-	            MiniFileMgr.fakeObj = MiniFileMgr.filesListObj = {};
+	            MiniFileMgr.fakeObj = {};
+	            MiniFileMgr.filesListObj = {};
 	        }
 	        MiniFileMgr.fs.readdir({
 	            dirPath: MiniFileMgr.fileNativeDir,
