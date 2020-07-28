@@ -64,6 +64,7 @@ import { DynamicBatchManager } from "../../graphics/DynamicBatchManager";
 import { CannonPhysicsSimulation } from "../../physicsCannon/CannonPhysicsSimulation";
 import { CannonPhysicsSettings } from "../../physicsCannon/CannonPhysicsSettings";
 import { CannonPhysicsComponent } from "../../physicsCannon/CannonPhysicsComponent";
+import { VideoTexture } from "../../../resource/videoTexture";
 
 /**
  * 环境光模式
@@ -438,6 +439,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 
 	set reflection(value: TextureCube) {
 		if (this._reflection != value) {
+			value._addReference();
 			this._shaderValues.setTexture(Scene3D.REFLECTIONTEXTURE, value || TextureCube.blackTexture);
 			this._reflection = value;
 		}
@@ -657,6 +659,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		this._clearScript();
 		this._updateScript();
 		Animator._update(this);
+		VideoTexture._update();
 		this._lateUpdateScript();
 	}
 
@@ -1309,6 +1312,8 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		this._cameraPool = null;
 		this._octree = null;
 		this._physicsSimulation && this._physicsSimulation._destroy();
+		this._reflection._removeReference();
+		this._reflection = null;
 		Loader.clearRes(this.url);
 	}
 

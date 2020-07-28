@@ -70,6 +70,7 @@ varying vec3 v_Normal;
 #ifdef TILINGOFFSET
 	uniform vec4 u_TilingOffset;
 #endif
+
 #ifdef SIMPLEBONE
 	#ifdef GPU_INSTANCE
 		attribute vec4 a_SimpleTextureParams;
@@ -80,6 +81,7 @@ varying vec3 v_Normal;
 
 	uniform float u_SimpleAnimatorTextureSize; 
 #endif
+
 
 #ifdef SIMPLEBONE
 mat4 loadMatFromTexture(float FramePos,int boneIndices,float offset)
@@ -104,6 +106,7 @@ mat4 loadMatFromTexture(float FramePos,int boneIndices,float offset)
 	return m;
 }
 #endif
+
 void main()
 {
 	vec4 position;
@@ -116,7 +119,6 @@ void main()
 			#else
 				currentPixelPos = u_SimpleAnimatorParams.x+u_SimpleAnimatorParams.y;
 			#endif
-			
 			float offset = 1.0/u_SimpleAnimatorTextureSize;
 			skinTransform =  loadMatFromTexture(currentPixelPos,int(a_BoneIndices.x),offset) * a_BoneWeights.x;
 			skinTransform += loadMatFromTexture(currentPixelPos,int(a_BoneIndices.y),offset) * a_BoneWeights.y;
