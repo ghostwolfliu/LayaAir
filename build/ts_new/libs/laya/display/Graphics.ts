@@ -49,7 +49,7 @@ export class Graphics {
     /**@internal */
     _one: any = null;
     /**@internal */
-    _render: Function = this._renderEmpty;
+    _render: (sprite: Sprite, context: Context, x: number, y: number)=>void = this._renderEmpty;
     /**@private */
     private _cmds: any[] = null;
     /**@private */

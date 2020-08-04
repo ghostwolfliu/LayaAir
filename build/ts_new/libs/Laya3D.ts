@@ -329,6 +329,8 @@ export class Laya3D {
 		createMap["lav"] = [Laya3D.AVATAR, Avatar._parse];
 		createMap["ltc"] = [Laya3D.TEXTURECUBE, TextureCube._parse];
 		createMap["ltcb"] = [Laya3D.TEXTURECUBEBIN, TextureCube._parseBin];
+		//为其他平台添加的兼容代码,临时TODO：
+		createMap["ltcb.ls"] = [Laya3D.TEXTURECUBEBIN, TextureCube._parseBin];
 
 		var parserMap: any = Loader.parserMap;
 		parserMap[Laya3D.HIERARCHY] = Laya3D._loadHierarchy;
