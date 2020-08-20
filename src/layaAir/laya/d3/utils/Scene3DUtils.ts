@@ -60,6 +60,7 @@ export class Scene3DUtils {
 				node = new TrailSprite3D();
 				break;
 			default:
+				console.error("未定义的类型", nodeData);
 				throw new Error("Utils3D:unidentified class type in (.lh) file.");
 		}
 

@@ -149,7 +149,7 @@ class Main {
                     if (this.filterArr.indexOf(files[i]) == -1)
                         yield this.checkAllDir(fileUrl);
                 }
-                else {
+                else if(this.createAS) {
                     if (this.filterArr.indexOf(files[i]) == -1) {
                         if (fileUrl.indexOf(".d.ts") != -1) {
                             //读取文件
@@ -194,8 +194,10 @@ class Main {
                             return;
                         }
                         console.log("create d.ts success");
-                        console.log("start copy layajs.exe");
-                        yield gulp.src(this.layajsURL).pipe(gulp.dest(path.join(this.outfile, this.outfileAS, "../../")));
+                        if (this.createAS) {
+                            console.log("start copy layajs.exe");
+                            yield gulp.src(this.layajsURL).pipe(gulp.dest(path.join(this.outfile, this.outfileAS, "../../")));
+                        }
                         console.log("start copy jsc");
                         yield gulp.src("./jsc/**/*.*").pipe(gulp.dest(path.join(this.outfile, this.outfileAS)));
                         console.log("copy success!");

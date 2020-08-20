@@ -20,7 +20,7 @@ export class PrimitiveMesh {
 	}
 
 	/**
-	 * @internal
+	 * 创建自定义网格
 	 */
 	static _createMesh(vertexDeclaration: VertexDeclaration, vertices: Float32Array, indices: Uint16Array): Mesh {
 		var gl: WebGLRenderingContext = LayaGL.instance;

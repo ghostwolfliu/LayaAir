@@ -1,6 +1,6 @@
 @echo off
-if exist ..\..\build (
-   rmdir /s/q ..\..\build
+if exist ..\..\build_lt (
+   rmdir /s/q ..\..\build_lt
 ) 
 
 if exist ..\..\bin\tsc\layaAir (

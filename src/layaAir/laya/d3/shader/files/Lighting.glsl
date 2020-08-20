@@ -274,7 +274,7 @@ LayaLight layaSpotLightToLight(in vec3 pos,in vec3 normal, in SpotLight light,in
 	float dl=dot(normalize(light.direction),normalLightVec);
 	dl*=smoothstep(cosAngles[0],cosAngles[1],dl);
 	attenuate *= LayaAttenuation(lightVec, 1.0/light.range)*dl;
-	relight.dir = normalLightVec;
+	relight.dir = lightVec;
 	relight.color = light.color*attenuate;
 	return relight;
 }
