@@ -130,7 +130,6 @@ export class ShaderInit3D {
 			'u_ViewProjection': Shader3D.PERIOD_CAMERA,
 
 			'u_ReflectTexture': Shader3D.PERIOD_SCENE,
-			'u_ReflectIntensity': Shader3D.PERIOD_SCENE,
 			'u_FogStart': Shader3D.PERIOD_SCENE,
 			'u_FogRange': Shader3D.PERIOD_SCENE,
 			'u_FogColor': Shader3D.PERIOD_SCENE,

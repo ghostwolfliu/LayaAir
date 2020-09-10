@@ -4,5 +4,5 @@ node_modules
 .cache
 /src/generateDoc/doc
 .vscode/chrome
-/src/platform
-/package-lock.json
+/src/platform/package-lock.json
+build

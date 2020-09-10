@@ -138,16 +138,18 @@ export class Scene extends Sprite {
         else this.removeSelf();
     }
 
-    /**关闭完成后，调用此方法（如果有关闭动画，则在动画完成后执行）
+    /**
+     * 关闭完成后，调用此方法（如果有关闭动画，则在动画完成后执行）
      * @param type 如果是点击默认关闭按钮触发，则传入关闭按钮的名字(name)，否则为null。
      */
     onClosed(type: string = null): void {
         //trace("onClosed");
     }
 
-    /**@inheritDoc 
+    /**
+     * @inheritDoc 
      * @override
-    */
+     */
     destroy(destroyChild: boolean = true): void {
         this._idMap = null;
         super.destroy(destroyChild);
@@ -268,9 +270,10 @@ export class Scene extends Sprite {
         return Scene._root;
     }
 
-    /**场景时钟
+    /**
+     * 场景时钟
      * @override
-    */
+     */
     get timer(): Timer {
         return this._timer || ILaya.timer;
     }
@@ -311,7 +314,7 @@ export class Scene extends Sprite {
             }
             if (scene && scene instanceof Node) {
                 scene.url = url;
-                if (!scene._getBit(Const.NOT_READY)) {
+                if (scene._viewCreated) {
                     complete && complete.runWith(scene);
                 } else {
                     scene.on("onViewCreated", null, function (): void {

@@ -65,6 +65,7 @@ import { CannonPhysicsSimulation } from "../../physicsCannon/CannonPhysicsSimula
 import { CannonPhysicsSettings } from "../../physicsCannon/CannonPhysicsSettings";
 import { CannonPhysicsComponent } from "../../physicsCannon/CannonPhysicsComponent";
 import { VideoTexture } from "../../../resource/videoTexture";
+import { ReflectionProbeManager } from "../reflectionProbe/ReflectionProbeManager";
 
 /**
  * 环境光模式
@@ -123,8 +124,6 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 	static AMBIENTSHBG: number = Shader3D.propertyNameToID("u_AmbientSHBg");
 	static AMBIENTSHBB: number = Shader3D.propertyNameToID("u_AmbientSHBb");
 	static AMBIENTSHC: number = Shader3D.propertyNameToID("u_AmbientSHC");
-	static REFLECTIONPROBE: number = Shader3D.propertyNameToID("u_ReflectionProbe");
-	static REFLECTIONCUBE_HDR_PARAMS: number = Shader3D.propertyNameToID("u_ReflectCubeHDRParams");
 
 	//------------------legacy lighting-------------------------------
 	static LIGHTDIRECTION: number = Shader3D.propertyNameToID("u_DirectionLight.direction");
@@ -141,7 +140,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 	//------------------legacy lighting-------------------------------
 
 	static AMBIENTCOLOR: number = Shader3D.propertyNameToID("u_AmbientColor");
-	static REFLECTIONTEXTURE: number = Shader3D.propertyNameToID("u_ReflectTexture");
+
 	static TIME: number = Shader3D.propertyNameToID("u_Time");
 
 	/** @internal */
@@ -288,6 +287,10 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 	_needClearScriptPool: boolean = false;
 	/**	@internal */
 	_reflectionCubeHDRParams: Vector4 = new Vector4();
+	/** @internal */
+	_reflectionProbeManager:ReflectionProbeManager = new ReflectionProbeManager();
+
+
 
 	/** 当前创建精灵所属遮罩层。*/
 	currentCreationLayer: number = Math.pow(2, 0);
@@ -440,8 +443,10 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 	set reflection(value: TextureCube) {
 		if (this._reflection != value) {
 			value._addReference();
-			this._shaderValues.setTexture(Scene3D.REFLECTIONTEXTURE, value || TextureCube.blackTexture);
-			this._reflection = value;
+			this._reflectionProbeManager.sceneReflectionProbe = value;
+			this._reflection = value || TextureCube.blackTexture;
+			this._reflectionProbeManager._needUpdateAllRender = true;
+
 		}
 	}
 
@@ -458,6 +463,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 			if (this._reflectionDecodeFormat == TextureDecodeFormat.RGBM)
 				this._reflectionCubeHDRParams.x *= 5.0;//5.0 is RGBM param
 			this._reflectionDecodeFormat = value;
+			this._reflectionProbeManager.sceneReflectionCubeHDRParam = this._reflectionCubeHDRParams;
 		}
 	}
 
@@ -474,6 +480,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		if (this._reflectionDecodeFormat == TextureDecodeFormat.RGBM)
 			this._reflectionCubeHDRParams.x *= 5.0;//5.0 is RGBM param
 		this._reflectionIntensity = value;
+		this._reflectionProbeManager.sceneReflectionCubeHDRParam = this._reflectionCubeHDRParams;
 	}
 
 	/**
@@ -566,7 +573,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		for (var i: number = 0; i < 7; i++)
 			this._shCoefficients[i] = new Vector4();
 
-		this._shaderValues.setVector(Scene3D.REFLECTIONCUBE_HDR_PARAMS, this._reflectionCubeHDRParams);
+		this._reflectionProbeManager.sceneReflectionCubeHDRParam = this._reflectionCubeHDRParams;
 
 		if (Render.supportWebGLPlusCulling) {//[NATIVE]
 			this._cullingBufferIndices = new Int32Array(1024);
@@ -660,6 +667,10 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 		this._updateScript();
 		Animator._update(this);
 		VideoTexture._update();
+		if(this._reflectionProbeManager._needUpdateAllRender)
+			this._reflectionProbeManager.updateAllRenderObjects(this._renders);
+		else
+			this._reflectionProbeManager.update();
 		this._lateUpdateScript();
 	}
 
@@ -1247,6 +1258,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 				this._cullingBufferIndices[indexInList] = render._cullingBufferIndex;
 			}
 		}
+		render._addReflectionProbeUpdate();
 	}
 
 	/**
@@ -1322,6 +1334,7 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 			}
 		}
 		this._lightmaps = null;
+		this._reflectionProbeManager.destroy();
 		Loader.clearRes(this.url);
 	}
 
@@ -1384,7 +1397,8 @@ export class Scene3D extends Sprite implements ISubmit, ICreateResource {
 
 	set customReflection(value: TextureCube) {
 		if (this._reflection != value) {
-			this._shaderValues.setTexture(Scene3D.REFLECTIONTEXTURE, value || TextureCube.blackTexture);
+			value._addReference();
+			this._reflectionProbeManager.sceneReflectionProbe = value;
 			this._reflection = value;
 		}
 	}
