@@ -5978,7 +5978,10 @@
 	        Laya.Laya.timer.clear(this, this._onLoop);
 	    }
 	    _onLoop() {
-	        this.texture.bitmap.loadImageSource(window.sharedCanvas);
+	        let _canvas = window.sharedCanvas;
+	        this.texture.sourceWidth = _canvas.width;
+	        this.texture.sourceHeight = _canvas.height;
+	        this.texture.bitmap.loadImageSource(_canvas);
 	    }
 	    set width(value) {
 	        super.width = value;
@@ -6076,4 +6079,5 @@
 	exports.WXOpenDataViewer = WXOpenDataViewer;
 	exports.Widget = Widget;
 
-}(window.Laya = window.Laya || {}, Laya));
+}(this.Laya = this.Laya || {}, Laya));
+//# sourceMappingURL=laya.ui.js.map

@@ -630,4 +630,5 @@
     exports.ParticleTemplateBase = ParticleTemplateBase;
     exports.ParticleTemplateWebGL = ParticleTemplateWebGL;
 
-}(window.Laya = window.Laya || {}, Laya));
+}(this.Laya = this.Laya || {}, Laya));
+//# sourceMappingURL=laya.particle.js.map

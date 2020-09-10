@@ -4163,4 +4163,5 @@
     exports.Transform = Transform;
     exports.UVTools = UVTools;
 
-}(window.Laya = window.Laya || {}, Laya));
+}(this.Laya = this.Laya || {}, Laya));
+//# sourceMappingURL=laya.ani.js.map

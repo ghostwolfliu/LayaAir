@@ -1598,4 +1598,5 @@
     exports.TileTexSet = TileTexSet;
     exports.TiledMap = TiledMap;
 
-}(window.Laya = window.Laya || {}, Laya));
+}(this.Laya = this.Laya || {}, Laya));
+//# sourceMappingURL=laya.tiledmap.js.map

@@ -321,11 +321,12 @@ gulp.task('buildJS', async function () {
                 typescript({
                     tsconfig: "./layaAir/tsconfig.json",
                     check: false,
-                    tsconfigOverride: { compilerOptions: { removeComments: true } }
+                    tsconfigOverride: { compilerOptions: { removeComments: true } },
+                    sourceMap: true,
                 }),
                 glsl({
                     include: /.*(.glsl|.vs|.fs)$/,
-                    sourceMap: false,
+                    sourceMap: true,
                     compress: false
                 }),
             ]
@@ -337,7 +338,7 @@ gulp.task('buildJS', async function () {
                 format: 'iife',
                 outro: 'exports.static=_static;',  //由于static是关键字，无法通过ts编译。AS需要这个函数，临时强插
                 name: 'Laya',
-                sourcemap: false
+                sourcemap: true
             });
         }
         else {
@@ -345,7 +346,7 @@ gulp.task('buildJS', async function () {
                 file: packsDef[i].out,
                 format: 'iife',
                 name: 'Laya',
-                sourcemap: false,
+                sourcemap: true,
                 extend: true,
                 globals: { 'Laya': 'Laya' }
             });

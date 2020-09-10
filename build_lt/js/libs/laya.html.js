@@ -1546,4 +1546,5 @@
     exports.Layout = Layout;
     exports.LayoutLine = LayoutLine;
 
-}(window.Laya = window.Laya || {}, Laya));
+}(this.Laya = this.Laya || {}, Laya));
+//# sourceMappingURL=laya.html.js.map
