@@ -19,6 +19,9 @@ import { RenderContext3D } from "./render/RenderContext3D";
 import { RenderElement } from "./render/RenderElement";
 import { SkinnedMeshSprite3DShaderDeclaration } from "./SkinnedMeshSprite3DShaderDeclaration";
 import { Render } from "../../renders/Render";
+import { ReflectionProbeMode, ReflectionProbe } from "./reflectionProbe/ReflectionProbe";
+import { MeshSprite3DShaderDeclaration } from "./MeshSprite3DShaderDeclaration";
+import { TextureCube } from "../resource/TextureCube";
 /**
  * <code>SkinMeshRenderer</code> 类用于蒙皮渲染器。
  */
@@ -27,19 +30,19 @@ export class SkinnedMeshRenderer extends MeshRenderer {
 	private static _tempMatrix4x4: Matrix4x4 = new Matrix4x4();
 
 	/**@internal */
-	private _cacheMesh: Mesh;
+	protected _cacheMesh: Mesh;
 	/** @internal */
-	private _bones: Sprite3D[] = [];
+	protected _bones: Sprite3D[] = [];
 	/** @internal */
 	_skinnedData: any[];
 	/** @internal */
 	private _skinnedDataLoopMarks: number[] = [];
 	/**@internal */
-	private _localBounds: Bounds = new Bounds(Vector3._ZERO, Vector3._ZERO);
+	protected _localBounds: Bounds = new Bounds(Vector3._ZERO, Vector3._ZERO);
 	/**@internal */
-	private _cacheAnimator: Animator;
+	protected _cacheAnimator: Animator;
 	/**@internal */
-	private _cacheRootBone: Sprite3D;
+	protected _cacheRootBone: Sprite3D;
 
 	/**
 	 * 局部边界。
@@ -246,6 +249,29 @@ export class SkinnedMeshRenderer extends MeshRenderer {
 		} else {
 			this._shaderValues.setMatrix4x4(Sprite3D.WORLDMATRIX, transform.worldMatrix);
 		}
+		//更新反射探针
+		if(!this._probReflection)
+		return;
+		if(this._reflectionMode==ReflectionProbeMode.off){
+			this._shaderValues.removeDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+			this._shaderValues.setVector(RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS,ReflectionProbe.defaultTextureHDRDecodeValues);
+			this._shaderValues.setTexture(RenderableSprite3D.REFLECTIONTEXTURE,TextureCube.blackTexture);
+		}
+		else{
+			if(!this._probReflection.boxProjection){
+				this._shaderValues.removeDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+				
+			}
+			else{
+				this._shaderValues.addDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+				this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEPOSITION,this._probReflection.probePosition);
+				this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMAX,this._probReflection.boundsMax);
+				this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMIN,this._probReflection.boundsMin);
+			}
+			this._shaderValues.setTexture(RenderableSprite3D.REFLECTIONTEXTURE,this._probReflection.reflectionTexture);
+			this._shaderValues.setVector(RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS,this._probReflection.reflectionHDRParams);
+			
+		}
 	}
 
 	/**
@@ -322,7 +348,7 @@ export class SkinnedMeshRenderer extends MeshRenderer {
 	/**
 	 * @internal
 	 */
-	private _setRootNode(): void {//[兼容性API]
+	protected _setRootNode(): void {//[兼容性API]
 		var rootNode: AnimationNode;
 		if (this._cacheAnimator && this._rootBone && this._cacheAvatar)
 			rootNode = this._cacheAnimator._avatarNodeMap[this._rootBone];

@@ -7343,10 +7343,17 @@ var Laya = (function (exports) {
         recoverBitmap(onok = null) {
             var url = this._bitmap.url;
             if (!this._destroyed && (!this._bitmap || this._bitmap.destroyed) && url) {
-                ILaya.loader.load(url, Handler.create(this, function (bit) {
-                    this.bitmap = bit;
+                let tex = ILaya.loader.getRes(url);
+                if (tex) {
+                    this.bitmap = tex;
                     onok && onok();
-                }), null, "htmlimage", 1, true);
+                }
+                else {
+                    ILaya.loader.load(url, Handler.create(this, function (bit) {
+                        this.bitmap = bit;
+                        onok && onok();
+                    }), null, "htmlimage", 1, true);
+                }
             }
         }
         disposeBitmap() {
@@ -10800,7 +10807,7 @@ var Laya = (function (exports) {
         static supportTextureFormat(format) {
             switch (format) {
                 case exports.TextureFormat.R32G32B32A32:
-                    return (!LayaGL.layaGPUInstance._oesTextureFloat) ? false : true;
+                    return (!LayaGL.layaGPUInstance._isWebGL2 && !LayaGL.layaGPUInstance._oesTextureFloat) ? false : true;
                 default:
                     return true;
             }
@@ -10808,7 +10815,7 @@ var Laya = (function (exports) {
         static supportRenderTextureFormat(format) {
             switch (format) {
                 case exports.RenderTextureFormat.R16G16B16A16:
-                    return (((!!LayaGL.layaGPUInstance._isWebGL2) && (!!LayaGL.layaGPUInstance._oesTextureFloat)) || LayaGL.layaGPUInstance._oesTextureHalfFloat && LayaGL.layaGPUInstance._oesTextureHalfFloatLinear) ? true : false;
+                    return (((!!LayaGL.layaGPUInstance._isWebGL2) && (!!LayaGL.layaGPUInstance._extColorBufferFloat)) || LayaGL.layaGPUInstance._oesTextureHalfFloat && LayaGL.layaGPUInstance._oesTextureHalfFloatLinear) ? true : false;
                 case exports.RenderTextureFormat.Depth:
                     return (LayaGL.layaGPUInstance._isWebGL2 || LayaGL.layaGPUInstance._webgl_depth_texture) ? true : false;
                 case exports.RenderTextureFormat.ShadowMap:
@@ -10835,6 +10842,7 @@ var Laya = (function (exports) {
             this._compressedTexturePvrtc = null;
             this._compressedTextureEtc1 = null;
             this._webgl_depth_texture = null;
+            this._extColorBufferFloat = null;
             this._gl = gl;
             this._isWebGL2 = isWebGL2;
             var maxTextureFS = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -10855,7 +10863,7 @@ var Laya = (function (exports) {
                 SystemUtils._shaderCapailityLevel = 30;
             }
             else {
-                this._oesTextureFloat = this._getExtension("EXT_color_buffer_float");
+                this._extColorBufferFloat = this._getExtension("EXT_color_buffer_float");
                 SystemUtils._shaderCapailityLevel = 35;
             }
             this._extTextureFilterAnisotropic = this._getExtension("EXT_texture_filter_anisotropic");
@@ -15372,8 +15380,12 @@ var Laya = (function (exports) {
             nw = Math.max.apply(this, this._lineWidths);
             if (this._style.currBitmapFont)
                 nh = this._lines.length * (this._style.currBitmapFont.getMaxHeight() + this.leading) + this.padding[0] + this.padding[2];
-            else
+            else {
                 nh = this._lines.length * (this._charSize.height + this.leading) + this.padding[0] + this.padding[2];
+                if (this._lines.length) {
+                    nh -= this.leading;
+                }
+            }
             if (nw != this._textWidth || nh != this._textHeight) {
                 this._textWidth = nw;
                 this._textHeight = nh;
@@ -15772,6 +15784,7 @@ var Laya = (function (exports) {
         _focusIn() {
             Input.isInputting = true;
             var input = this.nativeInput;
+            Input.input && (Input.input.type = this._type);
             this._focus = true;
             var cssStyle = input.style;
             cssStyle.whiteSpace = (this.wordWrap ? "pre-wrap" : "nowrap");
@@ -18766,7 +18779,7 @@ var Laya = (function (exports) {
                         data.pics = [];
                     }
                     this.event(Event.PROGRESS, 0.3 + 1 / toloadPics.length * 0.6);
-                    return this._loadResourceFilter(Loader.IMAGE, toloadPics.pop());
+                    return this._loadResourceFilter(Loader.IMAGE, URL.formatURL(toloadPics.pop()));
                 }
                 else {
                     if (!(data instanceof Texture2D)) {
@@ -23782,7 +23795,7 @@ var Laya = (function (exports) {
                 }
                 if (scene && scene instanceof Node) {
                     scene.url = url;
-                    if (!scene._getBit(Const.NOT_READY)) {
+                    if (scene._viewCreated) {
                         complete && complete.runWith(scene);
                     }
                     else {

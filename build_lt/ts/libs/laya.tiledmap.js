@@ -1599,3 +1599,4 @@
     exports.TiledMap = TiledMap;
 
 }(window.Laya = window.Laya || {}, Laya));
+//# sourceMappingURL=laya.tiledmap.js.map

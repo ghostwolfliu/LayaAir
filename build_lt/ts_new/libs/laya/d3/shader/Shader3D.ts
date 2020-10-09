@@ -150,6 +150,31 @@ export class Shader3D {
 	}
 
 	/**
+	 * 通过宏属性动态修改AttributeMap
+	 * @param defineString 
+	 * @param attributeMap 
+	 */
+	static getAttributeMapByDefine(defineString:string[],attributeMap:any):any{
+		var newAttributeMap:any = {};
+		for(var value in attributeMap){
+			newAttributeMap[value] = attributeMap[value];
+		}	
+		for ( var i = 0, n: number = defineString.length; i < n; i++) {
+			var def: string = defineString[i];
+			switch(def){
+				case "SIMPLEBONE":
+				if(attributeMap["a_Texcoord1"]){
+					newAttributeMap["a_SimpleTextureParams"] = attributeMap["a_Texcoord1"];
+					delete newAttributeMap["a_Texcoord1"];
+				}
+				newAttributeMap["a_SimpleTextureParams"] = 7;
+				break;
+			}
+		}
+		return newAttributeMap;
+	}
+
+	/**
 	 * 添加函数库引用。
 	 * @param fileName 文件名字。
 	 * @param txt 文件内容
@@ -193,8 +218,8 @@ export class Shader3D {
 	/**
 	 * 添加预编译shader文件，主要是处理宏定义
 	 */
-	static add(name: string, attributeMap: any = null, uniformMap: any = null, enableInstancing: boolean = false): Shader3D {
-		return Shader3D._preCompileShader[name] = new Shader3D(name, attributeMap, uniformMap, enableInstancing);
+	static add(name: string, attributeMap: any = null, uniformMap: any = null, enableInstancing: boolean = false,supportReflectionProbe:boolean = false): Shader3D {
+		return Shader3D._preCompileShader[name] = new Shader3D(name, attributeMap, uniformMap, enableInstancing,supportReflectionProbe);
 	}
 
 	/**
@@ -210,6 +235,8 @@ export class Shader3D {
 	_name: string;
 	/**@internal */
 	_enableInstancing: boolean = false;
+	/**@internal */
+	_supportReflectionProbe:boolean = false;
 
 	/**@internal */
 	_subShaders: SubShader[] = [];
@@ -224,11 +251,12 @@ export class Shader3D {
 	/**
 	 * 创建一个 <code>Shader3D</code> 实例。
 	 */
-	constructor(name: string, attributeMap: any, uniformMap: any, enableInstancing: boolean) {
+	constructor(name: string, attributeMap: any, uniformMap: any, enableInstancing: boolean, supportReflectionProbe:boolean) {
 		this._name = name;
 		this._attributeMap = attributeMap;
 		this._uniformMap = uniformMap;
 		this._enableInstancing = enableInstancing;
+		this._supportReflectionProbe = supportReflectionProbe;
 	}
 
 	/**

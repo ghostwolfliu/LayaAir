@@ -3219,3 +3219,4 @@ window.box2d=box2d;
     exports.WheelJoint = WheelJoint;
 
 }(window.Laya = window.Laya || {}, Laya));
+//# sourceMappingURL=laya.physics.js.map

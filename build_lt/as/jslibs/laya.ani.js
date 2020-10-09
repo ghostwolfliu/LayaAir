@@ -4164,3 +4164,4 @@
     exports.UVTools = UVTools;
 
 }(window.Laya = window.Laya || {}, Laya));
+//# sourceMappingURL=laya.ani.js.map

@@ -321,8 +321,7 @@ gulp.task('buildJS', async function () {
                 typescript({
                     tsconfig: "./layaAir/tsconfig.json",
                     check: false,
-                    tsconfigOverride: { compilerOptions: { removeComments: true } },
-                    sourceMap: true,
+                    tsconfigOverride: { compilerOptions: { removeComments: true, sourceMap: true, } },
                 }),
                 glsl({
                     include: /.*(.glsl|.vs|.fs)$/,

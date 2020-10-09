@@ -8859,15 +8859,17 @@
 	}
 
 	class Shader3D {
-	    constructor(name, attributeMap, uniformMap, enableInstancing) {
+	    constructor(name, attributeMap, uniformMap, enableInstancing, supportReflectionProbe) {
 	        this._attributeMap = null;
 	        this._uniformMap = null;
 	        this._enableInstancing = false;
+	        this._supportReflectionProbe = false;
 	        this._subShaders = [];
 	        this._name = name;
 	        this._attributeMap = attributeMap;
 	        this._uniformMap = uniformMap;
 	        this._enableInstancing = enableInstancing;
+	        this._supportReflectionProbe = supportReflectionProbe;
 	    }
 	    static _getNamesByDefineData(defineData, out) {
 	        var maskMap = Shader3D._maskMap;
@@ -8961,8 +8963,8 @@
 	            console.warn("Shader3D: unknown shader name.");
 	        }
 	    }
-	    static add(name, attributeMap = null, uniformMap = null, enableInstancing = false) {
-	        return Shader3D._preCompileShader[name] = new Shader3D(name, attributeMap, uniformMap, enableInstancing);
+	    static add(name, attributeMap = null, uniformMap = null, enableInstancing = false, supportReflectionProbe = false) {
+	        return Shader3D._preCompileShader[name] = new Shader3D(name, attributeMap, uniformMap, enableInstancing, supportReflectionProbe);
 	    }
 	    static find(name) {
 	        return Shader3D._preCompileShader[name];
@@ -16772,6 +16774,25 @@
 	        }
 	        return this._boundBox;
 	    }
+	    calculateBoundsintersection(bounds) {
+	        var ownMax = this.getMax();
+	        var ownMin = this.getMin();
+	        var calMax = bounds.getMax();
+	        var calMin = bounds.getMin();
+	        var tempV0 = Bounds.TEMP_VECTOR3_MAX0;
+	        var tempV1 = Bounds.TEMP_VECTOR3_MAX1;
+	        var thisExtends = this.getExtent();
+	        var boundExtends = bounds.getExtent();
+	        tempV0.setValue(Math.max(ownMax.x, calMax.x) - Math.min(ownMin.x, calMin.x), Math.max(ownMax.y, calMax.y) - Math.min(ownMin.y, calMin.y), Math.max(ownMax.z, calMax.z) - Math.min(ownMin.z, calMin.z));
+	        tempV1.setValue((thisExtends.x + boundExtends.x) * 2.0, (thisExtends.y + boundExtends.y) * 2.0, (thisExtends.z + boundExtends.z) * 2.0);
+	        if ((tempV0.x) >= (tempV1.x))
+	            return -1;
+	        if ((tempV0.y) >= (tempV1.y))
+	            return -1;
+	        if ((tempV0.z) >= (tempV1.z))
+	            return -1;
+	        return (tempV1.x - tempV0.x) * (tempV1.y - tempV0.y) * (tempV1.z - tempV0.z);
+	    }
 	    cloneTo(destObject) {
 	        var destBounds = destObject;
 	        this.getMin().cloneTo(destBounds._boundBox.min);
@@ -16790,6 +16811,8 @@
 	Bounds._UPDATE_MAX = 0x02;
 	Bounds._UPDATE_CENTER = 0x04;
 	Bounds._UPDATE_EXTENT = 0x08;
+	Bounds.TEMP_VECTOR3_MAX0 = new Vector3();
+	Bounds.TEMP_VECTOR3_MAX1 = new Vector3();
 
 	class GeometryElement {
 	    constructor() {
@@ -17085,6 +17108,11 @@
 	RenderableSprite3D.LIGHTMAP = Shader3D.propertyNameToID("u_LightMap");
 	RenderableSprite3D.LIGHTMAP_DIRECTION = Shader3D.propertyNameToID("u_LightMapDirection");
 	RenderableSprite3D.PICKCOLOR = Shader3D.propertyNameToID("u_PickColor");
+	RenderableSprite3D.REFLECTIONTEXTURE = Shader3D.propertyNameToID("u_ReflectTexture");
+	RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS = Shader3D.propertyNameToID("u_ReflectCubeHDRParams");
+	RenderableSprite3D.REFLECTIONCUBE_PROBEPOSITION = Shader3D.propertyNameToID("u_SpecCubeProbePosition");
+	RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMAX = Shader3D.propertyNameToID("u_SpecCubeBoxMax");
+	RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMIN = Shader3D.propertyNameToID("u_SpecCubeBoxMin");
 
 	class BatchMark {
 	    constructor() {
@@ -17372,7 +17400,7 @@
 	                queueElements.add(this);
 	            }
 	        }
-	        else if (this.renderSubShader._owner._enableInstancing && Laya.LayaGL.layaGPUInstance.supportInstance() && this.render.lightmapIndex < 0) {
+	        else if (this.renderSubShader._owner._enableInstancing && Laya.LayaGL.layaGPUInstance.supportInstance() && this.render.lightmapIndex < 0 && this.render._probReflection._isScene) {
 	            var subMesh = this._geometry;
 	            var insManager = ILaya3D.MeshRenderDynamicBatchManager.instance;
 	            var insBatchMarks = insManager.getInstanceBatchOpaquaMark(this.render.receiveShadow, this.material.id, subMesh._id, this._transform._isFrontFaceInvert);
@@ -17496,7 +17524,7 @@
 	                queue.lastTransparentBatched = false;
 	            }
 	        }
-	        else if (this.renderSubShader._owner._enableInstancing && Laya.LayaGL.layaGPUInstance.supportInstance() && this.render.lightmapIndex < 0) {
+	        else if (this.renderSubShader._owner._enableInstancing && Laya.LayaGL.layaGPUInstance.supportInstance() && this.render.lightmapIndex < 0 && this.render._probReflection._isScene) {
 	            var subMesh = this._geometry;
 	            var insManager = ILaya3D.MeshRenderDynamicBatchManager.instance;
 	            var insLastElement = queue.lastTransparentRenderElement;
@@ -18061,6 +18089,121 @@
 	}
 	MeshRenderStaticBatchManager.instance = new MeshRenderStaticBatchManager();
 
+	(function (ReflectionProbeMode) {
+	    ReflectionProbeMode[ReflectionProbeMode["off"] = 0] = "off";
+	    ReflectionProbeMode[ReflectionProbeMode["simple"] = 1] = "simple";
+	})(exports.ReflectionProbeMode || (exports.ReflectionProbeMode = {}));
+	class ReflectionProbe extends Sprite3D {
+	    constructor() {
+	        super();
+	        this._boxProjection = false;
+	        this._size = new Vector3();
+	        this._offset = new Vector3();
+	        this._reflectionHDRParams = new Vector4();
+	        this._reflectionDecodeFormat = Laya.TextureDecodeFormat.Normal;
+	        this._isScene = false;
+	    }
+	    get boxProjection() {
+	        return this._boxProjection;
+	    }
+	    set boxProjection(value) {
+	        this._boxProjection = value;
+	    }
+	    get importance() {
+	        return this._importance;
+	    }
+	    set importance(value) {
+	        this._importance = value;
+	    }
+	    get intensity() {
+	        return this._intensity;
+	    }
+	    set intensity(value) {
+	        value = Math.max(Math.min(value, 1.0), 0.0);
+	        this._reflectionHDRParams.x = value;
+	        if (this._reflectionDecodeFormat == Laya.TextureDecodeFormat.RGBM)
+	            this._reflectionHDRParams.x *= 5.0;
+	        this._intensity = value;
+	    }
+	    get reflectionTexture() {
+	        return this._reflectionTexture;
+	    }
+	    set reflectionTexture(value) {
+	        this._reflectionTexture = value;
+	        this._reflectionTexture._addReference();
+	    }
+	    get bounds() {
+	        return this._bounds;
+	    }
+	    set bounds(value) {
+	        this._bounds = value;
+	    }
+	    get boundsMax() {
+	        return this._bounds.getMax();
+	    }
+	    get boundsMin() {
+	        return this._bounds.getMin();
+	    }
+	    get probePosition() {
+	        return this.transform.position;
+	    }
+	    get reflectionHDRParams() {
+	        return this._reflectionHDRParams;
+	    }
+	    set reflectionHDRParams(value) {
+	        this._reflectionHDRParams = value;
+	    }
+	    _parse(data, spriteMap) {
+	        super._parse(data, spriteMap);
+	        this._boxProjection = data.boxProjection;
+	        this._importance = data.importance;
+	        this._reflectionTexture = Laya.Loader.getRes(data.reflection);
+	        var position = this.transform.position;
+	        this._size.fromArray(data.boxSize);
+	        Vector3.scale(this._size, 0.5, ReflectionProbe.TEMPVECTOR3);
+	        this._offset.fromArray(data.boxOffset);
+	        var min = new Vector3();
+	        var max = new Vector3();
+	        Vector3.add(position, ReflectionProbe.TEMPVECTOR3, max);
+	        Vector3.add(max, this._offset, max);
+	        Vector3.subtract(position, ReflectionProbe.TEMPVECTOR3, min);
+	        Vector3.add(min, this._offset, min);
+	        this._reflectionDecodeFormat = data.reflectionDecodingFormat;
+	        this.intensity = data.intensity;
+	        if (!this._bounds)
+	            this.bounds = new Bounds(min, max);
+	        else {
+	            this._bounds.setMin(min);
+	            this._bounds.setMax(max);
+	        }
+	    }
+	    _setIndexInReflectionList(value) {
+	        this._indexInReflectProbList = value;
+	    }
+	    _getIndexInReflectionList() {
+	        return this._indexInReflectProbList;
+	    }
+	    _onActive() {
+	        super._onActive();
+	        if (this._reflectionTexture)
+	            this.scene._reflectionProbeManager.add(this);
+	    }
+	    _onInActive() {
+	        super._onInActive();
+	        if (this.reflectionTexture)
+	            this.scene._reflectionProbeManager.remove(this);
+	    }
+	    destroy() {
+	        this._reflectionTexture._removeReference();
+	        this._reflectionTexture = null;
+	        this._bounds = null;
+	    }
+	    _cloneTo(dest) {
+	    }
+	}
+	ReflectionProbe.TEMPVECTOR3 = new Vector3();
+	ReflectionProbe.defaultTextureHDRDecodeValues = new Vector4(1.0, 1.0, 0.0, 0.0);
+
 	class BaseRender extends Laya.EventDispatcher {
 	    constructor(owner) {
 	        super();
@@ -18073,6 +18216,7 @@
 	        this._sharedMaterials = [];
 	        this._renderMark = -1;
 	        this._indexInOctreeMotionList = -1;
+	        this._reflectionMode = exports.ReflectionProbeMode.simple;
 	        this._updateMark = -1;
 	        this._updateRenderType = -1;
 	        this._isPartOfStaticBatch = false;
@@ -18138,6 +18282,7 @@
 	    }
 	    set material(value) {
 	        this.sharedMaterial = value;
+	        this._isSupportReflection();
 	    }
 	    get materials() {
 	        for (var i = 0, n = this._sharedMaterials.length; i < n; i++) {
@@ -18151,6 +18296,7 @@
 	    }
 	    set materials(value) {
 	        this.sharedMaterials = value;
+	        this._isSupportReflection();
 	    }
 	    get sharedMaterial() {
 	        return this._sharedMaterials[0];
@@ -18164,6 +18310,7 @@
 	            var renderElement = this._renderElements[0];
 	            (renderElement) && (renderElement.material = value);
 	        }
+	        this._isSupportReflection();
 	    }
 	    get sharedMaterials() {
 	        return this._sharedMaterials.slice();
@@ -18196,6 +18343,7 @@
 	        else {
 	            throw new Error("BaseRender: shadredMaterials value can't be null.");
 	        }
+	        this._isSupportReflection();
 	    }
 	    get bounds() {
 	        if (this._boundsChange) {
@@ -18228,6 +18376,12 @@
 	    get isRender() {
 	        return this._renderMark == -1 || this._renderMark == (Laya.Stat.loopCount - 1);
 	    }
+	    set reflectionMode(value) {
+	        this._reflectionMode = value;
+	    }
+	    get reflectionMode() {
+	        return this._reflectionMode;
+	    }
 	    _getOctreeNode() {
 	        return this._octreeNode;
 	    }
@@ -18251,6 +18405,19 @@
 	        this._changeMaterialReference(this._sharedMaterials[index], insMat);
 	        this._sharedMaterials[index] = insMat;
 	        return insMat;
+	    }
+	    _isSupportReflection() {
+	        this._surportReflectionProbe = false;
+	        var sharedMats = this._sharedMaterials;
+	        for (var i = 0, n = sharedMats.length; i < n; i++) {
+	            var mat = sharedMats[i];
+	            this._surportReflectionProbe = (this._surportReflectionProbe || mat._shader._supportReflectionProbe);
+	        }
+	    }
+	    _addReflectionProbeUpdate() {
+	        if (this._surportReflectionProbe && this._reflectionMode == 1) {
+	            this._scene._reflectionProbeManager.addMotionObject(this);
+	        }
 	    }
 	    _applyLightMapParams() {
 	        var lightMaps = this._scene.lightmaps;
@@ -18282,6 +18449,7 @@
 	                    this._octreeNode._octree.addMotionObject(this);
 	            }
 	        }
+	        this._addReflectionProbeUpdate();
 	    }
 	    _calculateBoundingBox() {
 	        throw ("BaseRender: must override it.");
@@ -19571,6 +19739,103 @@
 	}
 	DynamicBatchManager._managers = [];
 
+	class ReflectionProbeList extends SingletonList {
+	    constructor() {
+	        super();
+	    }
+	    add(singleElement) {
+	        this._add(singleElement);
+	        singleElement._setIndexInReflectionList(this.length++);
+	    }
+	    remove(singleElement) {
+	        var index = singleElement._getIndexInReflectionList();
+	        this.length--;
+	        if (index !== this.length) {
+	            var end = this.elements[this.length];
+	            this.elements[index] = end;
+	            end._setIndexInReflectionList(index);
+	        }
+	        singleElement._setIndexInReflectionList(-1);
+	    }
+	}
+
+	class ReflectionProbeManager {
+	    constructor() {
+	        this._reflectionProbes = new ReflectionProbeList();
+	        this._motionObjects = new SingletonList();
+	        this._needUpdateAllRender = false;
+	        this._sceneReflectionProbe = new ReflectionProbe();
+	        this._sceneReflectionProbe.bounds = new Bounds(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+	        this._sceneReflectionProbe.boxProjection = false;
+	        this._sceneReflectionProbe._isScene = true;
+	    }
+	    set sceneReflectionProbe(value) {
+	        this._sceneReflectionProbe.reflectionTexture = value;
+	    }
+	    set sceneReflectionCubeHDRParam(value) {
+	        this._sceneReflectionProbe.reflectionHDRParams = value;
+	    }
+	    _updateMotionObjects(baseRender) {
+	        var elements = this._reflectionProbes.elements;
+	        var maxOverlap = 0;
+	        var mainProbe;
+	        var renderBounds = baseRender.bounds;
+	        var overlop;
+	        for (var i = 0, n = this._reflectionProbes.length; i < n; i++) {
+	            var renflectProbe = elements[i];
+	            if (!mainProbe) {
+	                overlop = renderBounds.calculateBoundsintersection(renflectProbe.bounds);
+	                if (overlop < maxOverlap)
+	                    continue;
+	            }
+	            else {
+	                if (mainProbe.importance > renflectProbe.importance)
+	                    continue;
+	                overlop = renderBounds.calculateBoundsintersection(renflectProbe.bounds);
+	                if (overlop < maxOverlap && mainProbe.importance == renflectProbe.importance)
+	                    continue;
+	            }
+	            mainProbe = renflectProbe;
+	            maxOverlap = overlop;
+	        }
+	        if (!mainProbe && this._sceneReflectionProbe)
+	            mainProbe = this._sceneReflectionProbe;
+	        baseRender._probReflection = mainProbe;
+	    }
+	    add(reflectionProbe) {
+	        this._reflectionProbes.add(reflectionProbe);
+	        this._needUpdateAllRender = true;
+	    }
+	    remove(reflectionProbe) {
+	        this._reflectionProbes.remove(reflectionProbe);
+	        this._needUpdateAllRender = true;
+	    }
+	    addMotionObject(renderObject) {
+	        this._motionObjects.add(renderObject);
+	    }
+	    update() {
+	        if (this._reflectionProbes.length == 0)
+	            return;
+	        var elements = this._motionObjects.elements;
+	        for (var i = 0, n = this._motionObjects.length; i < n; i++) {
+	            this._updateMotionObjects(elements[i]);
+	        }
+	        this.clearMotionObjects();
+	    }
+	    updateAllRenderObjects(baseRenders) {
+	        var elements = baseRenders.elements;
+	        for (var i = 0, n = baseRenders.length; i < n; i++) {
+	            this._updateMotionObjects(elements[i]);
+	        }
+	        this._needUpdateAllRender = false;
+	    }
+	    clearMotionObjects() {
+	        this._motionObjects.length = 0;
+	    }
+	    destroy() {
+	    }
+	}
+
 	(function (AmbientMode) {
 	    AmbientMode[AmbientMode["SolidColor"] = 0] = "SolidColor";
 	    AmbientMode[AmbientMode["SphericalHarmonics"] = 1] = "SphericalHarmonics";
@@ -19604,6 +19869,7 @@
 	        this._tempScriptPool = new Array();
 	        this._needClearScriptPool = false;
 	        this._reflectionCubeHDRParams = new Vector4();
+	        this._reflectionProbeManager = new ReflectionProbeManager();
 	        this.currentCreationLayer = Math.pow(2, 0);
 	        this.enableLight = true;
 	        this._key = new Laya.SubmitKey();
@@ -19624,7 +19890,7 @@
 	        this.reflection = TextureCube.blackTexture;
 	        for (var i = 0; i < 7; i++)
 	            this._shCoefficients[i] = new Vector4();
-	        this._shaderValues.setVector(Scene3D.REFLECTIONCUBE_HDR_PARAMS, this._reflectionCubeHDRParams);
+	        this._reflectionProbeManager.sceneReflectionCubeHDRParam = this._reflectionCubeHDRParams;
 	        if (Laya.Render.supportWebGLPlusCulling) {
 	            this._cullingBufferIndices = new Int32Array(1024);
 	            this._cullingBufferResult = new Int32Array(1024);
@@ -19782,8 +20048,9 @@
 	    set reflection(value) {
 	        if (this._reflection != value) {
 	            value._addReference();
-	            this._shaderValues.setTexture(Scene3D.REFLECTIONTEXTURE, value || TextureCube.blackTexture);
-	            this._reflection = value;
+	            this._reflectionProbeManager.sceneReflectionProbe = value;
+	            this._reflection = value || TextureCube.blackTexture;
+	            this._reflectionProbeManager._needUpdateAllRender = true;
 	        }
 	    }
 	    get reflectionDecodingFormat() {
@@ -19795,6 +20062,7 @@
 	            if (this._reflectionDecodeFormat == Laya.TextureDecodeFormat.RGBM)
 	                this._reflectionCubeHDRParams.x *= 5.0;
 	            this._reflectionDecodeFormat = value;
+	            this._reflectionProbeManager.sceneReflectionCubeHDRParam = this._reflectionCubeHDRParams;
 	        }
 	    }
 	    get reflectionIntensity() {
@@ -19806,6 +20074,7 @@
 	        if (this._reflectionDecodeFormat == Laya.TextureDecodeFormat.RGBM)
 	            this._reflectionCubeHDRParams.x *= 5.0;
 	        this._reflectionIntensity = value;
+	        this._reflectionProbeManager.sceneReflectionCubeHDRParam = this._reflectionCubeHDRParams;
 	    }
 	    get skyRenderer() {
 	        return this._skyRenderer;
@@ -19897,6 +20166,10 @@
 	        this._updateScript();
 	        Animator._update(this);
 	        Laya.VideoTexture._update();
+	        if (this._reflectionProbeManager._needUpdateAllRender)
+	            this._reflectionProbeManager.updateAllRenderObjects(this._renders);
+	        else
+	            this._reflectionProbeManager.update();
 	        this._lateUpdateScript();
 	    }
 	    _binarySearchIndexInCameraPool(camera) {
@@ -20360,6 +20633,7 @@
 	                this._cullingBufferIndices[indexInList] = render._cullingBufferIndex;
 	            }
 	        }
+	        render._addReflectionProbeUpdate();
 	    }
 	    _removeRenderObject(render) {
 	        if (this._octree && render._supportOctree) {
@@ -20418,6 +20692,7 @@
 	            }
 	        }
 	        this._lightmaps = null;
+	        this._reflectionProbeManager.destroy();
 	        Laya.Loader.clearRes(this.url);
 	    }
 	    render(ctx, x, y) {
@@ -20450,7 +20725,8 @@
 	    }
 	    set customReflection(value) {
 	        if (this._reflection != value) {
-	            this._shaderValues.setTexture(Scene3D.REFLECTIONTEXTURE, value || TextureCube.blackTexture);
+	            value._addReference();
+	            this._reflectionProbeManager.sceneReflectionProbe = value;
 	            this._reflection = value;
 	        }
 	    }
@@ -20510,8 +20786,6 @@
 	Scene3D.AMBIENTSHBG = Shader3D.propertyNameToID("u_AmbientSHBg");
 	Scene3D.AMBIENTSHBB = Shader3D.propertyNameToID("u_AmbientSHBb");
 	Scene3D.AMBIENTSHC = Shader3D.propertyNameToID("u_AmbientSHC");
-	Scene3D.REFLECTIONPROBE = Shader3D.propertyNameToID("u_ReflectionProbe");
-	Scene3D.REFLECTIONCUBE_HDR_PARAMS = Shader3D.propertyNameToID("u_ReflectCubeHDRParams");
 	Scene3D.LIGHTDIRECTION = Shader3D.propertyNameToID("u_DirectionLight.direction");
 	Scene3D.LIGHTDIRCOLOR = Shader3D.propertyNameToID("u_DirectionLight.color");
 	Scene3D.POINTLIGHTPOS = Shader3D.propertyNameToID("u_PointLight.position");
@@ -20524,7 +20798,6 @@
 	Scene3D.SPOTLIGHTRANGE = Shader3D.propertyNameToID("u_SpotLight.range");
 	Scene3D.SPOTLIGHTCOLOR = Shader3D.propertyNameToID("u_SpotLight.color");
 	Scene3D.AMBIENTCOLOR = Shader3D.propertyNameToID("u_AmbientColor");
-	Scene3D.REFLECTIONTEXTURE = Shader3D.propertyNameToID("u_ReflectTexture");
 	Scene3D.TIME = Shader3D.propertyNameToID("u_Time");
 	Scene3D._configDefineValues = new DefineDatas();
 
@@ -20858,6 +21131,11 @@
 	            'u_SimpleAnimatorTexture': Shader3D.PERIOD_SPRITE,
 	            'u_SimpleAnimatorParams': Shader3D.PERIOD_SPRITE,
 	            'u_SimpleAnimatorTextureSize': Shader3D.PERIOD_SPRITE,
+	            'u_ReflectCubeHDRParams': Shader3D.PERIOD_SPRITE,
+	            'u_ReflectTexture': Shader3D.PERIOD_SPRITE,
+	            'u_SpecCubeProbePosition': Shader3D.PERIOD_SPRITE,
+	            'u_SpecCubeBoxMax': Shader3D.PERIOD_SPRITE,
+	            'u_SpecCubeBoxMin': Shader3D.PERIOD_SPRITE,
 	            'u_CameraPos': Shader3D.PERIOD_CAMERA,
 	            'u_View': Shader3D.PERIOD_CAMERA,
 	            'u_ProjectionParams': Shader3D.PERIOD_CAMERA,
@@ -20879,8 +21157,6 @@
 	            'u_TilingOffset': Shader3D.PERIOD_MATERIAL,
 	            'u_SpecGlossTexture': Shader3D.PERIOD_MATERIAL,
 	            'u_SpecularColor': Shader3D.PERIOD_MATERIAL,
-	            'u_ReflectTexture': Shader3D.PERIOD_SCENE,
-	            'u_ReflectIntensity': Shader3D.PERIOD_SCENE,
 	            'u_AmbientColor': Shader3D.PERIOD_SCENE,
 	            'u_FogStart': Shader3D.PERIOD_SCENE,
 	            'u_FogRange': Shader3D.PERIOD_SCENE,
@@ -20905,8 +21181,6 @@
 	            'u_AmbientSHBg': Shader3D.PERIOD_SCENE,
 	            'u_AmbientSHBb': Shader3D.PERIOD_SCENE,
 	            'u_AmbientSHC': Shader3D.PERIOD_SCENE,
-	            'u_ReflectionProbe': Shader3D.PERIOD_SCENE,
-	            'u_ReflectCubeHDRParams': Shader3D.PERIOD_SCENE,
 	            'u_DirectionLight.direction': Shader3D.PERIOD_SCENE,
 	            'u_DirectionLight.color': Shader3D.PERIOD_SCENE,
 	            'u_PointLight.position': Shader3D.PERIOD_SCENE,
@@ -20926,7 +21200,7 @@
 	            's_DepthTest': Shader3D.RENDER_STATE_DEPTH_TEST,
 	            's_DepthWrite': Shader3D.RENDER_STATE_DEPTH_WRITE
 	        };
-	        var shader = Shader3D.add("PBRSpecular", attributeMap, uniformMap, true);
+	        var shader = Shader3D.add("PBRSpecular", attributeMap, uniformMap, true, true);
 	        var subShader = new SubShader(attributeMap, uniformMap);
 	        shader.addSubShader(subShader);
 	        subShader.addShaderPass(PBRVS, PBRPS, stateMap, "Forward");
@@ -21000,6 +21274,11 @@
 	            'u_SimpleAnimatorTexture': Shader3D.PERIOD_SPRITE,
 	            'u_SimpleAnimatorParams': Shader3D.PERIOD_SPRITE,
 	            'u_SimpleAnimatorTextureSize': Shader3D.PERIOD_SPRITE,
+	            'u_ReflectCubeHDRParams': Shader3D.PERIOD_SPRITE,
+	            'u_ReflectTexture': Shader3D.PERIOD_SPRITE,
+	            'u_SpecCubeProbePosition': Shader3D.PERIOD_SPRITE,
+	            'u_SpecCubeBoxMax': Shader3D.PERIOD_SPRITE,
+	            'u_SpecCubeBoxMin': Shader3D.PERIOD_SPRITE,
 	            'u_CameraPos': Shader3D.PERIOD_CAMERA,
 	            'u_View': Shader3D.PERIOD_CAMERA,
 	            'u_ProjectionParams': Shader3D.PERIOD_CAMERA,
@@ -21021,8 +21300,6 @@
 	            'u_TilingOffset': Shader3D.PERIOD_MATERIAL,
 	            'u_MetallicGlossTexture': Shader3D.PERIOD_MATERIAL,
 	            'u_Metallic': Shader3D.PERIOD_MATERIAL,
-	            'u_ReflectTexture': Shader3D.PERIOD_SCENE,
-	            'u_ReflectIntensity': Shader3D.PERIOD_SCENE,
 	            'u_AmbientColor': Shader3D.PERIOD_SCENE,
 	            'u_FogStart': Shader3D.PERIOD_SCENE,
 	            'u_FogRange': Shader3D.PERIOD_SCENE,
@@ -21047,8 +21324,6 @@
 	            'u_AmbientSHBg': Shader3D.PERIOD_SCENE,
 	            'u_AmbientSHBb': Shader3D.PERIOD_SCENE,
 	            'u_AmbientSHC': Shader3D.PERIOD_SCENE,
-	            'u_ReflectionProbe': Shader3D.PERIOD_SCENE,
-	            'u_ReflectCubeHDRParams': Shader3D.PERIOD_SCENE,
 	            'u_DirectionLight.direction': Shader3D.PERIOD_SCENE,
 	            'u_DirectionLight.color': Shader3D.PERIOD_SCENE,
 	            'u_PointLight.position': Shader3D.PERIOD_SCENE,
@@ -21068,7 +21343,7 @@
 	            's_DepthTest': Shader3D.RENDER_STATE_DEPTH_TEST,
 	            's_DepthWrite': Shader3D.RENDER_STATE_DEPTH_WRITE
 	        };
-	        var shader = Shader3D.add("PBR", attributeMap, uniformMap, true);
+	        var shader = Shader3D.add("PBR", attributeMap, uniformMap, true, true);
 	        var subShader = new SubShader(attributeMap, uniformMap);
 	        shader.addSubShader(subShader);
 	        subShader.addShaderPass(PBRVS$1, PBRPS$1, stateMap, "Forward");
@@ -21694,6 +21969,26 @@
 	                this._shaderValues.addDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_GPU_INSTANCE);
 	                break;
 	        }
+	        if (!this._probReflection)
+	            return;
+	        if (this._reflectionMode == exports.ReflectionProbeMode.off) {
+	            this._shaderValues.removeDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+	            this._shaderValues.setVector(RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS, ReflectionProbe.defaultTextureHDRDecodeValues);
+	            this._shaderValues.setTexture(RenderableSprite3D.REFLECTIONTEXTURE, TextureCube.blackTexture);
+	        }
+	        else {
+	            if (!this._probReflection.boxProjection) {
+	                this._shaderValues.removeDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+	            }
+	            else {
+	                this._shaderValues.addDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+	                this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEPOSITION, this._probReflection.probePosition);
+	                this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMAX, this._probReflection.boundsMax);
+	                this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMIN, this._probReflection.boundsMin);
+	            }
+	            this._shaderValues.setTexture(RenderableSprite3D.REFLECTIONTEXTURE, this._probReflection.reflectionTexture);
+	            this._shaderValues.setVector(RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS, this._probReflection.reflectionHDRParams);
+	        }
 	    }
 	    _renderUpdateWithCamera(context, transform) {
 	        var projectionView = context.projectionViewMatrix;
@@ -22044,6 +22339,7 @@
 	        MeshSprite3DShaderDeclaration.SHADERDEFINE_COLOR = Shader3D.getDefineByName("COLOR");
 	        MeshSprite3DShaderDeclaration.SHADERDEFINE_UV1 = Shader3D.getDefineByName("UV1");
 	        MeshSprite3DShaderDeclaration.SHADERDEFINE_GPU_INSTANCE = Shader3D.getDefineByName("GPU_INSTANCE");
+	        MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION = Shader3D.getDefineByName("SPECCUBE_BOX_PROJECTION");
 	        StaticBatchManager._registerManager(MeshRenderStaticBatchManager.instance);
 	        DynamicBatchManager._registerManager(MeshRenderDynamicBatchManager.instance);
 	    }
@@ -27934,6 +28230,26 @@
 	        else {
 	            this._shaderValues.setMatrix4x4(Sprite3D.WORLDMATRIX, transform.worldMatrix);
 	        }
+	        if (!this._probReflection)
+	            return;
+	        if (this._reflectionMode == exports.ReflectionProbeMode.off) {
+	            this._shaderValues.removeDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+	            this._shaderValues.setVector(RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS, ReflectionProbe.defaultTextureHDRDecodeValues);
+	            this._shaderValues.setTexture(RenderableSprite3D.REFLECTIONTEXTURE, TextureCube.blackTexture);
+	        }
+	        else {
+	            if (!this._probReflection.boxProjection) {
+	                this._shaderValues.removeDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+	            }
+	            else {
+	                this._shaderValues.addDefine(MeshSprite3DShaderDeclaration.SHADERDEFINE_SPECCUBE_BOX_PROJECTION);
+	                this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEPOSITION, this._probReflection.probePosition);
+	                this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMAX, this._probReflection.boundsMax);
+	                this._shaderValues.setVector3(RenderableSprite3D.REFLECTIONCUBE_PROBEBOXMIN, this._probReflection.boundsMin);
+	            }
+	            this._shaderValues.setTexture(RenderableSprite3D.REFLECTIONTEXTURE, this._probReflection.reflectionTexture);
+	            this._shaderValues.setVector(RenderableSprite3D.REFLECTIONCUBE_HDR_PARAMS, this._probReflection.reflectionHDRParams);
+	        }
 	    }
 	    _renderUpdateWithCamera(context, transform) {
 	        var projectionView = context.projectionViewMatrix;
@@ -30228,7 +30544,7 @@
 
 	var extendTerrainVS = "#include \"Lighting.glsl\";\r\n\r\nattribute vec4 a_Position;\r\nattribute vec2 a_Texcoord0;\r\n\r\nuniform mat4 u_MvpMatrix;\r\n\r\nvarying vec2 v_Texcoord0;\r\n\r\n#if defined(DIRECTIONLIGHT)||defined(POINTLIGHT)||defined(SPOTLIGHT)||defined(LIGHTMAP)\r\n\tattribute vec3 a_Normal;\r\n\tvarying vec3 v_Normal;\r\n#endif\r\n\r\n#if defined(DIRECTIONLIGHT)||defined(POINTLIGHT)||defined(SPOTLIGHT)||defined(FOG)||(defined(CALCULATE_SHADOWS)&&defined(SHADOWMAP_PSSM1))\r\n\tuniform mat4 u_WorldMat;\r\n\tvarying vec3 v_PositionWorld;\r\n#endif\r\n\r\n#ifdef LIGHTMAP\r\n\tvarying vec2 v_LightMapUV;\r\n\tuniform vec4 u_LightmapScaleOffset;\r\n#endif\r\n\r\n#ifdef CALCULATE_SHADOWS\r\n\tvarying vec4 v_ShadowCoord;\r\n#endif\r\n\r\nvoid main()\r\n{\r\n\tgl_Position = u_MvpMatrix * a_Position;\r\n  \r\n\tv_Texcoord0 = a_Texcoord0;\r\n  \r\n\t#ifdef LIGHTMAP\r\n\t\tv_LightMapUV = vec2(a_Texcoord0.x, 1.0 - a_Texcoord0.y) * u_LightmapScaleOffset.xy + u_LightmapScaleOffset.zw;\r\n\t\tv_LightMapUV.y = 1.0 - v_LightMapUV.y;\r\n\t#endif\r\n  \r\n\t#if defined(DIRECTIONLIGHT)||defined(POINTLIGHT)||defined(SPOTLIGHT)\r\n\t\tv_Normal = a_Normal;\r\n\t#endif\r\n\r\n\t#if defined(DIRECTIONLIGHT)||defined(POINTLIGHT)||defined(SPOTLIGHT)||defined(FOG)||(defined(CALCULATE_SHADOWS)&&defined(SHADOWMAP_PSSM1))\r\n\t\tv_PositionWorld=(u_WorldMat*a_Position).xyz;\r\n\t#endif\r\n\r\n\t#ifdef CALCULATE_SHADOWS\r\n\t\tv_ShadowCoord = getShadowCoord(vec4(v_PositionWorld));\r\n\t#endif\r\n\tgl_Position=remapGLPositionZ(gl_Position);\r\n}";
 
-	var GlobalIllumination = "struct LayaGIInput\r\n{\r\n\tvec2 lightmapUV;\r\n};\r\n\r\n#define LAYA_SPECCUBE_LOD_STEPS 6.0\r\n\r\nuniform vec3 u_AmbientColor;\r\n\r\n#if defined(GI_AMBIENT_SH)\r\n\tuniform vec4 u_AmbientSHAr;\r\n\tuniform vec4 u_AmbientSHAg;\r\n\tuniform vec4 u_AmbientSHAb;\r\n\tuniform vec4 u_AmbientSHBr;\r\n\tuniform vec4 u_AmbientSHBg;\r\n\tuniform vec4 u_AmbientSHBb;\r\n\tuniform vec4 u_AmbientSHC;\r\n#endif\r\n\r\nuniform samplerCube u_ReflectTexture;\r\nuniform vec4 u_ReflectCubeHDRParams;\r\n\r\n\r\n#ifdef GI_AMBIENT_SH\r\n\tmediump vec3 shEvalLinearL0L1(mediump vec4 normal)\r\n\t{\r\n\t\tmediump vec3 x;\r\n\t\t// Linear (L1) + constant (L0) polynomial terms\r\n\t\tx.r = dot(u_AmbientSHAr, normal);\r\n\t\tx.g = dot(u_AmbientSHAg, normal);\r\n\t\tx.b = dot(u_AmbientSHAb, normal);\r\n\t\treturn x;\r\n\t}\r\n\r\n\tmediump vec3 shEvalLinearL2(mediump vec4 normal)\r\n\t{\r\n\t\tmediump vec3 x1,x2;\r\n\t\t// 4 of the quadratic (L2) polynomials\r\n\t\tmediump vec4 vB = normal.xyzz * normal.yzzx;\r\n\t\tx1.r = dot(u_AmbientSHBr, vB);\r\n\t\tx1.g = dot(u_AmbientSHBg, vB);\r\n\t\tx1.b = dot(u_AmbientSHBb, vB);\r\n\r\n\t\t// Final (5th) quadratic (L2) polynomial\r\n\t\tmediump float vC = normal.x*normal.x - normal.y*normal.y;\r\n\t\tx2 = u_AmbientSHC.rgb * vC;\r\n\r\n\t\treturn x1 + x2;\r\n\t}\r\n\t\r\n\tmediump vec3 shadeSHPerPixel(mediump vec3 normal)\r\n\t{\r\n\t\tmediump vec3 ambientContrib;\r\n\t\tmediump vec4 normalV4=vec4(-normal.x,normal.yz, 1.0);//Note:SH Data is left-hand,so x need inverse\r\n\t\tambientContrib = shEvalLinearL0L1(normalV4);\r\n\t\tambientContrib += shEvalLinearL2(normalV4);\r\n\t\tmediump vec3 ambient = max(vec3(0.0), ambientContrib);\r\n\t\tambient = layaLinearToGammaSpace(ambient);\r\n\t\treturn ambient;\r\n\t}\r\n#endif\r\n\r\nmediump vec3 layaDecodeDirectionalLightmap (mediump vec3 color, lowp vec4 dirTex, mediump vec3 normalWorld)\r\n{\r\n    // In directional (non-specular) mode Enlighten bakes dominant light direction\r\n    // in a way, that using it for half Lambert and then dividing by a \"rebalancing coefficient\"\r\n    // gives a result close to plain diffuse response lightmaps, but normalmapped.\r\n\r\n    // Note that dir is not unit length on purpose. Its length is \"directionality\", like\r\n    // for the directional specular lightmaps.\r\n\tlowp vec3 directional=dirTex.xyz - 0.5;\r\n\tdirectional.x=-directional.x;//NOTE:because coord System\r\n    mediump float halfLambert = dot(normalWorld,directional) + 0.5;\r\n\r\n    return color * halfLambert / max(1e-4, dirTex.w);\r\n}\r\n\r\nvec3 layaGIBase(LayaGIInput giInput,mediump float occlusion, mediump vec3 normalWorld)\r\n{\r\n\tvec3 indirectDiffuse;\r\n\t#ifdef LIGHTMAP\t\r\n\t\tmediump vec3 bakedColor =decodeHDR(texture2D(u_LightMap, giInput.lightmapUV),5.0);\r\n\t\t#ifdef LIGHTMAP_DIRECTIONAL\r\n\t\t\tlowp vec4 bakedDirTex = texture2D (u_LightMapDirection, giInput.lightmapUV);\r\n            indirectDiffuse = layaDecodeDirectionalLightmap (bakedColor, bakedDirTex, normalWorld);\r\n\t\t#else //unDirectional lightmap\r\n\t\t\tindirectDiffuse = bakedColor;\r\n\t\t#endif\r\n\t#else\r\n\t\t#ifdef GI_AMBIENT_SH\r\n\t\t\tindirectDiffuse = shadeSHPerPixel(normalWorld);\r\n\t\t#else\r\n\t\t\tindirectDiffuse = u_AmbientColor; //already in gamma space\r\n\t\t#endif\r\n\t#endif\r\n\r\n\tindirectDiffuse*=occlusion;\r\n\treturn indirectDiffuse;\r\n}\r\n\r\nmediump vec3 layaGlossyEnvironment(mediump vec4 glossIn)\r\n{\r\n\tmediump float perceptualRoughness = glossIn.a;\r\n\r\n\t// use approximation to solve,below is more reasonable,but maybe slow. \r\n\t// float m = perceptualRoughnessToRoughness(perceptualRoughness); // m is the real roughness parameter\r\n    // const float fEps = 1.192092896e-07F;        // smallest such that 1.0+FLT_EPSILON != 1.0  (+1e-4h is NOT good here. is visibly very wrong)\r\n    // float n =  (2.0/max(fEps, m*m))-2.0;        // remap to spec power. See eq. 21 in --> https://dl.dropboxusercontent.com/u/55891920/papers/mm_brdf.pdf\r\n    // n /= 4;                                     // remap from n_dot_h formulatino to n_dot_r. See section \"Pre-convolved Cube Maps vs Path Tracers\" --> https://s3.amazonaws.com/docs.knaldtech.com/knald/1.0.0/lys_power_drops.html\r\n    // perceptualRoughness = pow( 2/(n+2), 0.25);  // remap back to square root of real roughness (0.25 include both the sqrt root of the conversion and sqrt for going from roughness to perceptualRoughness)\r\n\tperceptualRoughness = perceptualRoughness * (1.7 - 0.7*perceptualRoughness);//just a approximation,but fast.\r\n \r\n\tmediump float mip = perceptualRoughness * LAYA_SPECCUBE_LOD_STEPS;\r\n\tmediump vec3 uvw = glossIn.rgb;\r\n\tuvw.x=-uvw.x;//Note:reflectCube is left-hand,so x need inverse\r\n\tmediump vec4 rgbm=textureCubeLodEXT(u_ReflectTexture,uvw,mip);\r\n\treturn decodeHDR(rgbm,u_ReflectCubeHDRParams.x);\r\n}\r\n\r\nmediump vec3 layaGIIndirectSpecular(LayaGIInput giInput,mediump float occlusion, vec4 glossIn)\r\n{\r\n\tmediump vec3 specular = layaGlossyEnvironment(glossIn);\r\n\treturn specular * occlusion;\r\n}\r\n\r\n\r\nLayaGI layaGlobalIllumination(LayaGIInput giInput,mediump float occlusion, mediump vec3 normalWorld,mediump vec4 uvwRoughness)\r\n{\r\n\tLayaGI gi;\r\n\tgi.diffuse = layaGIBase(giInput,occlusion, normalWorld);\r\n\tgi.specular = layaGIIndirectSpecular(giInput,occlusion, uvwRoughness);\r\n\treturn gi;\r\n}\r\n\r\n\r\n";
+	var GlobalIllumination = "struct LayaGIInput\r\n{\r\n\tvec2 lightmapUV;\r\n\tvec3 worldPos;\r\n};\r\n\r\n#define LAYA_SPECCUBE_LOD_STEPS 6.0\r\n\r\nuniform vec3 u_AmbientColor;\r\n\r\n#if defined(GI_AMBIENT_SH)\r\n\tuniform vec4 u_AmbientSHAr;\r\n\tuniform vec4 u_AmbientSHAg;\r\n\tuniform vec4 u_AmbientSHAb;\r\n\tuniform vec4 u_AmbientSHBr;\r\n\tuniform vec4 u_AmbientSHBg;\r\n\tuniform vec4 u_AmbientSHBb;\r\n\tuniform vec4 u_AmbientSHC;\r\n#endif\r\n\r\nuniform samplerCube u_ReflectTexture;\r\nuniform vec4 u_ReflectCubeHDRParams;\r\n\r\n#ifdef SPECCUBE_BOX_PROJECTION\r\n\tuniform vec3 u_SpecCubeProbePosition;\r\n\tuniform vec3 u_SpecCubeBoxMax;\r\n\tuniform vec3 u_SpecCubeBoxMin;\r\n#endif\r\n\r\n\r\n#ifdef GI_AMBIENT_SH\r\n\tmediump vec3 shEvalLinearL0L1(mediump vec4 normal)\r\n\t{\r\n\t\tmediump vec3 x;\r\n\t\t// Linear (L1) + constant (L0) polynomial terms\r\n\t\tx.r = dot(u_AmbientSHAr, normal);\r\n\t\tx.g = dot(u_AmbientSHAg, normal);\r\n\t\tx.b = dot(u_AmbientSHAb, normal);\r\n\t\treturn x;\r\n\t}\r\n\r\n\tmediump vec3 shEvalLinearL2(mediump vec4 normal)\r\n\t{\r\n\t\tmediump vec3 x1,x2;\r\n\t\t// 4 of the quadratic (L2) polynomials\r\n\t\tmediump vec4 vB = normal.xyzz * normal.yzzx;\r\n\t\tx1.r = dot(u_AmbientSHBr, vB);\r\n\t\tx1.g = dot(u_AmbientSHBg, vB);\r\n\t\tx1.b = dot(u_AmbientSHBb, vB);\r\n\r\n\t\t// Final (5th) quadratic (L2) polynomial\r\n\t\tmediump float vC = normal.x*normal.x - normal.y*normal.y;\r\n\t\tx2 = u_AmbientSHC.rgb * vC;\r\n\r\n\t\treturn x1 + x2;\r\n\t}\r\n\t\r\n\tmediump vec3 shadeSHPerPixel(mediump vec3 normal)\r\n\t{\r\n\t\tmediump vec3 ambientContrib;\r\n\t\tmediump vec4 normalV4=vec4(-normal.x,normal.yz, 1.0);//Note:SH Data is left-hand,so x need inverse\r\n\t\tambientContrib = shEvalLinearL0L1(normalV4);\r\n\t\tambientContrib += shEvalLinearL2(normalV4);\r\n\t\tmediump vec3 ambient = max(vec3(0.0), ambientContrib);\r\n\t\tambient = layaLinearToGammaSpace(ambient);\r\n\t\treturn ambient;\r\n\t}\r\n#endif\r\n\r\n\r\n\r\n mediump vec3 BoxProjectedCubemapDirection(mediump vec3 worldRefl,mediump vec3 worldPos,mediump vec3 cubemapCenter,mediump vec3 boxMin,mediump vec3 boxMax){\r\n\t mediump vec3 nrdir = normalize(worldRefl);\r\n\t mediump vec3 rbmax = (boxMax - worldPos);\r\n\t mediump vec3 rbmin = (boxMin - worldPos);\r\n\t mediump vec3 select = step(vec3(0.0), worldRefl);\r\n\t mediump vec3 rbminmax = mix(rbmin, rbmax, select);\r\n\trbminmax = rbminmax / nrdir;\r\n\tmediump float scalar = min(min(rbminmax.x, rbminmax.y), rbminmax.z);\r\n\t mediump vec3 worldChangeRefl = nrdir * scalar + (worldPos - cubemapCenter);\r\n\treturn worldChangeRefl;\r\n}\r\n\r\n\r\nmediump vec3 layaDecodeDirectionalLightmap (mediump vec3 color, lowp vec4 dirTex, mediump vec3 normalWorld)\r\n{\r\n    // In directional (non-specular) mode Enlighten bakes dominant light direction\r\n    // in a way, that using it for half Lambert and then dividing by a \"rebalancing coefficient\"\r\n    // gives a result close to plain diffuse response lightmaps, but normalmapped.\r\n\r\n    // Note that dir is not unit length on purpose. Its length is \"directionality\", like\r\n    // for the directional specular lightmaps.\r\n\tlowp vec3 directional=dirTex.xyz - 0.5;\r\n\tdirectional.x=-directional.x;//NOTE:because coord System\r\n    mediump float halfLambert = dot(normalWorld,directional) + 0.5;\r\n\r\n    return color * halfLambert / max(1e-4, dirTex.w);\r\n}\r\n\r\nvec3 layaGIBase(LayaGIInput giInput,mediump float occlusion, mediump vec3 normalWorld)\r\n{\r\n\tvec3 indirectDiffuse;\r\n\t#ifdef LIGHTMAP\t\r\n\t\tmediump vec3 bakedColor =decodeHDR(texture2D(u_LightMap, giInput.lightmapUV),5.0);\r\n\t\t#ifdef LIGHTMAP_DIRECTIONAL\r\n\t\t\tlowp vec4 bakedDirTex = texture2D (u_LightMapDirection, giInput.lightmapUV);\r\n            indirectDiffuse = layaDecodeDirectionalLightmap (bakedColor, bakedDirTex, normalWorld);\r\n\t\t#else //unDirectional lightmap\r\n\t\t\tindirectDiffuse = bakedColor;\r\n\t\t#endif\r\n\t#else\r\n\t\t#ifdef GI_AMBIENT_SH\r\n\t\t\tindirectDiffuse = shadeSHPerPixel(normalWorld);\r\n\t\t#else\r\n\t\t\tindirectDiffuse = u_AmbientColor; //already in gamma space\r\n\t\t#endif\r\n\t#endif\r\n\r\n\tindirectDiffuse*=occlusion;\r\n\treturn indirectDiffuse;\r\n}\r\n\r\nmediump vec3 layaGlossyEnvironment(mediump vec4 glossIn)\r\n{\r\n\tmediump float perceptualRoughness = glossIn.a;\r\n\r\n\t// use approximation to solve,below is more reasonable,but maybe slow. \r\n\t// float m = perceptualRoughnessToRoughness(perceptualRoughness); // m is the real roughness parameter\r\n    // const float fEps = 1.192092896e-07F;        // smallest such that 1.0+FLT_EPSILON != 1.0  (+1e-4h is NOT good here. is visibly very wrong)\r\n    // float n =  (2.0/max(fEps, m*m))-2.0;        // remap to spec power. See eq. 21 in --> https://dl.dropboxusercontent.com/u/55891920/papers/mm_brdf.pdf\r\n    // n /= 4;                                     // remap from n_dot_h formulatino to n_dot_r. See section \"Pre-convolved Cube Maps vs Path Tracers\" --> https://s3.amazonaws.com/docs.knaldtech.com/knald/1.0.0/lys_power_drops.html\r\n    // perceptualRoughness = pow( 2/(n+2), 0.25);  // remap back to square root of real roughness (0.25 include both the sqrt root of the conversion and sqrt for going from roughness to perceptualRoughness)\r\n\tperceptualRoughness = perceptualRoughness * (1.7 - 0.7*perceptualRoughness);//just a approximation,but fast.\r\n \r\n\tmediump float mip = perceptualRoughness * LAYA_SPECCUBE_LOD_STEPS;\r\n\tmediump vec3 uvw = glossIn.rgb;\r\n\tuvw.x=-uvw.x;//Note:reflectCube is left-hand,so x need inverse\r\n\tmediump vec4 rgbm=textureCubeLodEXT(u_ReflectTexture,uvw,mip);\r\n\treturn decodeHDR(rgbm,u_ReflectCubeHDRParams.x);\r\n}\r\n\r\nmediump vec3 layaGIIndirectSpecular(LayaGIInput giInput,mediump float occlusion, vec4 glossIn)\r\n{\r\n\t#ifdef SPECCUBE_BOX_PROJECTION\r\n\t\tvec3 originalReflUVW = glossIn.xyz;\r\n\t\tglossIn.xyz =BoxProjectedCubemapDirection(originalReflUVW,giInput.worldPos,u_SpecCubeProbePosition,u_SpecCubeBoxMin,u_SpecCubeBoxMax);\r\n\t#endif\r\n\tmediump vec3 specular = layaGlossyEnvironment(glossIn);\r\n\treturn specular * occlusion;\r\n}\r\n\r\n\r\nLayaGI layaGlobalIllumination(LayaGIInput giInput,mediump float occlusion, mediump vec3 normalWorld,mediump vec4 uvwRoughness)\r\n{\r\n\tLayaGI gi;\r\n\tgi.diffuse = layaGIBase(giInput,occlusion, normalWorld);\r\n\tgi.specular = layaGIIndirectSpecular(giInput,occlusion, uvwRoughness);\r\n\treturn gi;\r\n}\r\n\r\n\r\n";
 
 	var LightingGLSL = "#ifdef GRAPHICS_API_GLES3\r\n\t#define INVERSE_MAT(mat) inverse(mat)\r\n#else\r\n\t#define INVERSE_MAT(mat) inverseMat(mat)\r\n#endif\r\n\r\nstruct DirectionLight {\r\n\tvec3 color;\r\n\tvec3 direction;\r\n};\r\n\r\nstruct PointLight {\r\n\tvec3 color;\r\n\tvec3 position;\r\n\tfloat range;\r\n};\r\n\r\nstruct SpotLight {\r\n\tvec3 color;\r\n\tvec3 position;\r\n\tfloat range;\r\n\tvec3 direction;\r\n\tfloat spot;\r\n};\r\n\r\nstruct LayaGI{\r\n\tvec3 diffuse;\r\n\tvec3 specular;\r\n};\r\n\r\nstruct LayaLight{\r\n\tvec3 color;\r\n\tvec3 dir;\r\n};\r\n\r\nconst int c_ClusterBufferWidth = CLUSTER_X_COUNT*CLUSTER_Y_COUNT;\r\nconst int c_ClusterBufferHeight = CLUSTER_Z_COUNT*(1+int(ceil(float(MAX_LIGHT_COUNT_PER_CLUSTER)/4.0)));\r\nconst int c_ClusterBufferFloatWidth = c_ClusterBufferWidth*4;\r\n\r\n#ifndef GRAPHICS_API_GLES3\r\n\tmat3 inverseMat(mat3 m) {\r\n\t\tfloat a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];\r\n\t\tfloat a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];\r\n\t\tfloat a20 = m[2][0], a21 = m[2][1], a22 = m[2][2];\r\n\r\n\t\tfloat b01 = a22 * a11 - a12 * a21;\r\n\t\tfloat b11 = -a22 * a10 + a12 * a20;\r\n\t\tfloat b21 = a21 * a10 - a11 * a20;\r\n\r\n\t\tfloat det = a00 * b01 + a01 * b11 + a02 * b21;\r\n\r\n\t\treturn mat3(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),\r\n\t\t\t\t\tb11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),\r\n\t\t\t\t\tb21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10)) / det;\r\n\t}\r\n#endif\r\n\r\nivec4 getClusterInfo(sampler2D clusterBuffer,mat4 viewMatrix,vec4 viewport,vec3 position,vec4 fragCoord,vec4 projectParams)\r\n{\r\n\tvec3 viewPos = vec3(viewMatrix*vec4(position, 1.0)); //position in viewspace\r\n\r\n\tint clusterXIndex = int(floor(fragCoord.x/ (float(viewport.z)/float(CLUSTER_X_COUNT))));\r\n    int clusterYIndex = int(floor((viewport.w * (projectParams.z <0.0? 0.0 : 1.0) - fragCoord.y * projectParams.z)/ (float(viewport.w)/float(CLUSTER_Y_COUNT))));//Maybe Flipped ProjectMatrix\r\n\tfloat zSliceParam =float(CLUSTER_Z_COUNT)/log2(projectParams.y / projectParams.x);\r\n \tint clusterZIndex = int(floor(log2(-viewPos.z) * zSliceParam- log2(projectParams.x) * zSliceParam));//projectParams x:cameraNear y:cameraFar\r\n\r\n\tvec2 uv= vec2((float(clusterXIndex + clusterYIndex * CLUSTER_X_COUNT)+0.5)/float(c_ClusterBufferWidth),\r\n\t\t\t\t(float(clusterZIndex)+0.5)/float(c_ClusterBufferHeight));\r\n\tvec4 clusterPixel=texture2D(clusterBuffer, uv);\r\n\treturn ivec4(clusterPixel);//X:Point Count Y:Spot Count Z、W:Light Offset\r\n}\r\n\r\n\r\nint getLightIndex(sampler2D clusterBuffer,int offset,int index) \r\n{\r\n\tint totalOffset=offset+index;\r\n\tint row=totalOffset/c_ClusterBufferFloatWidth;\r\n\tint lastRowFloat=totalOffset-row*c_ClusterBufferFloatWidth;\r\n\tint col=lastRowFloat/4;\r\n\tvec2 uv=vec2((float(col)+0.5)/float(c_ClusterBufferWidth),\r\n\t\t\t\t(float(row)+0.5)/float(c_ClusterBufferHeight));\r\n\tvec4 texel = texture2D(clusterBuffer, uv);\r\n    int pixelComponent = lastRowFloat-col*4;\r\n    if (pixelComponent == 0) \r\n      return int(texel.x);\r\n    else if (pixelComponent == 1) \r\n      return int(texel.y);\r\n    else if (pixelComponent == 2) \r\n      return int(texel.z);\r\n    else //pixelComponent==3\r\n      return int(texel.w);\r\n}\r\n\r\nDirectionLight getDirectionLight(sampler2D lightBuffer,int index) \r\n{\r\n    DirectionLight light;\r\n    float v = (float(index)+0.5)/ float(MAX_LIGHT_COUNT);\r\n    vec4 p1 = texture2D(lightBuffer, vec2(0.125,v));\r\n    vec4 p2 = texture2D(lightBuffer, vec2(0.375,v));\r\n\tlight.color=p1.rgb;\r\n    light.direction = p2.rgb;\r\n    return light;\r\n}\r\n\r\nPointLight getPointLight(sampler2D lightBuffer,sampler2D clusterBuffer,ivec4 clusterInfo,int index) \r\n{\r\n    PointLight light;\r\n\tint pointIndex=getLightIndex(clusterBuffer,clusterInfo.z*c_ClusterBufferFloatWidth+clusterInfo.w,index);\r\n    float v = (float(pointIndex)+0.5)/ float(MAX_LIGHT_COUNT);\r\n    vec4 p1 = texture2D(lightBuffer, vec2(0.125,v));\r\n    vec4 p2 = texture2D(lightBuffer, vec2(0.375,v));\r\n\tlight.color=p1.rgb;\r\n\tlight.range = p1.a;\r\n    light.position = p2.rgb;\r\n    return light;\r\n}\r\n\r\nSpotLight getSpotLight(sampler2D lightBuffer,sampler2D clusterBuffer,ivec4 clusterInfo,int index) \r\n{\r\n    SpotLight light;\r\n\tint spoIndex=getLightIndex(clusterBuffer,clusterInfo.z*c_ClusterBufferFloatWidth+clusterInfo.w,clusterInfo.x+index);\r\n    float v = (float(spoIndex)+0.5)/ float(MAX_LIGHT_COUNT);\r\n    vec4 p1 = texture2D(lightBuffer, vec2(0.125,v));\r\n    vec4 p2 = texture2D(lightBuffer, vec2(0.375,v));\r\n\tvec4 p3 = texture2D(lightBuffer, vec2(0.625,v));\r\n    light.color = p1.rgb;\r\n\tlight.range=p1.a;\r\n    light.position = p2.rgb;\r\n\tlight.spot = p2.a;\r\n\tlight.direction = p3.rgb;\r\n    return light;\r\n}\r\n\r\n// Laya中使用衰减纹理\r\nfloat LayaAttenuation(in vec3 L,in float invLightRadius) {\r\n\tfloat fRatio = clamp(length(L) * invLightRadius,0.0,1.0);\r\n\tfRatio *= fRatio;\r\n\treturn 1.0 / (1.0 + 25.0 * fRatio)* clamp(4.0*(1.0 - fRatio),0.0,1.0); //fade to black as if 4 pixel texture\r\n}\r\n\r\n// Same as Just Cause 2 and Crysis 2 (you can read GPU Pro 1 book for more information)\r\nfloat BasicAttenuation(in vec3 L,in float invLightRadius) {\r\n\tvec3 distance = L * invLightRadius;\r\n\tfloat attenuation = clamp(1.0 - dot(distance, distance),0.0,1.0); // Equals float attenuation = saturate(1.0f - dot(L, L) / (lightRadius *  lightRadius));\r\n\treturn attenuation * attenuation;\r\n}\r\n\r\n// Inspired on http://fools.slindev.com/viewtopic.php?f=11&t=21&view=unread#unread\r\nfloat NaturalAttenuation(in vec3 L,in float invLightRadius) {\r\n\tfloat attenuationFactor = 30.0;\r\n\tvec3 distance = L * invLightRadius;\r\n\tfloat attenuation = dot(distance, distance); // Equals float attenuation = dot(L, L) / (lightRadius *  lightRadius);\r\n\tattenuation = 1.0 / (attenuation * attenuationFactor + 1.0);\r\n\t// Second we move down the function therewith it reaches zero at abscissa 1:\r\n\tattenuationFactor = 1.0 / (attenuationFactor + 1.0); //attenuationFactor contains now the value we have to subtract\r\n\tattenuation = max(attenuation - attenuationFactor, 0.0); // The max fixes a bug.\r\n\t// Finally we expand the equation along the y-axis so that it starts with a function value of 1 again.\r\n\tattenuation /= 1.0 - attenuationFactor;\r\n\treturn attenuation;\r\n}\r\n\r\nvoid LayaAirBlinnPhongLight (in vec3 specColor,in float specColorIntensity,in vec3 normal,in vec3 gloss, in vec3 viewDir,in vec3 lightColor, in vec3 lightVec,out vec3 diffuseColor,out vec3 specularColor) {\r\n\tmediump vec3 h = normalize(viewDir-lightVec);\r\n\tlowp float ln = max (0.0, dot (-lightVec,normal));\r\n\tfloat nh = max (0.0, dot (h,normal));\r\n\tdiffuseColor=lightColor * ln;\r\n\tspecularColor=lightColor *specColor*pow (nh, specColorIntensity*128.0) * gloss;\r\n}\r\n\r\nvoid LayaAirBlinnPhongDiectionLight (in vec3 specColor,in float specColorIntensity,in vec3 normal,in vec3 gloss, in vec3 viewDir, in DirectionLight light,out vec3 diffuseColor,out vec3 specularColor) {\r\n\tvec3 lightVec=normalize(light.direction);\r\n\tLayaAirBlinnPhongLight(specColor,specColorIntensity,normal,gloss,viewDir,light.color,lightVec,diffuseColor,specularColor);\r\n}\r\n\r\nvoid LayaAirBlinnPhongPointLight (in vec3 pos,in vec3 specColor,in float specColorIntensity,in vec3 normal,in vec3 gloss, in vec3 viewDir, in PointLight light,out vec3 diffuseColor,out vec3 specularColor) {\r\n\tvec3 lightVec =  pos-light.position;\r\n\tLayaAirBlinnPhongLight(specColor,specColorIntensity,normal,gloss,viewDir,light.color,lightVec/length(lightVec),diffuseColor,specularColor);\r\n\tfloat attenuate = LayaAttenuation(lightVec, 1.0/light.range);\r\n\tdiffuseColor *= attenuate;\r\n\tspecularColor*= attenuate;\r\n}\r\n\r\nvoid LayaAirBlinnPhongSpotLight (in vec3 pos,in vec3 specColor,in float specColorIntensity,in vec3 normal,in vec3 gloss, in vec3 viewDir, in SpotLight light,out vec3 diffuseColor,out vec3 specularColor) {\r\n\tvec3 lightVec =  pos-light.position;\r\n\tvec3 normalLightVec=lightVec/length(lightVec);\r\n\tLayaAirBlinnPhongLight(specColor,specColorIntensity,normal,gloss,viewDir,light.color,normalLightVec,diffuseColor,specularColor);\r\n\tvec2 cosAngles=cos(vec2(light.spot,light.spot*0.5)*0.5);//ConeAttenuation\r\n\tfloat dl=dot(normalize(light.direction),normalLightVec);\r\n\tdl*=smoothstep(cosAngles[0],cosAngles[1],dl);\r\n\tfloat attenuate = LayaAttenuation(lightVec, 1.0/light.range)*dl;\r\n\tdiffuseColor *=attenuate;\r\n\tspecularColor *=attenuate;\r\n}\r\n\r\nvec3 NormalSampleToWorldSpace(vec3 normalMapSample, vec3 unitNormal, vec3 tangent,vec3 binormal) {\r\n\tvec3 normalT =vec3(2.0*normalMapSample.x - 1.0,1.0-2.0*normalMapSample.y,2.0*normalMapSample.z - 1.0);\r\n\tmediump vec3 N = unitNormal;\r\n\tmediump vec3 T = tangent;\r\n\tmediump vec3 B = binormal;\r\n\tmat3 TBN = mat3(T, B, N);\r\n\r\n\t// Transform from tangent space to world space.\r\n\tvec3 bumpedNormal =normalize(TBN*normalT);\r\n\treturn bumpedNormal;\r\n}\r\n\r\nvec3 NormalSampleToWorldSpace1(vec4 normalMapSample, vec3 tangent, vec3 binormal, vec3 unitNormal) {\r\n\tvec3 normalT;\r\n\tnormalT.x = 2.0 * normalMapSample.x - 1.0;\r\n\tnormalT.y = 1.0 - 2.0 * normalMapSample.y;\r\n\tnormalT.z = sqrt(1.0 - clamp(dot(normalT.xy, normalT.xy), 0.0, 1.0));\r\n\r\n\tvec3 T = normalize(tangent);\r\n\tvec3 B = normalize(binormal);\r\n\tvec3 N = normalize(unitNormal);\r\n\tmat3 TBN = mat3(T, B, N);\r\n\r\n\t// Transform from tangent space to world space.\r\n\tvec3 bumpedNormal = TBN * normalize(normalT);\r\n\r\n\treturn bumpedNormal;\r\n}\r\n\r\nvec3 DecodeLightmap(vec4 color) {\r\n\treturn color.rgb*color.a*5.0;\r\n}\r\n\r\nvec3 decodeHDR(vec4 color,float range) {\r\n\treturn color.rgb*color.a*range;\r\n}\r\n\r\nvec2 TransformUV(vec2 texcoord,vec4 tilingOffset) {\r\n\tvec2 transTexcoord=vec2(texcoord.x,texcoord.y-1.0)*tilingOffset.xy+vec2(tilingOffset.z,-tilingOffset.w);\r\n\ttransTexcoord.y+=1.0;\r\n\treturn transTexcoord;\r\n}\r\n\r\nvec4 remapGLPositionZ(vec4 position) {\r\n\tposition.z=position.z * 2.0 - position.w;\r\n\treturn position;\r\n}\r\n\r\nmediump vec3 layaLinearToGammaSpace (mediump vec3 linRGB)\r\n{\r\n    linRGB = max(linRGB, vec3(0.0));\r\n    // An almost-perfect approximation from http://chilliant.blogspot.com.au/2012/08/srgb-approximations-for-hlsl.html?m=1\r\n    return max(1.055 * pow(linRGB,vec3(0.416666667)) - 0.055, 0.0);   \r\n}\r\n\r\nLayaLight layaDirectionLightToLight(in DirectionLight light,in float attenuate)\r\n{\r\n\tLayaLight relight;\r\n\trelight.color = light.color*attenuate;\r\n\trelight.dir = light.direction;\r\n\treturn relight;\r\n}\r\n\r\nLayaLight layaPointLightToLight(in vec3 pos,in vec3 normal, in PointLight light,in float attenuate)\r\n{\r\n\tLayaLight relight;\r\n\tvec3 lightVec =  pos-light.position;\r\n\tattenuate *= LayaAttenuation(lightVec, 1.0/light.range);\r\n\trelight.color = light.color*attenuate;\r\n\trelight.dir = normalize(lightVec);\r\n\treturn relight;\r\n}\r\n\r\nLayaLight layaSpotLightToLight(in vec3 pos,in vec3 normal, in SpotLight light,in float attenuate)\r\n{\r\n\tLayaLight relight;\r\n\tvec3 lightVec =  pos-light.position;\r\n\tvec3 normalLightVec=lightVec/length(lightVec);\r\n\tvec2 cosAngles=cos(vec2(light.spot,light.spot*0.5)*0.5);//ConeAttenuation\r\n\tfloat dl=dot(normalize(light.direction),normalLightVec);\r\n\tdl*=smoothstep(cosAngles[0],cosAngles[1],dl);\r\n\tattenuate *= LayaAttenuation(lightVec, 1.0/light.range)*dl;\r\n\trelight.dir = lightVec;\r\n\trelight.color = light.color*attenuate;\r\n\treturn relight;\r\n}\r\n\r\n\r\n\r\n\r\n";
 
@@ -30252,7 +30568,7 @@
 
 	var LayaPBRBRDF = "// allow to explicitly override LAYA_BRDF_GI and LAYA_BRDF_LIGHT in custom shader,default is layaBRDFHighGI and layaBRDFHighLight\r\n#if !defined (LAYA_BRDF_GI) \r\n\t#if defined(LAYA_PBR_BRDF_LOW)\r\n\t\t#define LAYA_BRDF_GI layaBRDFLowGI\r\n\t#elif defined(LAYA_PBR_BRDF_HIGH)\r\n\t\t#define LAYA_BRDF_GI layaBRDFHighGI\r\n\t#endif\r\n#endif\r\n#if !defined (LAYA_BRDF_LIGHT)\r\n\t#if defined(LAYA_PBR_BRDF_LOW)\r\n\t\t#define LAYA_BRDF_LIGHT layaBRDFLowLight\r\n\t#elif defined(LAYA_PBR_BRDF_HIGH)\r\n\t\t#define LAYA_BRDF_LIGHT layaBRDFHighLight\r\n\t#endif\r\n#endif\r\n\r\n#define PI 3.14159265359\r\n#define INV_PI 0.31830988618\r\n\r\nmediump float pow4(mediump float x)\r\n{\r\n\treturn x * x * x * x;\r\n}\r\n\r\nmediump float pow5(mediump float x)\r\n{\r\n\treturn x * x * x * x * x;\r\n}\r\n\r\nmediump vec3 fresnelLerp(mediump vec3 F0,mediump vec3 F90,mediump float cosA)\r\n{\r\n\tfloat t = pow5(1.0 - cosA);   // ala Schlick interpoliation\r\n\treturn mix(F0, F90, t);\r\n}\r\n\r\nmediump vec3 fresnelTerm(mediump vec3 F0,mediump float cosA)\r\n{\r\n\tfloat t = pow5(1.0 - cosA);   // ala Schlick interpoliation\r\n\treturn F0 + (vec3(1.0) - F0) * t;\r\n}\r\n\r\n// approximage Schlick with ^4 instead of ^5\r\nmediump vec3 fresnelLerpFast (mediump vec3 F0, mediump vec3 F90,mediump float cosA)\r\n{\r\n    mediump float t = pow4 (1.0 - cosA);\r\n    return mix (F0, F90, t);\r\n}\r\n\r\nfloat smoothnessToPerceptualRoughness(float smoothness)\r\n{\r\n    return 1.0 - smoothness;\r\n}\r\n\r\nfloat perceptualRoughnessToRoughness(float perceptualRoughness)\r\n{\r\n    return perceptualRoughness * perceptualRoughness;\r\n}\r\n\r\nvec3 safeNormalize(vec3 inVec)\r\n{\r\n\tfloat dp3 = max(0.001,dot(inVec,inVec));\r\n\treturn inVec * inversesqrt(dp3);\r\n}\r\n\r\n// Note: Disney diffuse must be multiply by diffuseAlbedo / PI. This is done outside of this function.\r\nmediump float disneyDiffuse(mediump float NdotV,mediump float NdotL,mediump float LdotH,mediump float perceptualRoughness)\r\n{\r\n\t//https://www.cnblogs.com/herenzhiming/articles/5790389.html\r\n\tmediump float fd90 = 0.5 + 2.0 * LdotH * LdotH * perceptualRoughness;\r\n\t// Two schlick fresnel term\r\n\tmediump float lightScatter = (1.0 + (fd90 - 1.0) * pow5(1.0 - NdotL));\r\n\tmediump float viewScatter = (1.0 + (fd90 - 1.0) * pow5(1.0 - NdotV));\r\n\r\n\treturn lightScatter * viewScatter;\r\n}\r\n\r\n// Ref: http://jcgt.org/published/0003/02/03/paper.pdf\r\nfloat smithJointGGXVisibilityTerm(float NdotL, float NdotV, float roughness)\r\n{\r\n\t// Original formulation:\r\n    // lambda_v    = (-1 + sqrt(a2 * (1 - NdotL2) / NdotL2 + 1)) * 0.5f;\r\n    // lambda_l    = (-1 + sqrt(a2 * (1 - NdotV2) / NdotV2 + 1)) * 0.5f;\r\n    // G           = 1 / (1 + lambda_v + lambda_l);\r\n\r\n\t// scientific code implement:\r\n\t// Reorder code to be more optimal\r\n    // half a          = roughness;\r\n    // half a2         = a * a;\r\n\r\n    // half lambdaV    = NdotL * sqrt((-NdotV * a2 + NdotV) * NdotV + a2);\r\n    // half lambdaL    = NdotV * sqrt((-NdotL * a2 + NdotL) * NdotL + a2);\r\n\r\n    // Simplify visibility term: (2.0f * NdotL * NdotV) /  ((4.0f * NdotL * NdotV) * (lambda_v + lambda_l + 1e-5f));\r\n    // return 0.5f / (lambdaV + lambdaL + 1e-5f);  \r\n\t// This function is not intended to be running on Mobile,therefore epsilon is smaller than can be represented by half\r\n\r\n\t// Approximation of the above formulation (simplify the sqrt, not mathematically correct but close enough)\r\n\tfloat a = roughness;\r\n\tfloat lambdaV = NdotL * (NdotV * (1.0 - a) + a);\r\n\tfloat lambdaL = NdotV * (NdotL * (1.0 - a) + a);\r\n\treturn 0.5 / (lambdaV + lambdaL + 1e-5);\r\n}\r\n\r\nfloat ggxTerm(float NdotH, float roughness)\r\n{\r\n\tfloat a2 = roughness * roughness;\r\n\tfloat d = (NdotH * a2 - NdotH) * NdotH + 1.0; // 2 mad\r\n\treturn INV_PI * a2 / (d * d + 1e-7); // This function is not intended to be running on Mobile,therefore epsilon is smaller than what can be represented by half//返回值小用half来返回\r\n}\r\n\r\n// BRDF1-------------------------------------------------------------------------------------\r\n\r\n// Note: BRDF entry points use smoothness and oneMinusReflectivity for optimization purposes,\r\n// mostly for DX9 SM2.0 level. Most of the math is being done on these (1-x) values, and that saves a few precious ALU slots.\r\n\r\n// Main Physically Based BRDF\r\n// Derived from Disney work and based on Torrance-Sparrow micro-facet model\r\n//\r\n// BRDF = kD / pi + kS * (D * V * F) / 4\r\n// I = BRDF * NdotL\r\n//\r\n// *NDF GGX:\r\n// *Smith for Visiblity term\r\n// *Schlick approximation for Fresnel\r\nmediump vec4 layaBRDFHighLight(mediump vec3 diffColor, mediump vec3 specColor, mediump float oneMinusReflectivity, float perceptualRoughness,float roughness,mediump float nv,vec3 normal, vec3 viewDir,LayaLight light)\r\n{\r\n\tvec3 halfDir = safeNormalize(viewDir-light.dir);\r\n\r\n\tfloat nl = clamp(dot(normal, -light.dir),0.0,1.0);\r\n\tfloat nh = clamp(dot(normal, halfDir),0.0,1.0);\r\n\tmediump float lv = clamp(dot(light.dir, viewDir),0.0,1.0);\r\n\tmediump float lh = clamp(dot(light.dir, -halfDir),0.0,1.0);\r\n\r\n\t// Diffuse term\r\n\tmediump float diffuseTerm = disneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;\r\n\r\n\t// Specular term\r\n    // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!\r\n    // BUT that will make shader look significantly darker than Legacy ones\r\n\r\n\t// GGX with roughtness to 0 would mean no specular at all, using max(roughness, 0.002) here to match HDrenderloop roughtness remapping.\r\n\troughness = max(roughness, 0.002);\r\n\tfloat V = smithJointGGXVisibilityTerm(nl, nv, roughness);\r\n\tfloat D = ggxTerm(nh, roughness);\r\n\r\n\tfloat specularTerm = V * D * PI; // Torrance-Sparrow model, Fresnel is applied later\r\n\r\n\t//#ifdef LAYA_COLORSPACE_GAMMA\r\n\tspecularTerm = sqrt(max(1e-4, specularTerm));\r\n\t//#endif\r\n\tspecularTerm = max(0.0, specularTerm * nl);\r\n\t\t\r\n\tmediump vec3 color = diffColor * light.color * diffuseTerm + specularTerm * light.color * fresnelTerm(specColor, lh);\r\n\treturn vec4(color, 1.0);\r\n}\r\n\r\nvec4 layaBRDFHighGI(mediump vec3 diffColor,mediump vec3 specColor,mediump float oneMinusReflectivity,float smoothness ,float perceptualRoughness,float roughness,mediump float nv,vec3 normal, vec3 viewDir,LayaGI gi)\r\n{\r\n\t// surfaceReduction = Int D(NdotH) * NdotH * Id(NdotL>0) dH = 1/(roughness^2+1)\r\n\tfloat surfaceReduction;\r\n\tsurfaceReduction = 1.0 - 0.28*roughness*perceptualRoughness;// 1-0.28*x^3 as approximation for (1/(x^4+1))^(1/2.2) on the domain [0;1]\r\n\tfloat grazingTerm = clamp(smoothness + (1.0 - oneMinusReflectivity),0.0,1.0);\r\n\tmediump vec3 color =diffColor * gi.diffuse + surfaceReduction * gi.specular * fresnelLerp(specColor,vec3(grazingTerm), nv);\r\n\treturn vec4(color,1.0);\r\n}\r\n// BRDF1-------------------------------------------------------------------------------------\r\n\r\n\r\n// BRDF2-------------------------------------------------------------------------------------\r\n// Based on Minimalist CookTorrance BRDF\r\n// Implementation is slightly different from original derivation: http://www.thetenthplanet.de/archives/255\r\n//\r\n// *NDF [Modified] GGX:\r\n// *Modified Kelemen and Szirmay-​Kalos for Visibility term\r\n// *Fresnel approximated with 1/LdotH\r\nmediump vec4 layaBRDFLowLight (mediump vec3 diffColor, mediump vec3 specColor,mediump float oneMinusReflectivity,float perceptualRoughness,float roughness,mediump float nv,vec3 normal,vec3 viewDir,LayaLight light)\r\n{\r\n    vec3 halfDir = safeNormalize (viewDir-light.dir);\r\n    mediump float nl = clamp(dot(normal, -light.dir),0.0,1.0);\r\n    float nh = clamp(dot(normal, halfDir),0.0,1.0);\r\n    float lh = clamp(dot(-light.dir, halfDir),0.0,1.0);\r\n\r\n    // GGX Distribution multiplied by combined approximation of Visibility and Fresnel\r\n    // See \"Optimizing PBR for Mobile\" from Siggraph 2015 moving mobile graphics course\r\n    // https://community.arm.com/events/1155\r\n    mediump float a = roughness;\r\n    float a2 = a*a;\r\n\r\n    float d = nh * nh * (a2 - 1.0) + 1.00001;\r\n\t// #ifdef LAYA_COLORSPACE_GAMMA\r\n\t\t// Tighter approximation for Gamma only rendering mode!\r\n\t\t// DVF = sqrt(DVF);\r\n\t\t// DVF = (a * sqrt(.25)) / (max(sqrt(0.1), lh)*sqrt(roughness + .5) * d);\r\n\t\tfloat specularTerm = a / (max(0.32, lh) * (1.5 + roughness) * d);\r\n\t// #else\r\n\t// \tfloat specularTerm = a2 / (max(0.1f, lh*lh) * (roughness + 0.5f) * (d * d) * 4);\r\n\t// #endif\r\n\r\n    // on mobiles (where half actually means something) denominator have risk of overflow\r\n    // clamp below was added specifically to \"fix\" that, but dx compiler (we convert bytecode to metal/gles)\r\n    // sees that specularTerm have only non-negative terms, so it skips max(0,..) in clamp (leaving only min(100,...))\r\n\r\n\t//#if defined (SHADER_API_MOBILE)\r\n    specularTerm = specularTerm - 1e-4;\r\n\t//#endif\r\n\r\n\t// #else\r\n\t\t// // Legacy\r\n\t\t// half specularPower = PerceptualRoughnessToSpecPower(perceptualRoughness);\r\n\t\t// // Modified with approximate Visibility function that takes roughness into account\r\n\t\t// // Original ((n+1)*N.H^n) / (8*Pi * L.H^3) didn't take into account roughness\r\n\t\t// // and produced extremely bright specular at grazing angles\r\n\r\n\t\t// half invV = lh * lh * smoothness + perceptualRoughness * perceptualRoughness; // approx ModifiedKelemenVisibilityTerm(lh, perceptualRoughness);\r\n\t\t// half invF = lh;\r\n\r\n\t\t// half specularTerm = ((specularPower + 1) * pow (nh, specularPower)) / (8 * invV * invF + 1e-4h);\r\n\r\n\t\t// #ifdef LAYA_COLORSPACE_GAMMA\r\n\t\t// \tspecularTerm = sqrt(max(1e-4f, specularTerm));\r\n\t\t// #endif\r\n\t// #endif\r\n\r\n\t// #if defined (SHADER_API_MOBILE)\r\n\t\tspecularTerm = clamp(specularTerm, 0.0, 100.0); // Prevent FP16 overflow on mobiles\r\n\t// #endif\r\n    \r\n    mediump vec3 color = (diffColor + specularTerm * specColor) * light.color * nl;\r\n\r\n    return vec4(color, 1.0);\r\n}\r\n\r\nmediump vec4 layaBRDFLowGI (mediump vec3 diffColor, mediump vec3 specColor,mediump float oneMinusReflectivity,mediump float smoothness,float perceptualRoughness,float roughness,mediump float nv,vec3 normal,vec3 viewDir,LayaGI gi)\r\n{\r\n\t// surfaceReduction = Int D(NdotH) * NdotH * Id(NdotL>0) dH = 1/(realRoughness^2+1)\r\n\r\n    // 1-0.28*x^3 as approximation for (1/(x^4+1))^(1/2.2) on the domain [0;1]\r\n    // 1-x^3*(0.6-0.08*x)   approximation for 1/(x^4+1)\r\n\t// #ifdef LAYA_COLORSPACE_GAMMA\r\n\t\tmediump float surfaceReduction = 0.28;\r\n\t// #else\r\n\t\t// mediump float surfaceReduction = (0.6-0.08*perceptualRoughness);\r\n\t// #endif\r\n\r\n    surfaceReduction = 1.0 - roughness*perceptualRoughness*surfaceReduction;\r\n\r\n\tmediump float grazingTerm = clamp(smoothness + (1.0-oneMinusReflectivity),0.0,1.0);\r\n\tmediump vec3 color =gi.diffuse * diffColor+ surfaceReduction * gi.specular * fresnelLerpFast (specColor, vec3(grazingTerm), nv);\r\n\r\n    return vec4(color, 1.0);\r\n}\r\n// BRDF2-------------------------------------------------------------------------------------";
 
-	var PBRCore = "struct FragmentCommonData{\r\n\tvec3 diffColor;\r\n\tvec3 specColor;\r\n\tfloat oneMinusReflectivity;\r\n\tfloat smoothness;\r\n\t//vec3 eyeVec;TODO:maybe can remove\r\n\t//float alpha;\r\n\t//vec3 reflUVW;\r\n};\r\n\r\n#ifndef SETUP_BRDF_INPUT\r\n    #define SETUP_BRDF_INPUT metallicSetup//default is metallicSetup,also can be other. \r\n#endif\r\n\r\nconst mediump vec4 dielectricSpecularColor = vec4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301);\r\n\r\nmediump vec3 diffuseAndSpecularFromMetallic(mediump vec3 albedo,mediump float metallic, out mediump vec3 specColor, out mediump float oneMinusReflectivity)\r\n{\r\n\tspecColor = mix(dielectricSpecularColor.rgb, albedo, metallic);\r\n\toneMinusReflectivity= dielectricSpecularColor.a*(1.0-metallic);//diffuse proportion\r\n\treturn albedo * oneMinusReflectivity;\r\n}\r\n\r\nmediump float specularStrength(mediump vec3 specular)\r\n{\r\n    return max (max (specular.r, specular.g), specular.b);\r\n}\r\n\r\n// Diffuse/Spec Energy conservation\r\nmediump vec3 energyConservationBetweenDiffuseAndSpecular (mediump vec3 albedo, mediump vec3 specColor, out mediump float oneMinusReflectivity)\r\n{\r\n\toneMinusReflectivity = 1.0 - specularStrength(specColor);\r\n    return albedo * (vec3(1.0) - specColor);\r\n}\r\n\r\n#ifdef TRANSPARENTBLEND\r\n\tmediump vec3 preMultiplyAlpha (mediump vec3 diffColor, mediump float alpha, mediump float oneMinusReflectivity,out mediump float modifiedAlpha)\r\n\t{\r\n\t\t// Transparency 'removes' from Diffuse component\r\n\t\tdiffColor *= alpha;\r\n\t\t// Reflectivity 'removes' from the rest of components, including Transparency\r\n\t\t// modifiedAlpha = 1.0-(1.0-alpha)*(1.0-reflectivity) = 1.0-(oneMinusReflectivity - alpha*oneMinusReflectivity) = 1.0-oneMinusReflectivity + alpha*oneMinusReflectivity\r\n\t\tmodifiedAlpha = 1.0 - oneMinusReflectivity + alpha*oneMinusReflectivity;\r\n\t\treturn diffColor;\r\n\t}\r\n#endif\r\n\r\nFragmentCommonData metallicSetup(vec2 uv)\r\n{\r\n\tmediump vec2 metallicGloss = getMetallicGloss(uv);\r\n\tmediump float metallic = metallicGloss.x;\r\n\tmediump float smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.\r\n\tmediump float oneMinusReflectivity;\r\n\tmediump vec3 specColor;\r\n\tmediump vec3 diffColor = diffuseAndSpecularFromMetallic(albedo(uv), metallic,/*out*/specColor,/*out*/oneMinusReflectivity);\r\n\r\n\tFragmentCommonData o;\r\n\to.diffColor = diffColor;\r\n\to.specColor = specColor;\r\n\to.oneMinusReflectivity = oneMinusReflectivity;\r\n\to.smoothness = smoothness;\r\n\treturn o;\r\n}\r\n\r\nFragmentCommonData specularSetup(vec2 uv)\r\n{\r\n    mediump vec4 specGloss = specularGloss(uv);\r\n    mediump vec3 specColor = specGloss.rgb;\r\n    mediump float smoothness = specGloss.a;\r\n\r\n    mediump float oneMinusReflectivity;\r\n    mediump vec3 diffColor = energyConservationBetweenDiffuseAndSpecular (albedo(uv), specColor, /*out*/ oneMinusReflectivity);\r\n\r\n    FragmentCommonData o;\r\n    o.diffColor = diffColor;\r\n    o.specColor = specColor;\r\n    o.oneMinusReflectivity = oneMinusReflectivity;\r\n    o.smoothness = smoothness;\r\n    return o;\r\n}\r\n\r\nLayaGI fragmentGI(float smoothness,vec3 eyeVec,mediump float occlusion,mediump vec2 lightmapUV,vec3 worldnormal)\r\n{\r\n\tLayaGIInput giInput;\r\n\t#ifdef LIGHTMAP\r\n\t\tgiInput.lightmapUV=lightmapUV;\r\n\t#endif\r\n\r\n\tvec3 worldViewDir = -eyeVec;\r\n\tmediump vec4 uvwRoughness;\r\n\tuvwRoughness.rgb = reflect(worldViewDir, worldnormal);//reflectUVW\r\n\tuvwRoughness.a= smoothnessToPerceptualRoughness(smoothness);//perceptualRoughness\r\n\r\n\treturn layaGlobalIllumination(giInput,occlusion, worldnormal, uvwRoughness);\r\n}\r\n\r\n\r\nvec3 perPixelWorldNormal(vec2 uv,vec3 normal,vec3 binormal,vec3 tangent)\r\n{\r\n\t#ifdef NORMALTEXTURE\r\n\t\tmediump vec3 normalTangent=normalInTangentSpace(uv);\r\n\t\tvec3 normalWorld = normalize(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z);\r\n\t#else\r\n\t\tvec3 normalWorld = normalize(normal);\r\n\t#endif\r\n\t\treturn normalWorld;\r\n}\r\n\r\nvoid fragmentForward()\r\n{\r\n\tvec2 uv;\r\n\t#if defined(ALBEDOTEXTURE)||defined(METALLICGLOSSTEXTURE)||defined(NORMALTEXTURE)||defined(EMISSIONTEXTURE)||defined(OCCLUSIONTEXTURE)||defined(PARALLAXTEXTURE)\r\n\t\t#ifdef PARALLAXTEXTURE\r\n\t\t\tuv = parallax(v_Texcoord0,normalize(v_ViewDirForParallax));\r\n\t\t#else\r\n\t\t\tuv = v_Texcoord0;\r\n\t\t#endif\r\n\t#endif\r\n\r\n\tmediump float alpha = getAlpha(uv);\r\n\t#ifdef ALPHATEST\r\n\t\tif(alpha<u_AlphaTestValue)\r\n\t\t\tdiscard;\r\n\t#endif\r\n\r\n\tFragmentCommonData o = SETUP_BRDF_INPUT(uv);\r\n\t\r\n\tvec3 binormal;\r\n\tvec3 tangent;\r\n\t#ifdef NORMALTEXTURE\r\n\t\ttangent = v_Tangent;\r\n\t\tbinormal = v_Binormal;\r\n\t#endif\r\n\r\n\tvec3 normal = v_Normal;\r\n\tvec3 normalWorld = perPixelWorldNormal(uv,normal,binormal,tangent);//In FS if the normal use mediump before normalize will cause precision prolem in mobile device.\r\n\tvec3 eyeVec = normalize(v_EyeVec);\r\n\tvec3 posworld = v_PositionWorld;\r\n\r\n\t#ifdef TRANSPARENTBLEND\r\n\t\to.diffColor=preMultiplyAlpha(o.diffColor,alpha,o.oneMinusReflectivity,/*out*/alpha);// shader relies on pre-multiply alpha-blend (srcBlend = One, dstBlend = OneMinusSrcAlpha)\r\n\t#endif\r\n\r\n\tmediump float occlusion = getOcclusion(uv);\r\n\tmediump vec2 lightMapUV;\r\n\t#ifdef LIGHTMAP\r\n\t\tlightMapUV=v_LightMapUV;\r\n\t#endif\r\n\tfloat perceptualRoughness = smoothnessToPerceptualRoughness(o.smoothness);\r\n\tfloat roughness = perceptualRoughnessToRoughness(perceptualRoughness);\r\n\tfloat nv = abs(dot(normalWorld, eyeVec));\r\n\tLayaGI gi =fragmentGI(o.smoothness,eyeVec,occlusion,lightMapUV,normalWorld);\r\n\tvec4 color = LAYA_BRDF_GI(o.diffColor,o.specColor,o.oneMinusReflectivity,o.smoothness,perceptualRoughness,roughness,nv,normalWorld,eyeVec,gi);\r\n\t\r\n\tfloat shadowAttenuation = 1.0;\r\n\t#ifdef LEGACYSINGLELIGHTING\r\n\t\t#ifdef DIRECTIONLIGHT\r\n\t\t\t#ifdef CALCULATE_SHADOWS\r\n\t\t\t\t#ifdef SHADOW_CASCADE\r\n\t\t\t\t\tvec4 shadowCoord = getShadowCoord(vec4(v_PositionWorld,1.0));\r\n\t\t\t\t#else\r\n\t\t\t\t\tvec4 shadowCoord = v_ShadowCoord;\r\n\t\t\t\t#endif\r\n\t\t\t\tshadowAttenuation=sampleShadowmap(shadowCoord);\r\n\t\t\t#endif\r\n\t\t\tLayaLight dirLight = layaDirectionLightToLight(u_DirectionLight,shadowAttenuation);\r\n\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,dirLight);\r\n\t\t#endif\r\n\t\r\n\t\t#ifdef POINTLIGHT\r\n\t\t\tshadowAttenuation = 1.0;\r\n\t\t\tLayaLight poiLight = layaPointLightToLight(posworld,normalWorld,u_PointLight,shadowAttenuation);\r\n\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,poiLight);\r\n\t\t#endif\r\n\t\t\r\n\t\t#ifdef SPOTLIGHT\r\n\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t#ifdef CALCULATE_SPOTSHADOWS\r\n\t\t\t\tvec4 spotShadowcoord = v_SpotShadowCoord;\r\n\t\t\t\tshadowAttenuation = sampleSpotShadowmap(spotShadowcoord);\r\n\t\t\t#endif\r\n\t\t    LayaLight spoLight = layaSpotLightToLight(posworld,normalWorld,u_SpotLight,shadowAttenuation);\r\n\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,spoLight);\r\n\t\t#endif\r\n\t#else\r\n\t \t#ifdef DIRECTIONLIGHT\r\n\t\t\tfor (int i = 0; i < MAX_LIGHT_COUNT; i++) \r\n\t\t\t{\r\n\t\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t\tif(i >= u_DirationLightCount)\r\n\t\t\t\t\tbreak;\r\n\t\t\t\t#ifdef CALCULATE_SHADOWS\r\n\t\t\t\t\tif(i == 0)\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t#ifdef SHADOW_CASCADE\r\n\t\t\t\t\t\t\tvec4 shadowCoord = getShadowCoord(vec4(v_PositionWorld,1.0));\r\n\t\t\t\t\t\t#else\r\n\t\t\t\t\t\t\tvec4 shadowCoord = v_ShadowCoord;\r\n\t\t\t\t\t\t#endif\r\n\t\t\t\t\t\tshadowAttenuation *= sampleShadowmap(shadowCoord);\r\n\t\t\t\t\t}\r\n\t\t\t\t#endif\r\n\t\t\t\tDirectionLight directionLight = getDirectionLight(u_LightBuffer,i);\r\n\t\t\t\tLayaLight dirLight = layaDirectionLightToLight(directionLight,shadowAttenuation);\r\n\t\t\t \tcolor+=LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,dirLight);\r\n\t\t\t}\r\n\t \t#endif\r\n\t\t#if defined(POINTLIGHT)||defined(SPOTLIGHT)\r\n\t\t\tivec4 clusterInfo =getClusterInfo(u_LightClusterBuffer,u_View,u_Viewport, v_PositionWorld,gl_FragCoord,u_ProjectionParams);\r\n\t\t\t#ifdef POINTLIGHT\r\n\t\t\t\tfor (int i = 0; i < MAX_LIGHT_COUNT; i++) \r\n\t\t\t\t{\r\n\t\t\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t\t\tif(i >= clusterInfo.x)//PointLightCount\r\n\t\t\t\t\t\tbreak;\r\n\t\t\t\t\tPointLight pointLight = getPointLight(u_LightBuffer,u_LightClusterBuffer,clusterInfo,i);\r\n\t\t\t\t\tLayaLight poiLight = layaPointLightToLight(posworld,normalWorld,pointLight,shadowAttenuation);\r\n\t\t\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,poiLight);\r\n\t\t\t\t}\r\n\t\t\t#endif\r\n\t\t\t#ifdef SPOTLIGHT\r\n\t\t\t\tfor (int i = 0; i < MAX_LIGHT_COUNT; i++) \r\n\t\t\t\t{\r\n\t\t\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t\t\tif(i >= clusterInfo.y)//SpotLightCount\r\n\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t#ifdef CALCULATE_SPOTSHADOWS\r\n\t\t\t\t\t\tif(i == 0)\r\n\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\tvec4 spotShadowcoord = v_SpotShadowCoord;\r\n\t\t\t\t\t\t\tshadowAttenuation= sampleSpotShadowmap(spotShadowcoord);\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t#endif\r\n\t\t\t\t\tSpotLight spotLight = getSpotLight(u_LightBuffer,u_LightClusterBuffer,clusterInfo,i);\r\n\t\t\t\t\tLayaLight spoLight = layaSpotLightToLight(posworld,normalWorld,spotLight,shadowAttenuation);\r\n\t\t\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,spoLight);\r\n\t\t\t\t}\r\n\t\t\t#endif\r\n\t\t#endif\r\n\t #endif\r\n\r\n\t#ifdef EMISSION\r\n\t\tcolor.rgb += emission(uv);\r\n\t#endif\r\n\r\n\t#ifdef FOG\r\n\t\tfloat lerpFact=clamp((1.0/gl_FragCoord.w-u_FogStart)/u_FogRange,0.0,1.0);\r\n\t\tcolor.rgb=mix(color.rgb,u_FogColor,lerpFact);\r\n\t#endif\r\n\t\r\n\tgl_FragColor=vec4(color.rgb,alpha);\r\n}\r\n\r\n\r\n";
+	var PBRCore = "struct FragmentCommonData{\r\n\tvec3 diffColor;\r\n\tvec3 specColor;\r\n\tfloat oneMinusReflectivity;\r\n\tfloat smoothness;\r\n\t//vec3 eyeVec;TODO:maybe can remove\r\n\t//float alpha;\r\n\t//vec3 reflUVW;\r\n};\r\n\r\n#ifndef SETUP_BRDF_INPUT\r\n    #define SETUP_BRDF_INPUT metallicSetup//default is metallicSetup,also can be other. \r\n#endif\r\n\r\nconst mediump vec4 dielectricSpecularColor = vec4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301);\r\n\r\nmediump vec3 diffuseAndSpecularFromMetallic(mediump vec3 albedo,mediump float metallic, out mediump vec3 specColor, out mediump float oneMinusReflectivity)\r\n{\r\n\tspecColor = mix(dielectricSpecularColor.rgb, albedo, metallic);\r\n\toneMinusReflectivity= dielectricSpecularColor.a*(1.0-metallic);//diffuse proportion\r\n\treturn albedo * oneMinusReflectivity;\r\n}\r\n\r\nmediump float specularStrength(mediump vec3 specular)\r\n{\r\n    return max (max (specular.r, specular.g), specular.b);\r\n}\r\n\r\n// Diffuse/Spec Energy conservation\r\nmediump vec3 energyConservationBetweenDiffuseAndSpecular (mediump vec3 albedo, mediump vec3 specColor, out mediump float oneMinusReflectivity)\r\n{\r\n\toneMinusReflectivity = 1.0 - specularStrength(specColor);\r\n    return albedo * (vec3(1.0) - specColor);\r\n}\r\n\r\n#ifdef TRANSPARENTBLEND\r\n\tmediump vec3 preMultiplyAlpha (mediump vec3 diffColor, mediump float alpha, mediump float oneMinusReflectivity,out mediump float modifiedAlpha)\r\n\t{\r\n\t\t// Transparency 'removes' from Diffuse component\r\n\t\tdiffColor *= alpha;\r\n\t\t// Reflectivity 'removes' from the rest of components, including Transparency\r\n\t\t// modifiedAlpha = 1.0-(1.0-alpha)*(1.0-reflectivity) = 1.0-(oneMinusReflectivity - alpha*oneMinusReflectivity) = 1.0-oneMinusReflectivity + alpha*oneMinusReflectivity\r\n\t\tmodifiedAlpha = 1.0 - oneMinusReflectivity + alpha*oneMinusReflectivity;\r\n\t\treturn diffColor;\r\n\t}\r\n#endif\r\n\r\nFragmentCommonData metallicSetup(vec2 uv)\r\n{\r\n\tmediump vec2 metallicGloss = getMetallicGloss(uv);\r\n\tmediump float metallic = metallicGloss.x;\r\n\tmediump float smoothness = metallicGloss.y; // this is 1 minus the square root of real roughness m.\r\n\tmediump float oneMinusReflectivity;\r\n\tmediump vec3 specColor;\r\n\tmediump vec3 diffColor = diffuseAndSpecularFromMetallic(albedo(uv), metallic,/*out*/specColor,/*out*/oneMinusReflectivity);\r\n\r\n\tFragmentCommonData o;\r\n\to.diffColor = diffColor;\r\n\to.specColor = specColor;\r\n\to.oneMinusReflectivity = oneMinusReflectivity;\r\n\to.smoothness = smoothness;\r\n\treturn o;\r\n}\r\n\r\nFragmentCommonData specularSetup(vec2 uv)\r\n{\r\n    mediump vec4 specGloss = specularGloss(uv);\r\n    mediump vec3 specColor = specGloss.rgb;\r\n    mediump float smoothness = specGloss.a;\r\n\r\n    mediump float oneMinusReflectivity;\r\n    mediump vec3 diffColor = energyConservationBetweenDiffuseAndSpecular (albedo(uv), specColor, /*out*/ oneMinusReflectivity);\r\n\r\n    FragmentCommonData o;\r\n    o.diffColor = diffColor;\r\n    o.specColor = specColor;\r\n    o.oneMinusReflectivity = oneMinusReflectivity;\r\n    o.smoothness = smoothness;\r\n    return o;\r\n}\r\n\r\nLayaGI fragmentGI(float smoothness,vec3 eyeVec,mediump float occlusion,mediump vec2 lightmapUV,vec3 worldnormal,vec3 worldPos)\r\n{\r\n\tLayaGIInput giInput;\r\n\t#ifdef LIGHTMAP\r\n\t\tgiInput.lightmapUV=lightmapUV;\r\n\t#endif\r\n\tgiInput.worldPos = worldPos;\r\n\r\n\tvec3 worldViewDir = -eyeVec;\r\n\tmediump vec4 uvwRoughness;\r\n\tuvwRoughness.rgb = reflect(worldViewDir, worldnormal);//reflectUVW\r\n\tuvwRoughness.a= smoothnessToPerceptualRoughness(smoothness);//perceptualRoughness\r\n\r\n\treturn layaGlobalIllumination(giInput,occlusion, worldnormal, uvwRoughness);\r\n}\r\n\r\n\r\nvec3 perPixelWorldNormal(vec2 uv,vec3 normal,vec3 binormal,vec3 tangent)\r\n{\r\n\t#ifdef NORMALTEXTURE\r\n\t\tmediump vec3 normalTangent=normalInTangentSpace(uv);\r\n\t\tvec3 normalWorld = normalize(tangent * normalTangent.x + binormal * normalTangent.y + normal * normalTangent.z);\r\n\t#else\r\n\t\tvec3 normalWorld = normalize(normal);\r\n\t#endif\r\n\t\treturn normalWorld;\r\n}\r\n\r\nvoid fragmentForward()\r\n{\r\n\tvec2 uv;\r\n\t#if defined(ALBEDOTEXTURE)||defined(METALLICGLOSSTEXTURE)||defined(NORMALTEXTURE)||defined(EMISSIONTEXTURE)||defined(OCCLUSIONTEXTURE)||defined(PARALLAXTEXTURE)\r\n\t\t#ifdef PARALLAXTEXTURE\r\n\t\t\tuv = parallax(v_Texcoord0,normalize(v_ViewDirForParallax));\r\n\t\t#else\r\n\t\t\tuv = v_Texcoord0;\r\n\t\t#endif\r\n\t#endif\r\n\r\n\tmediump float alpha = getAlpha(uv);\r\n\t#ifdef ALPHATEST\r\n\t\tif(alpha<u_AlphaTestValue)\r\n\t\t\tdiscard;\r\n\t#endif\r\n\r\n\tFragmentCommonData o = SETUP_BRDF_INPUT(uv);\r\n\t\r\n\tvec3 binormal;\r\n\tvec3 tangent;\r\n\t#ifdef NORMALTEXTURE\r\n\t\ttangent = v_Tangent;\r\n\t\tbinormal = v_Binormal;\r\n\t#endif\r\n\r\n\tvec3 normal = v_Normal;\r\n\tvec3 normalWorld = perPixelWorldNormal(uv,normal,binormal,tangent);//In FS if the normal use mediump before normalize will cause precision prolem in mobile device.\r\n\tvec3 eyeVec = normalize(v_EyeVec);\r\n\tvec3 posworld = v_PositionWorld;\r\n\r\n\t#ifdef TRANSPARENTBLEND\r\n\t\to.diffColor=preMultiplyAlpha(o.diffColor,alpha,o.oneMinusReflectivity,/*out*/alpha);// shader relies on pre-multiply alpha-blend (srcBlend = One, dstBlend = OneMinusSrcAlpha)\r\n\t#endif\r\n\r\n\tmediump float occlusion = getOcclusion(uv);\r\n\tmediump vec2 lightMapUV;\r\n\t#ifdef LIGHTMAP\r\n\t\tlightMapUV=v_LightMapUV;\r\n\t#endif\r\n\tfloat perceptualRoughness = smoothnessToPerceptualRoughness(o.smoothness);\r\n\tfloat roughness = perceptualRoughnessToRoughness(perceptualRoughness);\r\n\tfloat nv = abs(dot(normalWorld, eyeVec));\r\n\tLayaGI gi =fragmentGI(o.smoothness,eyeVec,occlusion,lightMapUV,normalWorld,posworld);\r\n\tvec4 color = LAYA_BRDF_GI(o.diffColor,o.specColor,o.oneMinusReflectivity,o.smoothness,perceptualRoughness,roughness,nv,normalWorld,eyeVec,gi);\r\n\t\r\n\tfloat shadowAttenuation = 1.0;\r\n\t#ifdef LEGACYSINGLELIGHTING\r\n\t\t#ifdef DIRECTIONLIGHT\r\n\t\t\t#ifdef CALCULATE_SHADOWS\r\n\t\t\t\t#ifdef SHADOW_CASCADE\r\n\t\t\t\t\tvec4 shadowCoord = getShadowCoord(vec4(v_PositionWorld,1.0));\r\n\t\t\t\t#else\r\n\t\t\t\t\tvec4 shadowCoord = v_ShadowCoord;\r\n\t\t\t\t#endif\r\n\t\t\t\tshadowAttenuation=sampleShadowmap(shadowCoord);\r\n\t\t\t#endif\r\n\t\t\tLayaLight dirLight = layaDirectionLightToLight(u_DirectionLight,shadowAttenuation);\r\n\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,dirLight);\r\n\t\t#endif\r\n\t\r\n\t\t#ifdef POINTLIGHT\r\n\t\t\tshadowAttenuation = 1.0;\r\n\t\t\tLayaLight poiLight = layaPointLightToLight(posworld,normalWorld,u_PointLight,shadowAttenuation);\r\n\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,poiLight);\r\n\t\t#endif\r\n\t\t\r\n\t\t#ifdef SPOTLIGHT\r\n\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t#ifdef CALCULATE_SPOTSHADOWS\r\n\t\t\t\tvec4 spotShadowcoord = v_SpotShadowCoord;\r\n\t\t\t\tshadowAttenuation = sampleSpotShadowmap(spotShadowcoord);\r\n\t\t\t#endif\r\n\t\t    LayaLight spoLight = layaSpotLightToLight(posworld,normalWorld,u_SpotLight,shadowAttenuation);\r\n\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,spoLight);\r\n\t\t#endif\r\n\t#else\r\n\t \t#ifdef DIRECTIONLIGHT\r\n\t\t\tfor (int i = 0; i < MAX_LIGHT_COUNT; i++) \r\n\t\t\t{\r\n\t\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t\tif(i >= u_DirationLightCount)\r\n\t\t\t\t\tbreak;\r\n\t\t\t\t#ifdef CALCULATE_SHADOWS\r\n\t\t\t\t\tif(i == 0)\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\t#ifdef SHADOW_CASCADE\r\n\t\t\t\t\t\t\tvec4 shadowCoord = getShadowCoord(vec4(v_PositionWorld,1.0));\r\n\t\t\t\t\t\t#else\r\n\t\t\t\t\t\t\tvec4 shadowCoord = v_ShadowCoord;\r\n\t\t\t\t\t\t#endif\r\n\t\t\t\t\t\tshadowAttenuation *= sampleShadowmap(shadowCoord);\r\n\t\t\t\t\t}\r\n\t\t\t\t#endif\r\n\t\t\t\tDirectionLight directionLight = getDirectionLight(u_LightBuffer,i);\r\n\t\t\t\tLayaLight dirLight = layaDirectionLightToLight(directionLight,shadowAttenuation);\r\n\t\t\t \tcolor+=LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,dirLight);\r\n\t\t\t}\r\n\t \t#endif\r\n\t\t#if defined(POINTLIGHT)||defined(SPOTLIGHT)\r\n\t\t\tivec4 clusterInfo =getClusterInfo(u_LightClusterBuffer,u_View,u_Viewport, v_PositionWorld,gl_FragCoord,u_ProjectionParams);\r\n\t\t\t#ifdef POINTLIGHT\r\n\t\t\t\tfor (int i = 0; i < MAX_LIGHT_COUNT; i++) \r\n\t\t\t\t{\r\n\t\t\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t\t\tif(i >= clusterInfo.x)//PointLightCount\r\n\t\t\t\t\t\tbreak;\r\n\t\t\t\t\tPointLight pointLight = getPointLight(u_LightBuffer,u_LightClusterBuffer,clusterInfo,i);\r\n\t\t\t\t\tLayaLight poiLight = layaPointLightToLight(posworld,normalWorld,pointLight,shadowAttenuation);\r\n\t\t\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,poiLight);\r\n\t\t\t\t}\r\n\t\t\t#endif\r\n\t\t\t#ifdef SPOTLIGHT\r\n\t\t\t\tfor (int i = 0; i < MAX_LIGHT_COUNT; i++) \r\n\t\t\t\t{\r\n\t\t\t\t\tshadowAttenuation = 1.0;\r\n\t\t\t\t\tif(i >= clusterInfo.y)//SpotLightCount\r\n\t\t\t\t\t\tbreak;\r\n\t\t\t\t\t#ifdef CALCULATE_SPOTSHADOWS\r\n\t\t\t\t\t\tif(i == 0)\r\n\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\tvec4 spotShadowcoord = v_SpotShadowCoord;\r\n\t\t\t\t\t\t\tshadowAttenuation= sampleSpotShadowmap(spotShadowcoord);\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t#endif\r\n\t\t\t\t\tSpotLight spotLight = getSpotLight(u_LightBuffer,u_LightClusterBuffer,clusterInfo,i);\r\n\t\t\t\t\tLayaLight spoLight = layaSpotLightToLight(posworld,normalWorld,spotLight,shadowAttenuation);\r\n\t\t\t\t\tcolor+= LAYA_BRDF_LIGHT(o.diffColor,o.specColor,o.oneMinusReflectivity,perceptualRoughness,roughness,nv,normalWorld,eyeVec,spoLight);\r\n\t\t\t\t}\r\n\t\t\t#endif\r\n\t\t#endif\r\n\t #endif\r\n\r\n\t#ifdef EMISSION\r\n\t\tcolor.rgb += emission(uv);\r\n\t#endif\r\n\r\n\t#ifdef FOG\r\n\t\tfloat lerpFact=clamp((1.0/gl_FragCoord.w-u_FogStart)/u_FogRange,0.0,1.0);\r\n\t\tcolor.rgb=mix(color.rgb,u_FogColor,lerpFact);\r\n\t#endif\r\n\t\r\n\tgl_FragColor=vec4(color.rgb,alpha);\r\n}\r\n\r\n\r\n\r\n";
 
 	var PBRVSInput = "attribute vec4 a_Position;\r\n\r\n#ifdef GPU_INSTANCE\r\n\tattribute mat4 a_MvpMatrix;\r\n\tattribute mat4 a_WorldMat;\r\n#else\r\n\tuniform mat4 u_MvpMatrix;\r\n\tuniform mat4 u_WorldMat;\r\n#endif\r\n\r\n#ifdef BONE\r\n\tconst int c_MaxBoneCount = 24;\r\n\tattribute vec4 a_BoneIndices;\r\n\tattribute vec4 a_BoneWeights;\r\n\tuniform mat4 u_Bones[c_MaxBoneCount];\r\n#endif\r\n\r\nattribute vec3 a_Normal;\r\nvarying vec3 v_Normal; \r\n\r\n#if defined(NORMALTEXTURE)||defined(PARALLAXTEXTURE)\r\n\tattribute vec4 a_Tangent0;\r\n\tvarying vec3 v_Tangent;\r\n\tvarying vec3 v_Binormal;\r\n    #ifdef PARALLAXTEXTURE\r\n\t    varying vec3 v_ViewDirForParallax;\r\n    #endif\r\n#endif\r\n\r\n#if defined(ALBEDOTEXTURE)||defined(METALLICGLOSSTEXTURE)||defined(NORMALTEXTURE)||defined(EMISSIONTEXTURE)||defined(OCCLUSIONTEXTURE)||defined(PARALLAXTEXTURE)||(defined(LIGHTMAP)&&defined(UV))\r\n\tattribute vec2 a_Texcoord0;\r\n\tvarying vec2 v_Texcoord0;\r\n#endif\r\n\r\n#if defined(LIGHTMAP)&&defined(UV1)\r\n\tattribute vec2 a_Texcoord1;\r\n#endif\r\n\r\n#ifdef LIGHTMAP\r\n\tuniform vec4 u_LightmapScaleOffset;\r\n\tvarying vec2 v_LightMapUV;\r\n#endif\r\n\r\nuniform vec3 u_CameraPos;\r\nvarying vec3 v_EyeVec;\r\nvarying vec3 v_PositionWorld;\r\nvarying float v_posViewZ;\r\n\r\n#if defined(CALCULATE_SHADOWS)&&!defined(SHADOW_CASCADE)\r\n\tvarying vec4 v_ShadowCoord;\r\n#endif\r\n\r\n#ifdef CALCULATE_SPOTSHADOWS\r\n\tvarying vec4 v_SpotShadowCoord;\r\n#endif\r\n\r\n#ifdef TILINGOFFSET\r\n\tuniform vec4 u_TilingOffset;\r\n#endif\r\n\r\n\r\n#ifdef SIMPLEBONE\r\n\t#ifdef GPU_INSTANCE\r\n\t\tattribute vec4 a_SimpleTextureParams;\r\n\t#else\r\n\t\tuniform vec4 u_SimpleAnimatorParams;\r\n\t#endif\r\n\tuniform sampler2D u_SimpleAnimatorTexture;\r\n\r\n\tuniform float u_SimpleAnimatorTextureSize; \r\n#endif\r\n\r\n\r\n#ifdef SIMPLEBONE\r\nmat4 loadMatFromTexture(float FramePos,int boneIndices,float offset)\r\n{\r\n\tvec2 uv;\r\n\tfloat PixelPos = FramePos+float(boneIndices)*4.0;\r\n\tfloat halfOffset = offset * 0.5;\r\n\tfloat uvoffset = PixelPos/u_SimpleAnimatorTextureSize;\r\n\tuv.y = floor(uvoffset)*offset+halfOffset;\r\n\tuv.x = mod(float(PixelPos),u_SimpleAnimatorTextureSize)*offset+halfOffset;\r\n\tvec4 mat0row = texture2D(u_SimpleAnimatorTexture,uv);\r\n\tuv.x+=offset;\r\n\tvec4 mat1row = texture2D(u_SimpleAnimatorTexture,uv);\r\n\tuv.x+=offset;\r\n\tvec4 mat2row = texture2D(u_SimpleAnimatorTexture,uv);\r\n\tuv.x+=offset;\r\n\tvec4 mat3row = texture2D(u_SimpleAnimatorTexture,uv);\r\n\tmat4 m =mat4(mat0row.x,mat0row.y,mat0row.z,mat0row.w,\r\n\t\t\t  mat1row.x,mat1row.y,mat1row.z,mat1row.w,\r\n\t\t\t  mat2row.x,mat2row.y,mat2row.z,mat2row.w,\r\n\t\t\t  mat3row.x,mat3row.y,mat3row.z,mat3row.w);\r\n\treturn m;\r\n}\r\n#endif";
 
@@ -30367,7 +30683,6 @@
 	            'u_View': Shader3D.PERIOD_CAMERA,
 	            'u_ViewProjection': Shader3D.PERIOD_CAMERA,
 	            'u_ReflectTexture': Shader3D.PERIOD_SCENE,
-	            'u_ReflectIntensity': Shader3D.PERIOD_SCENE,
 	            'u_FogStart': Shader3D.PERIOD_SCENE,
 	            'u_FogRange': Shader3D.PERIOD_SCENE,
 	            'u_FogColor': Shader3D.PERIOD_SCENE,
@@ -31246,6 +31561,9 @@
 	                break;
 	            case "TrailSprite3D":
 	                node = new TrailSprite3D();
+	                break;
+	            case "ReflectionProbe":
+	                node = new ReflectionProbe();
 	                break;
 	            default:
 	                console.error("未定义的类型", nodeData);
@@ -32917,6 +33235,10 @@
 	            case "Terrain":
 	                Laya3D._addHierarchyInnerUrls(fourthLelUrls, subUrls, urlVersion, hierarchyBasePath, props.dataPath, Laya3D.TERRAINRES);
 	                break;
+	            case "ReflectionProbe":
+	                var reflection = props.reflection;
+	                (reflection) && (props.reflection = Laya3D._addHierarchyInnerUrls(firstLevelUrls, subUrls, urlVersion, hierarchyBasePath, reflection, Laya3D.TEXTURECUBEBIN));
+	                break;
 	        }
 	        var components = node.components;
 	        if (components) {
@@ -34200,6 +34522,9 @@
 	exports.Rand = Rand;
 	exports.RandX = RandX;
 	exports.Ray = Ray;
+	exports.ReflectionProbe = ReflectionProbe;
+	exports.ReflectionProbeList = ReflectionProbeList;
+	exports.ReflectionProbeManager = ReflectionProbeManager;
 	exports.RenderContext3D = RenderContext3D;
 	exports.RenderElement = RenderElement;
 	exports.RenderQueue = RenderQueue;

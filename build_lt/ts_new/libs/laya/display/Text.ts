@@ -782,7 +782,7 @@ export class Text extends Sprite {
                 }
                 _word.setText(word);
                 ((<WordText>_word)).splitRender = this._singleCharRender;
-                style.stroke ? graphics.fillBorderText(_word, x, y, ctxFont, this.color, style.strokeColor, style.stroke, textAlgin) : graphics.fillText(_word, x, y, ctxFont, this.color, textAlgin);
+                style.stroke ? graphics.fillBorderText(_word, x, y, ctxFont, this.color, textAlgin, style.stroke, style.strokeColor) : graphics.fillText(_word, x, y, ctxFont, this.color, textAlgin);
             }
         }
         if (tCurrBitmapFont && tCurrBitmapFont.autoScaleSize) {
@@ -866,8 +866,12 @@ export class Text extends Sprite {
         //计算textHeight
         if (((<TextStyle>this._style)).currBitmapFont)
             nh = this._lines.length * (((<TextStyle>this._style)).currBitmapFont.getMaxHeight() + this.leading) + this.padding[0] + this.padding[2];
-        else
-            nh = this._lines.length * (this._charSize.height + this.leading) + this.padding[0] + this.padding[2];
+        else{
+			nh = this._lines.length * (this._charSize.height + this.leading) + this.padding[0] + this.padding[2];
+			if(this._lines.length){
+				nh-=this.leading; 	// 去掉最后一行的leading，否则多算了。
+			}
+		}
         if (nw != this._textWidth || nh != this._textHeight) {
             this._textWidth = nw;
             this._textHeight = nh;

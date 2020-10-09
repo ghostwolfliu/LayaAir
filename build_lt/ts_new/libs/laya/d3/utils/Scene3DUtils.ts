@@ -14,6 +14,8 @@ import { Sprite3D } from "../core/Sprite3D";
 import { TrailSprite3D } from "../core/trail/TrailSprite3D";
 import { StaticBatchManager } from "../graphics/StaticBatchManager";
 import { ClassUtils } from "../../utils/ClassUtils";
+import { SimpleSkinnedMeshSprite3D } from "../core/SimpleSkinnedMeshSprite3D";
+import { ReflectionProbe } from "../core/reflectionProbe/ReflectionProbe";
 
 
 
@@ -37,6 +39,9 @@ export class Scene3DUtils {
 			case "SkinnedMeshSprite3D":
 				node = new SkinnedMeshSprite3D();
 				break;
+			case "SimpleSkinnedMeshSprite3D":
+				node = new SimpleSkinnedMeshSprite3D();
+				break;
 			case "ShuriKenParticle3D":
 				node = new ShuriKenParticle3D();
 				break;
@@ -54,6 +59,9 @@ export class Scene3DUtils {
 				break;
 			case "TrailSprite3D":
 				node = new TrailSprite3D();
+				break;
+			case "ReflectionProbe":
+				node = new ReflectionProbe();
 				break;
 			default:
 				console.error("未定义的类型", nodeData);

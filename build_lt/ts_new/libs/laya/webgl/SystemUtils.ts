@@ -56,7 +56,7 @@ export class SystemUtils {
     static supportRenderTextureFormat(format: number): boolean {
         switch (format) {
             case RenderTextureFormat.R16G16B16A16:
-                return (LayaGL.layaGPUInstance._isWebGL2 || LayaGL.layaGPUInstance._oesTextureHalfFloat && LayaGL.layaGPUInstance._oesTextureHalfFloatLinear) ? true : false;
+                return (((!!LayaGL.layaGPUInstance._isWebGL2)&&(!!LayaGL.layaGPUInstance._extColorBufferFloat)) || LayaGL.layaGPUInstance._oesTextureHalfFloat && LayaGL.layaGPUInstance._oesTextureHalfFloatLinear) ? true : false;
             case RenderTextureFormat.Depth:
                 return (LayaGL.layaGPUInstance._isWebGL2 || LayaGL.layaGPUInstance._webgl_depth_texture) ? true : false;
             case RenderTextureFormat.ShadowMap:
